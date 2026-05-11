@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
@@ -18,7 +17,7 @@ class Profile extends StatelessWidget {
         body: Column(
           children: [
             Text(
-              "Nama: Rannssky",
+              "Hallo Rannssky",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             Row(
