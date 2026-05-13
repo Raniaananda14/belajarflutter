@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Day_10/flutter_widget3.dart';
-
+import 'package:flutter_application_1/Day_10/fluter_widget4.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const Flutter3(),
+      home: const Profile5(),
     );
   }
 }

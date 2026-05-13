@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Flutter3 extends StatelessWidget {
@@ -11,26 +10,24 @@ class Flutter3 extends StatelessWidget {
         title: Center(
           child: Text(
             style: TextStyle(fontWeight: FontWeight.bold),
-            "Registrasi & Katalog"
-            ),
+            "Registrasi & Katalog",
+          ),
         ),
         backgroundColor: const Color.fromARGB(255, 78, 107, 136),
       ),
       body: Padding(
         padding: EdgeInsets.all(8),
         child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
             children: [
               Text(
                 "Nama",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-          
+
               TextField(
                 decoration: InputDecoration(
                   hintText: "Nama Lengkap",
@@ -41,15 +38,12 @@ class Flutter3 extends StatelessWidget {
                   ),
                 ),
               ),
-          
+
               Text(
                 "No Telpon",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-          
+
               TextField(
                 decoration: InputDecoration(
                   hintText: "Masukan No Telp Aktif",
@@ -60,15 +54,12 @@ class Flutter3 extends StatelessWidget {
                   ),
                 ),
               ),
-          
-               Text(
+
+              Text(
                 "Email",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-          
+
               TextField(
                 decoration: InputDecoration(
                   hintText: "Masukan Email Aktif",
@@ -79,15 +70,12 @@ class Flutter3 extends StatelessWidget {
                   ),
                 ),
               ),
-          
-               Text(
+
+              Text(
                 "Password",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-          
+
               TextField(
                 decoration: InputDecoration(
                   hintText: "Password",
@@ -99,15 +87,12 @@ class Flutter3 extends StatelessWidget {
                   ),
                 ),
               ),
-          
+
               Text(
                 "Konfirmasi Password",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-          
+
               TextField(
                 decoration: InputDecoration(
                   hintText: "Masukan kembali Passwordmu",
@@ -119,24 +104,24 @@ class Flutter3 extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               // Katalog
               Text(
                 "Which one are you?",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               SizedBox(height: 10),
-              
+
               GridView.count(
-                
                 // padding: EdgeInsets.only(top: 18),
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 crossAxisCount: 3,
-              mainAxisSpacing: 4,
+                mainAxisSpacing: 4,
                 // mainAxisExtent: 4,
-                crossAxisSpacing: 4,clipBehavior: Clip.none,
-                
+                crossAxisSpacing: 4,
+                clipBehavior: Clip.none,
+
                 children: [
                   aboutYou("1.jpg", "cynical"),
                   aboutYou("2.webp", "angry"),
@@ -145,41 +130,40 @@ class Flutter3 extends StatelessWidget {
                   aboutYou("5.jpg", "ponder"),
                   aboutYou("6.webp", "laugh"),
                 ],
-              )
-            ]
+              ),
+            ],
           ),
         ),
-      )
+      ),
     );
   }
 }
 
-Widget aboutYou(String namaImg, String textLabel){
-  return Stack(
-    alignment: AlignmentGeometry.bottomCenter, clipBehavior: Clip.none,
+Widget aboutYou(String namaImg, String textLabel) {
+  return Column(
+    // alignment: AlignmentGeometry.bottomCenter, clipBehavior: Clip.none,
     children: [
       ClipRRect(
         borderRadius: BorderRadiusGeometry.circular(14),
-        child: 
-        Image.asset("assets/images/$namaImg", fit: BoxFit.cover),
+        child: Image.asset("assets/images/$namaImg", fit: BoxFit.cover),
       ),
-      Positioned(
-        bottom: -10,
-        child: Container(
-          padding: EdgeInsets.all(6),
-          width: 78,
-          decoration: BoxDecoration(
-            color: Colors.grey,
-            borderRadius: BorderRadius.circular(8),
-          ),
+      // Positioned(
+      //   bottom: -10,
+      //   child: Container(
+      //     padding: EdgeInsets.all(6),
+      //     width: 78,
+      //     decoration: BoxDecoration(
+      //       color: Colors.grey,
+      //       borderRadius: BorderRadius.circular(8),
+      //     ),
 
-          child: Text(
-            textLabel,
-            style: TextStyle(color: CupertinoColors.secondarySystemGroupedBackground),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      )
+      //     child: Text(
+      //       textLabel,
+      //       style: TextStyle(color: CupertinoColors.secondarySystemGroupedBackground),
+      //       textAlign: TextAlign.center,
+      //     ),
+      //   ),
+      // )
     ],
   );
 }
