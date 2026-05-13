@@ -19,7 +19,6 @@ class Flutter3 extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.all(8),
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
@@ -122,29 +121,29 @@ class Flutter3 extends StatelessWidget {
               ),
               
               // Katalog
-              Column(
+              Text(
+                "Which one are you?",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              SizedBox(height: 10),
+              
+              GridView.count(
+                
+                // padding: EdgeInsets.only(top: 18),
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                crossAxisCount: 3,
+              mainAxisSpacing: 4,
+                // mainAxisExtent: 4,
+                crossAxisSpacing: 4,clipBehavior: Clip.none,
+                
                 children: [
-                  Text(
-                    "Which one are you?",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  SizedBox(height: 10),
-
-                  GridView.count(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    crossAxisCount: 3,
-                    mainAxisExtent: 25,
-                    crossAxisSpacing: 10,
-                    children: [
-                      aboutYou("1.jpg", "cynical"),
-                      aboutYou("2.webp", "angry"),
-                      aboutYou("3.jpg", "startled"),
-                      aboutYou("4.jpg", "spoiled"),
-                      aboutYou("5.jpg", "ponder"),
-                      aboutYou("6.webp", "laugh"),
-                    ],
-                  )
+                  aboutYou("1.jpg", "cynical"),
+                  aboutYou("2.webp", "angry"),
+                  aboutYou("3.jpg", "startled"),
+                  aboutYou("4.jpg", "spoiled"),
+                  aboutYou("5.jpg", "ponder"),
+                  aboutYou("6.webp", "laugh"),
                 ],
               )
             ]
@@ -155,22 +154,17 @@ class Flutter3 extends StatelessWidget {
   }
 }
 
-Stack aboutYou(String namaImg, String textLabel){
+Widget aboutYou(String namaImg, String textLabel){
   return Stack(
     alignment: AlignmentGeometry.bottomCenter, clipBehavior: Clip.none,
     children: [
-      SizedBox(
-        height: double.infinity,
-        width: double.infinity,
-
-        child: ClipRRect(
-          borderRadius: BorderRadiusGeometry.circular(14),
-          child: 
-          Image.asset("assets/images/$namaImg", fit: BoxFit.cover),
-        ),
+      ClipRRect(
+        borderRadius: BorderRadiusGeometry.circular(14),
+        child: 
+        Image.asset("assets/images/$namaImg", fit: BoxFit.cover),
       ),
       Positioned(
-        bottom: -14,
+        bottom: -10,
         child: Container(
           padding: EdgeInsets.all(6),
           width: 78,
