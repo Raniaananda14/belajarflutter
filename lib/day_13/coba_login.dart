@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/day_12/state12.dart';
+import 'package:flutter_application_1/extention/navigator.dart';
 
 void main() {
   runApp(const BizGrowApp());
@@ -261,6 +263,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
                                     print("Sudah memenuhi syarat");
+                                    context.pushReplacement(State12());
+                                  } else {
+                                    print("eror");
                                   }
                                 },
 
