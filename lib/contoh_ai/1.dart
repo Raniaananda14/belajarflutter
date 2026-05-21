@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/day_12/state12.dart';
+import 'package:flutter_application_1/extention/navigator.dart';
 
 void main() {
   runApp(const BizGrowApp());
@@ -877,29 +879,96 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             const SizedBox(height: 28),
 
-                            /// LOGIN BUTTON
-                            // SizedBox(
-                            //   width: double.infinity,
-                            //   height: 56,
-                            //   child: ElevatedButton(
-                            //     style: ElevatedButton.styleFrom(
-                            //       backgroundColor: Colors.black,
-                            //       elevation: 0,
-                            //       shape: RoundedRectangleBorder(
-                            //         borderRadius: BorderRadius.circular(16),
-                            //       ),
-                            //     ),
+                            // LOGIN BUTTON
+                            SizedBox(
+                              width: double.infinity,
+                              height: 56,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
 
-                            //     child: const Text(
-                            //       "Login",
-                            //       style: TextStyle(
-                            //         color: Colors.white,
-                            //         fontSize: 16,
-                            //         fontWeight: FontWeight.w700,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    // context.pushReplacement(State12());
+
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadiusGeometry.circular(
+                                                  12,
+                                                ),
+                                          ),
+
+                                          title: Column(
+                                            children: [
+                                              Icon(
+                                                Icons.verified,
+                                                color: Colors.green,
+                                                size: 50,
+                                              ),
+                                              Text(
+                                                "Login successful!",
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                            ],
+                                          ),
+
+                                          backgroundColor: Colors.white,
+
+                                          actions: [
+                                            Center(
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Color(
+                                                    0xFF005BBF,
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadiusGeometry.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  context.pushReplacement(
+                                                    State12(),
+                                                  );
+                                                },
+                                                child: Text(
+                                                  "Ok",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
+
+                                child: const Text(
+                                  "Login",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
