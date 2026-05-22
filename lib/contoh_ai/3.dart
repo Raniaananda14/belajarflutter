@@ -1,19 +1,175 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const BizGrowUI());
+  runApp(const BizGrowApp());
 }
 
-class BizGrowUI extends StatelessWidget {
-  const BizGrowUI({super.key});
+/// MAIN APP
+class BizGrowApp extends StatelessWidget {
+  const BizGrowApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'BizGrow Drawer UI',
+      title: 'BizGrow UI',
       theme: ThemeData(fontFamily: 'Poppins'),
-      home: const HomePage(),
+      home: const MainNavigation(),
+    );
+  }
+}
+
+/// MAIN NAVIGATION
+class MainNavigation extends StatefulWidget {
+  const MainNavigation({super.key});
+
+  @override
+  State<MainNavigation> createState() => _MainNavigationState();
+}
+
+class _MainNavigationState extends State<MainNavigation> {
+  int currentIndex = 0;
+
+  final List<Widget> pages = [const HomePage(), const AboutPage()];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+
+        centerTitle: true,
+
+        title: Text(
+          currentIndex == 0 ? "BizGrow Dashboard" : "Tentang Aplikasi",
+
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      drawer: currentIndex == 0
+          ? Drawer(
+              backgroundColor: Colors.black,
+
+              child: ListView(
+                padding: EdgeInsets.zero,
+
+                children: [
+                  DrawerHeader(
+                    decoration: const BoxDecoration(color: Colors.black),
+
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+
+                      children: [
+                        Container(
+                          width: 55,
+                          height: 55,
+
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+
+                          child: const Icon(
+                            Icons.auto_graph,
+
+                            color: Colors.white,
+
+                            size: 28,
+                          ),
+                        ),
+
+                        const Spacer(),
+
+                        const Text(
+                          "BizGrow",
+
+                          style: TextStyle(
+                            color: Colors.white,
+
+                            fontSize: 22,
+
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        const SizedBox(height: 4),
+
+                        Text(
+                          "Smart Business Solution",
+
+                          style: TextStyle(color: Colors.grey, fontSize: 17),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  drawerMenu(Icons.dashboard, "Dashboard"),
+
+                  drawerMenu(Icons.analytics, "Analytics"),
+
+                  drawerMenu(Icons.inventory_2, "Products"),
+
+                  drawerMenu(Icons.settings, "Settings"),
+                ],
+              ),
+            )
+          : null,
+
+      body: pages[currentIndex],
+
+      /// ===================================================
+      /// BOTTOM NAVIGATION
+      /// ===================================================
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+
+        selectedItemColor: Colors.black,
+
+        unselectedItemColor: Colors.grey,
+
+        backgroundColor: Colors.white,
+
+        selectedFontSize: 11,
+        unselectedFontSize: 10,
+
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+
+          BottomNavigationBarItem(icon: Icon(Icons.info), label: "Tentang"),
+        ],
+      ),
+    );
+  }
+
+  /// =====================================================
+  /// DRAWER MENU
+  /// =====================================================
+
+  Widget drawerMenu(IconData icon, String title) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white, size: 20),
+
+      title: Text(
+        title,
+
+        style: const TextStyle(color: Colors.white, fontSize: 13),
+      ),
+
+      onTap: () {},
     );
   }
 }
@@ -31,227 +187,242 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   /// CHECKBOX
-  bool isChecked = false;
+  bool isCheck = false;
 
-  /// SWITCH
-  bool isDarkMode = false;
+  /// DARK MODE
+  bool isSwitch = false;
 
   /// DROPDOWN
-  String selectedCategory = "Elektronik";
+  String selectedItem = "Elektronik";
 
-  /// DATE
-  DateTime? selectedDate;
-
-  /// TIME
-  TimeOfDay? selectedTime;
-
-  /// ==============================
-  /// DATE PICKER
-  /// ==============================
-
-  Future<void> pickDate() async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-
-      initialDate: DateTime.now(),
-
-      firstDate: DateTime(2000),
-
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        selectedDate = pickedDate;
-      });
-    }
-  }
-
-  /// ==============================
-  /// TIME PICKER
-  /// ==============================
-
-  Future<void> pickTime() async {
-    TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (pickedTime != null) {
-      setState(() {
-        selectedTime = pickedTime;
-      });
-    }
-  }
+  List<String> category = ["Elektronik", "Pakaian", "Makanan", "Lainnya"];
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = isDarkMode
-        ? const Color(0xFF111111)
+    /// ===================================================
+    /// DYNAMIC COLOR
+    /// ===================================================
+
+    final backgroundColor = isSwitch
+        ? const Color(0xFF121212)
         : const Color(0xFFF5F5F5);
 
-    final cardColor = isDarkMode ? const Color(0xFF1C1C1C) : Colors.white;
+    final cardColor = isSwitch ? const Color(0xFF1E1E1E) : Colors.white;
 
-    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final textColor = isSwitch ? Colors.white : Colors.black;
+
+    final subtitleColor = isSwitch ? Colors.white70 : Colors.black54;
 
     return Scaffold(
       backgroundColor: backgroundColor,
 
-      /// APPBAR
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: backgroundColor,
-        iconTheme: IconThemeData(color: textColor),
-        title: Text(
-          "BizGrow Dashboard",
-          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
-        ),
-      ),
-
-      /// ===================================================
-      /// DRAWER
-      /// ===================================================
-      drawer: Drawer(
-        backgroundColor: const Color(0xFF111111),
-
-        child: Column(
-          children: [
-            /// HEADER
-            DrawerHeader(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  Container(
-                    width: 70,
-                    height: 70,
-
-                    decoration: BoxDecoration(
-                      color: Colors.white10,
-
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-
-                    child: const Icon(
-                      Icons.auto_graph,
-                      color: Colors.white,
-                      size: 36,
-                    ),
-                  ),
-
-                  const Spacer(),
-
-                  Center(
-                    child: const Text(
-                      "BizGrow",
-
-                      style: TextStyle(
-                        color: Colors.white,
-
-                        fontSize: 20,
-
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  Text(
-                    "UMKM Solution",
-
-                    style: TextStyle(color: Colors.grey.shade400),
-                  ),
-                ],
-              ),
-            ),
-
-            /// MENU
-            drawerMenu(icon: Icons.dashboard, title: "Dashboard"),
-
-            drawerMenu(icon: Icons.analytics, title: "Business Analytics"),
-
-            drawerMenu(icon: Icons.inventory, title: "Product Management"),
-
-            drawerMenu(icon: Icons.settings, title: "Settings"),
-
-            drawerMenu(icon: Icons.logout, title: "Logout"),
-          ],
-        ),
-      ),
-
-      /// BODY
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(18),
 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
-            /// HEADER TEXT
+            /// HEADER
             Text(
-              "Interactive Input Form",
+              "Interactive Form",
 
               style: TextStyle(
-                color: textColor,
-
-                fontSize: 28,
+                fontSize: 22,
 
                 fontWeight: FontWeight.bold,
+
+                color: textColor,
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
 
             Text(
-              "Kelola bisnis UMKM dengan tampilan modern dan premium.",
+              "Kelola bisnis UMKM modern dengan tampilan interaktif.",
 
-              style: TextStyle(
-                color: isDarkMode ? Colors.white70 : Colors.black54,
+              style: TextStyle(color: subtitleColor, height: 1.5, fontSize: 15),
+            ),
 
-                height: 1.5,
+            const SizedBox(height: 24),
+
+            /// =================================================
+            /// CHECKBOX CARD
+            /// =================================================
+            buildCard(
+              cardColor: cardColor,
+
+              title: "1. Syarat & Ketentuan",
+
+              textColor: textColor,
+
+              child: Column(
+                children: [
+                  CheckboxListTile(
+                    value: isCheck,
+
+                    activeColor: Colors.black,
+
+                    title: Text(
+                      "Saya menyetujui persyaratan",
+
+                      style: TextStyle(color: textColor, fontSize: 15),
+                    ),
+
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isCheck = value ?? false;
+                      });
+                    },
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Container(
+                    width: double.infinity,
+
+                    padding: const EdgeInsets.all(14),
+
+                    decoration: BoxDecoration(
+                      color: isCheck
+                          ? Colors.green.shade100
+                          : Colors.red.shade100,
+
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+
+                    child: Text(
+                      isCheck
+                          ? "Pendaftaran diperbolehkan"
+                          : "Pendaftaran belum tersedia",
+
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 18),
 
-            /// =============================================
-            /// CHECKBOX CARD
-            /// =============================================
+            /// =================================================
+            /// SWITCH CARD
+            /// =================================================
             buildCard(
               cardColor: cardColor,
+
+              title: "2. Mode Tampilan",
+
+              textColor: textColor,
+
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    value: isSwitch,
+
+                    activeThumbColor: Colors.black,
+
+                    title: Text(
+                      "Aktifkan Dark Mode",
+
+                      style: TextStyle(color: textColor, fontSize: 15),
+                    ),
+
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isSwitch = value ?? false;
+                      });
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 400),
+
+                    height: 90,
+
+                    width: double.infinity,
+
+                    decoration: BoxDecoration(
+                      color: isSwitch ? Colors.black : Colors.white,
+
+                      borderRadius: BorderRadius.circular(18),
+
+                      border: Border.all(color: Colors.black12),
+                    ),
+
+                    child: Center(
+                      child: Text(
+                        isSwitch ? "Dark Mode Active" : "Light Mode Active",
+
+                        style: TextStyle(
+                          color: isSwitch ? Colors.white : Colors.black,
+
+                          fontSize: 13,
+
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 18),
+
+            /// =================================================
+            /// DROPDOWN CARD
+            /// =================================================
+            buildCard(
+              cardColor: cardColor,
+
+              title: "3. Kategori Produk",
+
+              textColor: textColor,
 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
-                  sectionTitle("1. Syarat & Ketentuan", textColor),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
 
-                  const SizedBox(height: 18),
+                    decoration: BoxDecoration(
+                      color: isSwitch ? Colors.white10 : Colors.grey.shade100,
 
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: isChecked,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
 
-                        activeColor: Colors.black,
+                    child: DropdownButton(
+                      value: selectedItem,
 
-                        onChanged: (value) {
-                          setState(() {
-                            isChecked = value!;
-                          });
-                        },
-                      ),
+                      isExpanded: true,
 
-                      Expanded(
-                        child: Text(
-                          "Saya menyetujui persyaratan",
+                      underline: const SizedBox(),
 
-                          style: TextStyle(color: textColor),
-                        ),
-                      ),
-                    ],
+                      dropdownColor: cardColor,
+
+                      style: TextStyle(color: textColor, fontSize: 12),
+
+                      items: category.map((String items) {
+                        return DropdownMenuItem(
+                          value: items,
+
+                          child: Text(items),
+                        );
+                      }).toList(),
+
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedItem = value!;
+                        });
+                      },
+                    ),
                   ),
 
                   const SizedBox(height: 16),
@@ -259,271 +430,25 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     width: double.infinity,
 
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(14),
 
                     decoration: BoxDecoration(
-                      color: isChecked
-                          ? Colors.green.shade100
-                          : Colors.red.shade100,
-
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-
-                    child: Text(
-                      isChecked
-                          ? "Pendaftaran diperbolehkan"
-                          : "Pendaftaran belum tersedia",
-
-                      style: TextStyle(
-                        color: Colors.black,
-
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-            /// =============================================
-            /// SWITCH CARD
-            /// =============================================
-            Center(
-              child: buildCard(
-                cardColor: cardColor,
-
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-
-                  children: [
-                    sectionTitle("2. Mode Tampilan", textColor),
-
-                    const SizedBox(height: 20),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                      children: [
-                        Text(
-                          "Aktifkan Mode Gelap",
-
-                          style: TextStyle(
-                            color: textColor,
-
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-
-                        Switch(
-                          value: isDarkMode,
-
-                          activeThumbColor: Colors.black,
-
-                          onChanged: (value) {
-                            setState(() {
-                              isDarkMode = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-            /// =============================================
-            /// DROPDOWN CARD
-            /// =============================================
-            buildCard(
-              cardColor: cardColor,
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  sectionTitle("3. Kategori Produk", textColor),
-
-                  const SizedBox(height: 20),
-
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
-
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.white10 : Colors.grey.shade100,
+                      color: Colors.black,
 
                       borderRadius: BorderRadius.circular(16),
                     ),
 
-                    child: DropdownButton(
-                      dropdownColor: isDarkMode ? Colors.black : Colors.white,
+                    child: Text(
+                      "Kategori dipilih : $selectedItem",
 
-                      value: selectedCategory,
+                      style: const TextStyle(
+                        color: Colors.white,
 
-                      isExpanded: true,
+                        fontSize: 12,
 
-                      underline: const SizedBox(),
-
-                      style: TextStyle(color: textColor),
-
-                      items: const [
-                        DropdownMenuItem(
-                          value: "Elektronik",
-
-                          child: Text("Elektronik"),
-                        ),
-
-                        DropdownMenuItem(
-                          value: "Pakaian",
-
-                          child: Text("Pakaian"),
-                        ),
-
-                        DropdownMenuItem(
-                          value: "Makanan",
-
-                          child: Text("Makanan"),
-                        ),
-
-                        DropdownMenuItem(
-                          value: "Lainnya",
-
-                          child: Text("Lainnya"),
-                        ),
-                      ],
-
-                      onChanged: (value) {
-                        setState(() {
-                          selectedCategory = value!;
-                        });
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  Text(
-                    "Anda memilih kategori: $selectedCategory",
-
-                    style: TextStyle(color: textColor),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-            /// =============================================
-            /// DATE PICKER
-            /// =============================================
-            buildCard(
-              cardColor: cardColor,
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  sectionTitle("4. Pilih Tanggal", textColor),
-
-                  const SizedBox(height: 20),
-
-                  SizedBox(
-                    width: double.infinity,
-
-                    height: 55,
-
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-
-                      onPressed: pickDate,
-
-                      child: const Text(
-                        "Pilih Tanggal",
-
-                        style: TextStyle(
-                          color: Colors.white,
-
-                          fontWeight: FontWeight.bold,
-                        ),
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  Text(
-                    selectedDate == null
-                        ? "Belum memilih tanggal"
-                        : "Tanggal Lahir: ${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}",
-
-                    style: TextStyle(color: textColor),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-            /// =============================================
-            /// TIME PICKER
-            /// =============================================
-            buildCard(
-              cardColor: cardColor,
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  sectionTitle("5. Atur Pengingat", textColor),
-
-                  const SizedBox(height: 20),
-
-                  SizedBox(
-                    width: double.infinity,
-
-                    height: 55,
-
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-
-                      onPressed: pickTime,
-
-                      child: const Text(
-                        "Atur Waktu",
-
-                        style: TextStyle(
-                          color: Colors.white,
-
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  Text(
-                    selectedTime == null
-                        ? "Belum mengatur waktu"
-                        : "Pengingat diatur pukul: ${selectedTime!.format(context)}",
-
-                    style: TextStyle(color: textColor),
                   ),
                 ],
               ),
@@ -536,64 +461,172 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  /// =======================================================
-  /// DRAWER MENU
-  /// =======================================================
+  /// =====================================================
+  /// CARD UI
+  /// =====================================================
 
-  Widget drawerMenu({required IconData icon, required String title}) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.white),
+  Widget buildCard({
+    required String title,
 
-      title: Text(title, style: const TextStyle(color: Colors.white)),
+    required Widget child,
 
-      onTap: () {},
-    );
-  }
+    required Color cardColor,
 
-  /// =======================================================
-  /// CARD
-  /// =======================================================
-
-  Widget buildCard({required Widget child, required Color cardColor}) {
+    required Color textColor,
+  }) {
     return Container(
       width: double.infinity,
 
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(18),
 
       decoration: BoxDecoration(
         color: cardColor,
 
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24),
 
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
 
-            blurRadius: 20,
+            blurRadius: 15,
 
-            offset: const Offset(0, 10),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
 
-      child: child,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+
+        children: [
+          Text(
+            title,
+
+            style: TextStyle(
+              fontSize: 15,
+
+              color: textColor,
+
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+/// =======================================================
+/// ABOUT PAGE
+/// =======================================================
+
+class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xFFF5F5F5),
+
+      padding: const EdgeInsets.all(20),
+
+      child: Center(
+        child: Container(
+          width: double.infinity,
+
+          padding: const EdgeInsets.all(24),
+
+          decoration: BoxDecoration(
+            color: Colors.white,
+
+            borderRadius: BorderRadius.circular(24),
+          ),
+
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+
+            children: [
+              Container(
+                width: 75,
+                height: 75,
+
+                decoration: BoxDecoration(
+                  color: Colors.black,
+
+                  borderRadius: BorderRadius.circular(20),
+                ),
+
+                child: const Icon(
+                  Icons.auto_graph,
+
+                  color: Colors.white,
+
+                  size: 35,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              const Text(
+                "BizGrow App",
+
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 10),
+
+              const Text(
+                "Aplikasi UMKM modern untuk analisis bisnis dan manajemen produk.",
+
+                textAlign: TextAlign.center,
+
+                style: TextStyle(
+                  color: Colors.black54,
+
+                  height: 1.5,
+
+                  fontSize: 12,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              infoTile("Developer", "Ranski"),
+
+              infoTile("Version", "1.0.0"),
+
+              infoTile("Framework", "Flutter"),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  /// =======================================================
-  /// TITLE
-  /// =======================================================
+  Widget infoTile(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
 
-  Widget sectionTitle(String title, Color textColor) {
-    return Text(
-      title,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-      style: TextStyle(
-        color: textColor,
+        children: [
+          Text(
+            title,
 
-        fontSize: 18,
+            style: const TextStyle(color: Colors.black54, fontSize: 12),
+          ),
 
-        fontWeight: FontWeight.bold,
+          Text(
+            value,
+
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+          ),
+        ],
       ),
     );
   }
