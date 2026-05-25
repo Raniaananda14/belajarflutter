@@ -41,6 +41,8 @@ class _MainNavigationState extends State<MainNavigation> {
 
         centerTitle: true,
 
+        actions: [],
+
         title: Text(
           currentIndex == 0 ? "BizGrow Dashboard" : "Tentang Aplikasi",
 
