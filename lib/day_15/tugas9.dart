@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/data/dara_ran.dart';
 import 'package:flutter_application_1/data/data2_ran.dart';
 import 'package:flutter_application_1/data/data3_ran.dart';
+import 'package:flutter_application_1/data/data_ran.dart';
 
 class Tugas9 extends StatefulWidget {
   const Tugas9({super.key});
@@ -18,7 +18,6 @@ class _Tugas9State extends State<Tugas9> {
         title: Row(
           children: [
             Icon(Icons.auto_graph),
-            SizedBox(width: 8),
             Text("BizGrow", style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
@@ -213,11 +212,9 @@ class _Tugas9State extends State<Tugas9> {
                           "Curated excellence for the modern entrepreneur. A collection of 10 handcrafted essentials.",
                           style: TextStyle(fontSize: 14),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 24),
                       ],
                     ),
-
-                    const SizedBox(height: 5),
 
                     ListView.builder(
                       shrinkWrap: true,
@@ -228,13 +225,7 @@ class _Tugas9State extends State<Tugas9> {
                           color: Colors.grey,
                           child: Column(
                             children: [
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              Text(barang.nama, style: TextStyle(fontSize: 30)),
+                              Text(barang.nama, style: TextStyle(fontSize: 32)),
                               Image.asset(barang.gambar),
                               Text(barang.deskripsi),
                             ],
