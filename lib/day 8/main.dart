@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/day_15/tugas10.dart';
+import 'package:flutter_application_1/day_19/database/preference_handler.dart';
+import 'package:flutter_application_1/day_19/views/splash_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
+  await PreferenceHandler.init();
   runApp(const MyApp());
 }
 
@@ -32,7 +37,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const Tugas10(),
+      home: const SplashScreen(),
     );
   }
 }

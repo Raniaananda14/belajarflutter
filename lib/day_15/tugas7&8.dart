@@ -119,7 +119,8 @@ class _MainNavigationState extends State<MainNavigation> {
 
                   drawerMenu(Icons.inventory_2, "Products"),
 
-                  drawerMenu(Icons.settings, "Settings"),
+                  // drawerMenu(Icons.settings, "Settings"),
+                  drawerMenu(Icons.logout, "Logout"),
                 ],
               ),
             )
