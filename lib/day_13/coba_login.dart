@@ -370,7 +370,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           GestureDetector(
                             onTap: () {},
                             child: const Text(
-                              "Register",
+                              "Regis",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w700,
