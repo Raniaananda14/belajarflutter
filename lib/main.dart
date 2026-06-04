@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/day_19/database/preference_handler.dart';
-import 'package:flutter_application_1/day_20/views/register.dart';
+import 'package:flutter_application_1/day_19/views/splash_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const Registertugas11(),
+      home: const MainNavigation(),
     );
   }
 }

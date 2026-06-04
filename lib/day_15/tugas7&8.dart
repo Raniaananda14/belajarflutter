@@ -1,636 +1,630 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const BizGrowApp());
-}
+// class BizGrowApp extends StatelessWidget {
+//   const BizGrowApp({super.key});
 
-/// MAIN APP
-class BizGrowApp extends StatelessWidget {
-  const BizGrowApp({super.key});
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       title: 'BizGrow UI',
+//       theme: ThemeData(fontFamily: 'Poppins'),
+//       home: const MainNavigation(),
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'BizGrow UI',
-      theme: ThemeData(fontFamily: 'Poppins'),
-      home: const MainNavigation(),
-    );
-  }
-}
+// /// MAIN NAVIGATION
+// class MainNavigation extends StatefulWidget {
+//   const MainNavigation({super.key});
 
-/// MAIN NAVIGATION
-class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
+//   @override
+//   State<MainNavigation> createState() => _MainNavigationState();
+// }
 
-  @override
-  State<MainNavigation> createState() => _MainNavigationState();
-}
+// class _MainNavigationState extends State<MainNavigation> {
+//   int currentIndex = 0;
 
-class _MainNavigationState extends State<MainNavigation> {
-  int currentIndex = 0;
+//   final List<Widget> pages = [const HomePage(), const AboutPage()];
 
-  final List<Widget> pages = [const HomePage(), const AboutPage()];
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         elevation: 0,
+//         backgroundColor: Colors.white,
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
+//         centerTitle: true,
 
-        centerTitle: true,
+//         actions: [],
 
-        actions: [],
+//         title: Text(
+//           currentIndex == 0 ? "BizGrow Dashboard" : "Tentang Aplikasi",
+//           style: const TextStyle(
+//             color: Colors.black,
+//             fontSize: 22,
+//             fontWeight: FontWeight.w600,
+//           ),
+//         ),
+//       ),
 
-        title: Text(
-          currentIndex == 0 ? "BizGrow Dashboard" : "Tentang Aplikasi",
+//       drawer: currentIndex == 0
+//           ? Drawer(
+//               backgroundColor: Colors.black,
 
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+//               child: ListView(
+//                 padding: EdgeInsets.zero,
 
-      drawer: currentIndex == 0
-          ? Drawer(
-              backgroundColor: Colors.black,
+//                 children: [
+//                   DrawerHeader(
+//                     decoration: const BoxDecoration(color: Colors.black),
 
-              child: ListView(
-                padding: EdgeInsets.zero,
+//                     child: Column(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
 
-                children: [
-                  DrawerHeader(
-                    decoration: const BoxDecoration(color: Colors.black),
+//                       children: [
+//                         Container(
+//                           width: 55,
+//                           height: 55,
 
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+//                           decoration: BoxDecoration(
+//                             color: Colors.white10,
 
-                      children: [
-                        Container(
-                          width: 55,
-                          height: 55,
+//                             borderRadius: BorderRadius.circular(16),
+//                           ),
 
-                          decoration: BoxDecoration(
-                            color: Colors.white10,
+//                           child: const Icon(
+//                             Icons.auto_graph,
 
-                            borderRadius: BorderRadius.circular(16),
-                          ),
+//                             color: Colors.white,
 
-                          child: const Icon(
-                            Icons.auto_graph,
+//                             size: 28,
+//                           ),
+//                         ),
 
-                            color: Colors.white,
+//                         const Spacer(),
 
-                            size: 28,
-                          ),
-                        ),
+//                         const Text(
+//                           "BizGrow",
 
-                        const Spacer(),
+//                           style: TextStyle(
+//                             color: Colors.white,
 
-                        const Text(
-                          "BizGrow",
+//                             fontSize: 22,
 
-                          style: TextStyle(
-                            color: Colors.white,
+//                             fontWeight: FontWeight.bold,
+//                           ),
+//                         ),
 
-                            fontSize: 22,
+//                         const SizedBox(height: 4),
 
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+//                         Text(
+//                           "Smart Business Solution",
 
-                        const SizedBox(height: 4),
+//                           style: TextStyle(color: Colors.grey, fontSize: 17),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
 
-                        Text(
-                          "Smart Business Solution",
+//                   drawerMenu(Icons.dashboard, "Dashboard"),
 
-                          style: TextStyle(color: Colors.grey, fontSize: 17),
-                        ),
-                      ],
-                    ),
-                  ),
+//                   drawerMenu(Icons.analytics, "Analytics"),
 
-                  drawerMenu(Icons.dashboard, "Dashboard"),
+//                   drawerMenu(Icons.inventory_2, "Products"),
 
-                  drawerMenu(Icons.analytics, "Analytics"),
+//                   // drawerMenu(Icons.settings, "Settings"),
+//                   drawerMenu(Icons.logout, "Logout"),
+//                 ],
+//               ),
+//             )
+//           : null,
 
-                  drawerMenu(Icons.inventory_2, "Products"),
+//       body: pages[currentIndex],
 
-                  // drawerMenu(Icons.settings, "Settings"),
-                  drawerMenu(Icons.logout, "Logout"),
-                ],
-              ),
-            )
-          : null,
+//       /// ===================================================
+//       /// BOTTOM NAVIGATION
+//       /// ===================================================
+//       bottomNavigationBar: BottomNavigationBar(
+//         currentIndex: currentIndex,
 
-      body: pages[currentIndex],
+//         selectedItemColor: Colors.black,
 
-      /// ===================================================
-      /// BOTTOM NAVIGATION
-      /// ===================================================
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+//         unselectedItemColor: Colors.grey,
 
-        selectedItemColor: Colors.black,
+//         backgroundColor: Colors.white,
 
-        unselectedItemColor: Colors.grey,
+//         selectedFontSize: 11,
+//         unselectedFontSize: 10,
 
-        backgroundColor: Colors.white,
+//         onTap: (index) {
+//           setState(() {
+//             currentIndex = index;
+//           });
+//         },
 
-        selectedFontSize: 11,
-        unselectedFontSize: 10,
+//         items: const [
+//           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
 
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
+//           BottomNavigationBarItem(icon: Icon(Icons.info), label: "Tentang"),
+//         ],
+//       ),
+//     );
+//   }
 
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+//   /// =====================================================
+//   /// DRAWER MENU
+//   /// =====================================================
 
-          BottomNavigationBarItem(icon: Icon(Icons.info), label: "Tentang"),
-        ],
-      ),
-    );
-  }
+//   Widget drawerMenu(IconData icon, String title) {
+//     return ListTile(
+//       leading: Icon(icon, color: Colors.white, size: 20),
 
-  /// =====================================================
-  /// DRAWER MENU
-  /// =====================================================
+//       title: Text(
+//         title,
 
-  Widget drawerMenu(IconData icon, String title) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.white, size: 20),
+//         style: const TextStyle(color: Colors.white, fontSize: 13),
+//       ),
 
-      title: Text(
-        title,
+//       onTap: () {},
+//     );
+//   }
+// }
 
-        style: const TextStyle(color: Colors.white, fontSize: 13),
-      ),
+// /// =======================================================
+// /// HOME PAGE
+// /// =======================================================
 
-      onTap: () {},
-    );
-  }
-}
+// class HomePage extends StatefulWidget {
+//   const HomePage({super.key});
 
-/// =======================================================
-/// HOME PAGE
-/// =======================================================
+//   @override
+//   State<HomePage> createState() => _HomePageState();
+// }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+// class _HomePageState extends State<HomePage> {
+//   /// CHECKBOX
+//   bool isCheck = false;
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
+//   /// DARK MODE
+//   bool isSwitch = false;
 
-class _HomePageState extends State<HomePage> {
-  /// CHECKBOX
-  bool isCheck = false;
+//   /// DROPDOWN
+//   String selectedItem = "Elektronik";
 
-  /// DARK MODE
-  bool isSwitch = false;
+//   List<String> category = ["Elektronik", "Pakaian", "Makanan", "Lainnya"];
 
-  /// DROPDOWN
-  String selectedItem = "Elektronik";
+//   @override
+//   Widget build(BuildContext context) {
+//     /// ===================================================
+//     /// DYNAMIC COLOR
+//     /// ===================================================
 
-  List<String> category = ["Elektronik", "Pakaian", "Makanan", "Lainnya"];
+//     final backgroundColor = isSwitch
+//         ? const Color(0xFF121212)
+//         : const Color(0xFFF5F5F5);
 
-  @override
-  Widget build(BuildContext context) {
-    /// ===================================================
-    /// DYNAMIC COLOR
-    /// ===================================================
+//     final cardColor = isSwitch ? const Color(0xFF1E1E1E) : Colors.white;
 
-    final backgroundColor = isSwitch
-        ? const Color(0xFF121212)
-        : const Color(0xFFF5F5F5);
+//     final textColor = isSwitch ? Colors.white : Colors.black;
 
-    final cardColor = isSwitch ? const Color(0xFF1E1E1E) : Colors.white;
+//     final subtitleColor = isSwitch ? Colors.white70 : Colors.black54;
 
-    final textColor = isSwitch ? Colors.white : Colors.black;
+//     return Scaffold(
+//       backgroundColor: backgroundColor,
 
-    final subtitleColor = isSwitch ? Colors.white70 : Colors.black54;
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(18),
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(18),
+//           children: [
+//             /// HEADER
+//             Text(
+//               "Interactive Form",
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+//               style: TextStyle(
+//                 fontSize: 22,
 
-          children: [
-            /// HEADER
-            Text(
-              "Interactive Form",
+//                 fontWeight: FontWeight.bold,
 
-              style: TextStyle(
-                fontSize: 22,
+//                 color: textColor,
+//               ),
+//             ),
 
-                fontWeight: FontWeight.bold,
+//             const SizedBox(height: 6),
 
-                color: textColor,
-              ),
-            ),
+//             Text(
+//               "Kelola bisnis UMKM modern dengan tampilan interaktif.",
 
-            const SizedBox(height: 6),
+//               style: TextStyle(color: subtitleColor, height: 1.5, fontSize: 15),
+//             ),
 
-            Text(
-              "Kelola bisnis UMKM modern dengan tampilan interaktif.",
+//             const SizedBox(height: 24),
 
-              style: TextStyle(color: subtitleColor, height: 1.5, fontSize: 15),
-            ),
+//             /// =================================================
+//             /// CHECKBOX CARD
+//             /// =================================================
+//             buildCard(
+//               cardColor: cardColor,
 
-            const SizedBox(height: 24),
+//               title: "1. Syarat & Ketentuan",
 
-            /// =================================================
-            /// CHECKBOX CARD
-            /// =================================================
-            buildCard(
-              cardColor: cardColor,
+//               textColor: textColor,
 
-              title: "1. Syarat & Ketentuan",
+//               child: Column(
+//                 children: [
+//                   CheckboxListTile(
+//                     value: isCheck,
 
-              textColor: textColor,
+//                     activeColor: Colors.black,
 
-              child: Column(
-                children: [
-                  CheckboxListTile(
-                    value: isCheck,
+//                     title: Text(
+//                       "Saya menyetujui persyaratan",
 
-                    activeColor: Colors.black,
+//                       style: TextStyle(color: textColor, fontSize: 15),
+//                     ),
 
-                    title: Text(
-                      "Saya menyetujui persyaratan",
+//                     onChanged: (bool? value) {
+//                       setState(() {
+//                         isCheck = value ?? false;
+//                       });
+//                     },
+//                   ),
 
-                      style: TextStyle(color: textColor, fontSize: 15),
-                    ),
+//                   const SizedBox(height: 10),
 
-                    onChanged: (bool? value) {
-                      setState(() {
-                        isCheck = value ?? false;
-                      });
-                    },
-                  ),
+//                   Container(
+//                     width: double.infinity,
 
-                  const SizedBox(height: 10),
+//                     padding: const EdgeInsets.all(14),
 
-                  Container(
-                    width: double.infinity,
+//                     decoration: BoxDecoration(
+//                       color: isCheck
+//                           ? Colors.green.shade100
+//                           : Colors.red.shade100,
 
-                    padding: const EdgeInsets.all(14),
+//                       borderRadius: BorderRadius.circular(16),
+//                     ),
 
-                    decoration: BoxDecoration(
-                      color: isCheck
-                          ? Colors.green.shade100
-                          : Colors.red.shade100,
+//                     child: Text(
+//                       isCheck
+//                           ? "Pendaftaran diperbolehkan"
+//                           : "Pendaftaran belum tersedia",
 
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+//                       style: const TextStyle(
+//                         fontSize: 12,
+//                         fontWeight: FontWeight.w500,
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
 
-                    child: Text(
-                      isCheck
-                          ? "Pendaftaran diperbolehkan"
-                          : "Pendaftaran belum tersedia",
+//             const SizedBox(height: 18),
 
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+//             /// =================================================
+//             /// SWITCH CARD
+//             /// =================================================
+//             buildCard(
+//               cardColor: cardColor,
 
-            const SizedBox(height: 18),
+//               title: "2. Mode Tampilan",
 
-            /// =================================================
-            /// SWITCH CARD
-            /// =================================================
-            buildCard(
-              cardColor: cardColor,
+//               textColor: textColor,
 
-              title: "2. Mode Tampilan",
+//               child: Column(
+//                 children: [
+//                   SwitchListTile(
+//                     value: isSwitch,
 
-              textColor: textColor,
+//                     activeThumbColor: Colors.black,
 
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    value: isSwitch,
+//                     title: Text(
+//                       "Aktifkan Dark Mode",
 
-                    activeThumbColor: Colors.black,
+//                       style: TextStyle(color: textColor, fontSize: 15),
+//                     ),
 
-                    title: Text(
-                      "Aktifkan Dark Mode",
+//                     onChanged: (bool? value) {
+//                       setState(() {
+//                         isSwitch = value ?? false;
+//                       });
+//                     },
+//                   ),
 
-                      style: TextStyle(color: textColor, fontSize: 15),
-                    ),
+//                   const SizedBox(height: 12),
 
-                    onChanged: (bool? value) {
-                      setState(() {
-                        isSwitch = value ?? false;
-                      });
-                    },
-                  ),
+//                   AnimatedContainer(
+//                     duration: const Duration(milliseconds: 400),
 
-                  const SizedBox(height: 12),
+//                     height: 90,
 
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
+//                     width: double.infinity,
 
-                    height: 90,
+//                     decoration: BoxDecoration(
+//                       color: isSwitch ? Colors.black : Colors.white,
 
-                    width: double.infinity,
+//                       borderRadius: BorderRadius.circular(18),
 
-                    decoration: BoxDecoration(
-                      color: isSwitch ? Colors.black : Colors.white,
+//                       border: Border.all(color: Colors.black12),
+//                     ),
 
-                      borderRadius: BorderRadius.circular(18),
+//                     child: Center(
+//                       child: Text(
+//                         isSwitch ? "Dark Mode Active" : "Light Mode Active",
 
-                      border: Border.all(color: Colors.black12),
-                    ),
+//                         style: TextStyle(
+//                           color: isSwitch ? Colors.white : Colors.black,
 
-                    child: Center(
-                      child: Text(
-                        isSwitch ? "Dark Mode Active" : "Light Mode Active",
+//                           fontSize: 13,
 
-                        style: TextStyle(
-                          color: isSwitch ? Colors.white : Colors.black,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
 
-                          fontSize: 13,
+//             const SizedBox(height: 18),
 
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+//             /// =================================================
+//             /// DROPDOWN CARD
+//             /// =================================================
+//             buildCard(
+//               cardColor: cardColor,
 
-            const SizedBox(height: 18),
+//               title: "3. Kategori Produk",
 
-            /// =================================================
-            /// DROPDOWN CARD
-            /// =================================================
-            buildCard(
-              cardColor: cardColor,
+//               textColor: textColor,
 
-              title: "3. Kategori Produk",
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
 
-              textColor: textColor,
+//                 children: [
+//                   Container(
+//                     padding: const EdgeInsets.symmetric(horizontal: 14),
 
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+//                     decoration: BoxDecoration(
+//                       color: isSwitch ? Colors.white10 : Colors.grey.shade100,
 
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
+//                       borderRadius: BorderRadius.circular(14),
+//                     ),
 
-                    decoration: BoxDecoration(
-                      color: isSwitch ? Colors.white10 : Colors.grey.shade100,
+//                     child: DropdownButton(
+//                       value: selectedItem,
 
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+//                       isExpanded: true,
 
-                    child: DropdownButton(
-                      value: selectedItem,
+//                       underline: const SizedBox(),
 
-                      isExpanded: true,
+//                       dropdownColor: cardColor,
 
-                      underline: const SizedBox(),
+//                       style: TextStyle(color: textColor, fontSize: 12),
 
-                      dropdownColor: cardColor,
+//                       items: category.map((String items) {
+//                         return DropdownMenuItem(
+//                           value: items,
 
-                      style: TextStyle(color: textColor, fontSize: 12),
+//                           child: Text(items),
+//                         );
+//                       }).toList(),
 
-                      items: category.map((String items) {
-                        return DropdownMenuItem(
-                          value: items,
+//                       onChanged: (String? value) {
+//                         setState(() {
+//                           selectedItem = value!;
+//                         });
+//                       },
+//                     ),
+//                   ),
 
-                          child: Text(items),
-                        );
-                      }).toList(),
+//                   const SizedBox(height: 16),
 
-                      onChanged: (String? value) {
-                        setState(() {
-                          selectedItem = value!;
-                        });
-                      },
-                    ),
-                  ),
+//                   Container(
+//                     width: double.infinity,
 
-                  const SizedBox(height: 16),
+//                     padding: const EdgeInsets.all(14),
 
-                  Container(
-                    width: double.infinity,
+//                     decoration: BoxDecoration(
+//                       color: Colors.black,
 
-                    padding: const EdgeInsets.all(14),
+//                       borderRadius: BorderRadius.circular(16),
+//                     ),
 
-                    decoration: BoxDecoration(
-                      color: Colors.black,
+//                     child: Text(
+//                       "Kategori dipilih : $selectedItem",
 
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+//                       style: const TextStyle(
+//                         color: Colors.white,
 
-                    child: Text(
-                      "Kategori dipilih : $selectedItem",
+//                         fontSize: 12,
 
-                      style: const TextStyle(
-                        color: Colors.white,
+//                         fontWeight: FontWeight.w500,
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
 
-                        fontSize: 12,
+//             const SizedBox(height: 30),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+//   /// =====================================================
+//   /// CARD UI
+//   /// =====================================================
 
-            const SizedBox(height: 30),
-          ],
-        ),
-      ),
-    );
-  }
+//   Widget buildCard({
+//     required String title,
 
-  /// =====================================================
-  /// CARD UI
-  /// =====================================================
+//     required Widget child,
 
-  Widget buildCard({
-    required String title,
+//     required Color cardColor,
 
-    required Widget child,
+//     required Color textColor,
+//   }) {
+//     return Container(
+//       width: double.infinity,
 
-    required Color cardColor,
+//       padding: const EdgeInsets.all(18),
 
-    required Color textColor,
-  }) {
-    return Container(
-      width: double.infinity,
+//       decoration: BoxDecoration(
+//         color: cardColor,
 
-      padding: const EdgeInsets.all(18),
+//         borderRadius: BorderRadius.circular(24),
 
-      decoration: BoxDecoration(
-        color: cardColor,
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.04),
 
-        borderRadius: BorderRadius.circular(24),
+//             blurRadius: 15,
 
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+//             offset: const Offset(0, 8),
+//           ),
+//         ],
+//       ),
 
-            blurRadius: 15,
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
 
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
+//         children: [
+//           Text(
+//             title,
 
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+//             style: TextStyle(
+//               fontSize: 15,
 
-        children: [
-          Text(
-            title,
+//               color: textColor,
 
-            style: TextStyle(
-              fontSize: 15,
+//               fontWeight: FontWeight.w600,
+//             ),
+//           ),
 
-              color: textColor,
+//           const SizedBox(height: 16),
 
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+//           child,
+//         ],
+//       ),
+//     );
+//   }
+// }
 
-          const SizedBox(height: 16),
+// /// =======================================================
+// /// ABOUT PAGE
+// /// =======================================================
 
-          child,
-        ],
-      ),
-    );
-  }
-}
+// class AboutPage extends StatelessWidget {
+//   const AboutPage({super.key});
 
-/// =======================================================
-/// ABOUT PAGE
-/// =======================================================
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       color: const Color(0xFFF5F5F5),
 
-class AboutPage extends StatelessWidget {
-  const AboutPage({super.key});
+//       padding: const EdgeInsets.all(20),
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFFF5F5F5),
+//       child: Center(
+//         child: Container(
+//           width: double.infinity,
 
-      padding: const EdgeInsets.all(20),
+//           padding: const EdgeInsets.all(24),
 
-      child: Center(
-        child: Container(
-          width: double.infinity,
+//           decoration: BoxDecoration(
+//             color: Colors.white,
 
-          padding: const EdgeInsets.all(24),
+//             borderRadius: BorderRadius.circular(24),
+//           ),
 
-          decoration: BoxDecoration(
-            color: Colors.white,
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
 
-            borderRadius: BorderRadius.circular(24),
-          ),
+//             children: [
+//               Container(
+//                 width: 75,
+//                 height: 75,
 
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+//                 decoration: BoxDecoration(
+//                   color: Colors.black,
 
-            children: [
-              Container(
-                width: 75,
-                height: 75,
+//                   borderRadius: BorderRadius.circular(20),
+//                 ),
 
-                decoration: BoxDecoration(
-                  color: Colors.black,
+//                 child: const Icon(
+//                   Icons.auto_graph,
 
-                  borderRadius: BorderRadius.circular(20),
-                ),
+//                   color: Colors.white,
 
-                child: const Icon(
-                  Icons.auto_graph,
+//                   size: 35,
+//                 ),
+//               ),
 
-                  color: Colors.white,
+//               const SizedBox(height: 20),
 
-                  size: 35,
-                ),
-              ),
+//               const Text(
+//                 "BizGrow App",
 
-              const SizedBox(height: 20),
+//                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+//               ),
 
-              const Text(
-                "BizGrow App",
+//               const SizedBox(height: 10),
 
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
+//               const Text(
+//                 "Aplikasi UMKM modern untuk analisis bisnis dan manajemen produk.",
 
-              const SizedBox(height: 10),
+//                 textAlign: TextAlign.center,
 
-              const Text(
-                "Aplikasi UMKM modern untuk analisis bisnis dan manajemen produk.",
+//                 style: TextStyle(
+//                   color: Colors.black54,
 
-                textAlign: TextAlign.center,
+//                   height: 1.5,
 
-                style: TextStyle(
-                  color: Colors.black54,
+//                   fontSize: 12,
+//                 ),
+//               ),
 
-                  height: 1.5,
+//               const SizedBox(height: 24),
 
-                  fontSize: 12,
-                ),
-              ),
+//               infoTile("Developer", "Ranski"),
 
-              const SizedBox(height: 24),
+//               infoTile("Version", "1.0.0"),
 
-              infoTile("Developer", "Ranski"),
+//               infoTile("Framework", "Flutter"),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-              infoTile("Version", "1.0.0"),
+//   Widget infoTile(String title, String value) {
+//     return Padding(
+//       padding: const EdgeInsets.only(bottom: 14),
 
-              infoTile("Framework", "Flutter"),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-  Widget infoTile(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+//         children: [
+//           Text(
+//             title,
 
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             style: const TextStyle(color: Colors.black54, fontSize: 12),
+//           ),
 
-        children: [
-          Text(
-            title,
+//           Text(
+//             value,
 
-            style: const TextStyle(color: Colors.black54, fontSize: 12),
-          ),
-
-          Text(
-            value,
-
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

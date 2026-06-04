@@ -297,7 +297,6 @@ class _Registertugas11State extends State<Registertugas11> {
                                   ),
                                 ],
                               ),
-
                               const SizedBox(height: 10),
 
                               TextFormField(
@@ -394,6 +393,18 @@ class _Registertugas11State extends State<Registertugas11> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "© 2026 BizGrow Technologies Inc. By Ranski.",
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
