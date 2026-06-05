@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
+class Homepage1 extends StatefulWidget {
+  const Homepage1({super.key});
 
   @override
-  State<MainNavigation> createState() => _MainNavigationState();
+  State<Homepage1> createState() => _Homepage1State();
 }
 
-class _MainNavigationState extends State<MainNavigation> {
+class _Homepage1State extends State<Homepage1> {
   int currentIndex = 0;
 
   // final List<Widget> pages = [const HomePage(), const AboutPage()];
