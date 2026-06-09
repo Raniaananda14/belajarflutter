@@ -1,31 +1,39 @@
 class UserModelBizgrow {
   final int? id;
+  final String nama;
   final String email;
   final String password;
   final String nik;
+  final String? profileImage;
 
   UserModelBizgrow({
     this.id,
+    required this.nama,
     required this.email,
     required this.password,
     required this.nik,
+    this.profileImage,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'nama': nama,
       'email': email,
       'password': password,
       'nik': nik,
+      'profileImage': profileImage,
     };
   }
 
   factory UserModelBizgrow.fromMap(Map<String, dynamic> map) {
     return UserModelBizgrow(
       id: map['id'] as int?,
+      nama: map['nama'] as String? ?? '',
       email: map['email'] as String? ?? '',
       password: map['password'] as String? ?? '',
       nik: map['nik'] as String? ?? '',
+      profileImage: map['profileImage'] as String?,
     );
   }
 }
@@ -38,6 +46,7 @@ class ProductModel {
   final String deskripsi;
   final String kategori;
   final String status; // 'Aktif' or 'Habis'
+  final String? gambar;
 
   ProductModel({
     this.id,
@@ -47,6 +56,7 @@ class ProductModel {
     required this.deskripsi,
     required this.kategori,
     required this.status,
+    this.gambar,
   });
 
   Map<String, dynamic> toMap() {
@@ -58,6 +68,7 @@ class ProductModel {
       'deskripsi': deskripsi,
       'kategori': kategori,
       'status': status,
+      'gambar': gambar,
     };
   }
 
@@ -70,6 +81,7 @@ class ProductModel {
       deskripsi: map['deskripsi'] as String? ?? '',
       kategori: map['kategori'] as String? ?? '',
       status: map['status'] as String? ?? 'Aktif',
+      gambar: map['gambar'] as String?,
     );
   }
 }

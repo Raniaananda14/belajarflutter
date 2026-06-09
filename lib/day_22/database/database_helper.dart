@@ -18,7 +18,7 @@ class DBHelper {
 
   Future<Database> _initDB() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'bizgrow_day22.db');
+    final path = join(dbPath, 'bizgrow_day22_v6.db');
 
     return await openDatabase(
       path,
@@ -28,9 +28,11 @@ class DBHelper {
         await db.execute('''
           CREATE TABLE users(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nama TEXT,
             email TEXT UNIQUE,
             password TEXT,
-            nik TEXT
+            nik TEXT,
+            profileImage TEXT
           )
         ''');
 
@@ -43,7 +45,8 @@ class DBHelper {
             stok INTEGER,
             deskripsi TEXT,
             kategori TEXT,
-            status TEXT
+            status TEXT,
+            gambar TEXT
           )
         ''');
 
@@ -76,11 +79,13 @@ class DBHelper {
   }
 
   Future<void> _seedInitialData(Database db) async {
-    // Seed standard admin user
+    // Seed standard admin user matching mockup
     await db.insert('users', {
-      'email': 'admin@example.com',
+      'nama': 'Rania Ananda',
+      'email': 'rania@gmail.com',
       'password': 'password123',
-      'nik': '1234567890123456'
+      'nik': '1234567890123456',
+      'profileImage': null
     });
 
     // Seed products
@@ -88,10 +93,11 @@ class DBHelper {
       {
         'nama': 'Produk A',
         'harga': 150000.0,
-        'stok': 25,
+        'stok': 35,
         'deskripsi': 'Handcrafted ceramic vase featuring minimalist design and clean natural texture.',
         'kategori': 'Elektronik',
-        'status': 'Aktif'
+        'status': 'Aktif',
+        'gambar': 'assets/images/1.jpg'
       },
       {
         'nama': 'Produk B',
@@ -99,15 +105,17 @@ class DBHelper {
         'stok': 40,
         'deskripsi': 'Handwoven bamboo tote bag. Lightweight, organic, and elegant.',
         'kategori': 'Pakaian',
-        'status': 'Aktif'
+        'status': 'Aktif',
+        'gambar': 'assets/images/3.jpg'
       },
       {
         'nama': 'Produk C',
         'harga': 75000.0,
-        'stok': 0,
+        'stok': 10,
         'deskripsi': 'Traditional handwritten batik scarf, colored with organic Javanese indigo.',
         'kategori': 'Pakaian',
-        'status': 'Habis'
+        'status': 'Aktif',
+        'gambar': 'assets/images/8.jpg'
       },
       {
         'nama': 'Produk D',
@@ -115,7 +123,17 @@ class DBHelper {
         'stok': 18,
         'deskripsi': 'Reclaimed Javanese teak root bowl, ideal for statement centerpieces.',
         'kategori': 'Makanan',
-        'status': 'Aktif'
+        'status': 'Aktif',
+        'gambar': 'assets/images/9.jpg'
+      },
+      {
+        'nama': 'Produk E (Habis)',
+        'harga': 90000.0,
+        'stok': 0,
+        'deskripsi': 'Modern glass planter box with brass details.',
+        'kategori': 'Lainnya',
+        'status': 'Habis',
+        'gambar': 'assets/images/10.jpg'
       }
     ];
 
@@ -126,19 +144,19 @@ class DBHelper {
     // Seed targets
     final targets = [
       {
-        'bulan': 'Juni 2024',
+        'bulan': 'Juni 2026',
         'targetJumlah': 30000000.0,
         'tercapaiJumlah': 15000000.0,
         'status': 'Belum Tercapai'
       },
       {
-        'bulan': 'Juli 2024',
+        'bulan': 'Juli 2026',
         'targetJumlah': 28000000.0,
         'tercapaiJumlah': 28000000.0,
         'status': 'Tercapai'
       },
       {
-        'bulan': 'Agustus 2024',
+        'bulan': 'Agustus 2026',
         'targetJumlah': 35000000.0,
         'tercapaiJumlah': 10000000.0,
         'status': 'Belum Tercapai'
@@ -152,19 +170,19 @@ class DBHelper {
     // Seed activities
     final activities = [
       {
-        'kodePesanan': '#BIZ-1001',
+        'kodePesanan': '#BM-1001',
         'tanggal': '12 Mei 2024',
         'total': 250000.0,
         'status': 'Selesai'
       },
       {
-        'kodePesanan': '#BIZ-1002',
+        'kodePesanan': '#BM-1002',
         'tanggal': '13 Mei 2024',
         'total': 450000.0,
         'status': 'Selesai'
       },
       {
-        'kodePesanan': '#BIZ-1003',
+        'kodePesanan': '#BM-1003',
         'tanggal': '14 Mei 2024',
         'total': 150000.0,
         'status': 'Pending'
@@ -203,6 +221,65 @@ class DBHelper {
       log("Error logging in: $e");
     }
     return null;
+  }
+
+  // Update user profile in database
+  Future<bool> updateUser(String oldEmail, String newName, String newEmail, String newNik) async {
+    final db = await database;
+    try {
+      int count = await db.update(
+        'users',
+        {
+          'nama': newName,
+          'email': newEmail,
+          'nik': newNik,
+        },
+        where: 'email = ?',
+        whereArgs: [oldEmail],
+      );
+      return count > 0;
+    } catch (e) {
+      log("Error updating user profile: $e");
+      return false;
+    }
+  }
+
+  // Update user profile password in database
+  Future<bool> updateUserPassword(String email, String newPassword) async {
+    final db = await database;
+    try {
+      int count = await db.update(
+        'users',
+        {
+          'password': newPassword,
+        },
+        where: 'email = ?',
+        whereArgs: [email],
+      );
+      return count > 0;
+    } catch (e) {
+      log("Error updating user password: $e");
+      return false;
+    }
+  }
+
+  // Update user profile image path in database
+  Future<bool> updateUserProfileImage(String email, String? imagePath) async {
+    final db = await database;
+    try {
+      int count = await db.update(
+        'users',
+        {
+          'profileImage': imagePath,
+        },
+        where: 'email = ?',
+        whereArgs: [email],
+      );
+      return count > 0;
+    } catch (e) {
+      log("Error updating user profile image: $e");
+      return false;
+    }
   }
 
   // Products CRUD
