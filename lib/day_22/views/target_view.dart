@@ -25,8 +25,18 @@ class _TargetViewState extends State<TargetView> {
 
     if (picked != null) {
       final List<String> indonesianMonths = [
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
       ];
       final monthName = indonesianMonths[picked.month - 1];
       setState(() {
@@ -55,7 +65,9 @@ class _TargetViewState extends State<TargetView> {
           content: const Text("Target baru berhasil dibuat!"),
           backgroundColor: const Color(0xFF10B981),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       _monthController.clear();
@@ -71,238 +83,267 @@ class _TargetViewState extends State<TargetView> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(
-        children: [
-          // Title Bar & Add Button matching Mockup style
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Target Bisnis",
-                  style: TextStyle(
-                    color: context.textPrimary,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
+          children: [
+            // Title Bar & Add Button matching Mockup style
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Target Bisnis",
+                    style: TextStyle(
+                      color: context.textPrimary,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
                   ),
-                ),
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: context.buttonBg,
-                  ),
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: Icon(Icons.add, color: context.isDark ? context.textPrimary : Colors.white, size: 22),
-                    onPressed: () => _showAddTargetSheet(context),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Scrollable Area
-          Expanded(
-            child: ListView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              children: [
-                // Highlight Circular Target Card
-                 GestureDetector(
-                  onTap: () {
-                    _showTargetAnalysisSheet(
-                      context,
-                      TargetModel(
-                        bulan: "Mei 2024",
-                        targetJumlah: 25000000.0,
-                        tercapaiJumlah: 15000000.0,
-                        status: "Belum Tercapai",
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
+                  Container(
+                    width: 38,
+                    height: 38,
                     decoration: BoxDecoration(
-                      color: context.cardBg,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: context.borderColor),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.01),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        )
-                      ],
+                      shape: BoxShape.circle,
+                      color: context.buttonBg,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Target Penjualan Bulanan",
-                          style: TextStyle(
-                            color: context.textPrimary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Mei 2024",
-                          style: TextStyle(
-                            color: context.textSecondary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Rp 25.000.000",
-                              style: TextStyle(
-                                color: context.textPrimary,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                            Text(
-                              "60%",
-                              style: TextStyle(
-                                color: context.textPrimary,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: 0.6,
-                            minHeight: 8,
-                            backgroundColor: context.dividerColor,
-                            valueColor: AlwaysStoppedAnimation<Color>(context.isDark ? const Color(0xFF0D9488) : const Color(0xFF1E293B)), // Adaptive brand/slate indicator
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Tercapai: Rp 15.000.000",
-                          style: TextStyle(
-                            color: context.textSecondary,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      icon: Icon(
+                        Icons.add,
+                        color: context.isDark
+                            ? context.textPrimary
+                            : Colors.white,
+                        size: 22,
+                      ),
+                      onPressed: () => _showAddTargetSheet(context),
                     ),
                   ),
-                ),
-                const SizedBox(height: 28),
+                ],
+              ),
+            ),
 
-                // Daftar Target Header
-                Text(
-                  "Daftar Pencapaian Bulanan",
-                  style: TextStyle(
-                    color: context.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+            // Scrollable Area
+            Expanded(
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
                 ),
-                const SizedBox(height: 12),
-
-                // FutureBuilder Target Items List matching Mockup 7
-                FutureBuilder<List<TargetModel>>(
-                  future: DBHelper().getAllTargets(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(20.0),
-                          child: CircularProgressIndicator(color: Color(0xFF0D9488)),
+                children: [
+                  // Highlight Circular Target Card
+                  GestureDetector(
+                    onTap: () {
+                      _showTargetAnalysisSheet(
+                        context,
+                        TargetModel(
+                          bulan: "Mei 2024",
+                          targetJumlah: 25000000.0,
+                          tercapaiJumlah: 15000000.0,
+                          status: "Belum Tercapai",
                         ),
                       );
-                    }
-                    final list = snapshot.data ?? [];
-                    if (list.isEmpty) {
-                      return Card(
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
                         color: context.cardBg,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Center(child: Text("Belum ada target.", style: TextStyle(color: context.textSecondary))),
-                        ),
-                      );
-                    }
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: list.length,
-                      itemBuilder: (context, index) {
-                        final target = list[index];
-                        return GestureDetector(
-                          onTap: () => _showTargetAnalysisSheet(context, target),
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                            decoration: BoxDecoration(
-                              color: context.cardBg,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: context.borderColor),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: context.borderColor),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.01),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Target Penjualan Bulanan",
+                            style: TextStyle(
+                              color: context.textPrimary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      target.bulan,
-                                      style: TextStyle(
-                                        color: context.textPrimary,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      target.status == "Tercapai" ? "Tercapai" : "Belum tercapai",
-                                      style: TextStyle(
-                                        color: target.status == "Tercapai"
-                                            ? const Color(0xFF10B981) // Green
-                                            : context.textSecondary,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "Mei 2024",
+                            style: TextStyle(
+                              color: context.textSecondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Rp 25.000.000",
+                                style: TextStyle(
+                                  color: context.textPrimary,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: -0.5,
                                 ),
-                                Text(
-                                  "Rp ${target.targetJumlah.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
-                                  style: TextStyle(
-                                    color: context.textPrimary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
+                              ),
+                              Text(
+                                "60%",
+                                style: TextStyle(
+                                  color: context.textPrimary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              value: 0.6,
+                              minHeight: 8,
+                              backgroundColor: context.dividerColor,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                context.isDark
+                                    ? const Color(0xFF0D9488)
+                                    : const Color(0xFF1E293B),
+                              ), // Adaptive brand/slate indicator
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            "Tercapai: Rp 15.000.000",
+                            style: TextStyle(
+                              color: context.textSecondary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Daftar Target Header
+                  Text(
+                    "Daftar Pencapaian Bulanan",
+                    style: TextStyle(
+                      color: context.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // FutureBuilder Target Items List matching Mockup 7
+                  FutureBuilder<List<TargetModel>>(
+                    future: DBHelper().getAllTargets(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF0D9488),
                             ),
                           ),
                         );
-                      },
-                    );
-                  },
-                )
-              ],
+                      }
+                      final list = snapshot.data ?? [];
+                      if (list.isEmpty) {
+                        return Card(
+                          color: context.cardBg,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Center(
+                              child: Text(
+                                "Belum ada target.",
+                                style: TextStyle(color: context.textSecondary),
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: list.length,
+                        itemBuilder: (context, index) {
+                          final target = list[index];
+                          return GestureDetector(
+                            onTap: () =>
+                                _showTargetAnalysisSheet(context, target),
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 18,
+                              ),
+                              decoration: BoxDecoration(
+                                color: context.cardBg,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: context.borderColor),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        target.bulan,
+                                        style: TextStyle(
+                                          color: context.textPrimary,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        target.status == "Tercapai"
+                                            ? "Tercapai"
+                                            : "Belum tercapai",
+                                        style: TextStyle(
+                                          color: target.status == "Tercapai"
+                                              ? const Color(0xFF10B981) // Green
+                                              : context.textSecondary,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    "Rp ${target.targetJumlah.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                                    style: TextStyle(
+                                      color: context.textPrimary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),);
+    );
   }
 
   void _showAddTargetSheet(BuildContext context) {
@@ -310,7 +351,9 @@ class _TargetViewState extends State<TargetView> {
       context: context,
       isScrollControlled: true,
       backgroundColor: context.cardBg,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (context) {
         return Padding(
           padding: EdgeInsets.only(
@@ -330,16 +373,20 @@ class _TargetViewState extends State<TargetView> {
                   children: [
                     Text(
                       'Buat Target Bulanan Baru',
-                      style: TextStyle(color: context.textPrimary, fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: context.textPrimary,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     IconButton(
                       icon: Icon(Icons.close, color: context.iconColor),
                       onPressed: () => Navigator.pop(context),
-                    )
+                    ),
                   ],
                 ),
                 const SizedBox(height: 20),
-                 TextFormField(
+                TextFormField(
                   controller: _monthController,
                   readOnly: true,
                   onTap: () => _selectMonth(context),
@@ -347,17 +394,26 @@ class _TargetViewState extends State<TargetView> {
                   decoration: _inputDeco(
                     context,
                     "Pilih Bulan Target",
-                    suffixIcon: Icon(Icons.calendar_today_rounded, color: context.iconColor, size: 20),
+                    suffixIcon: Icon(
+                      Icons.calendar_today_rounded,
+                      color: context.iconColor,
+                      size: 20,
+                    ),
                   ),
-                  validator: (v) => v!.isEmpty ? "Bulan target wajib diisi" : null,
+                  validator: (v) =>
+                      v!.isEmpty ? "Bulan target wajib diisi" : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _targetController,
                   keyboardType: TextInputType.number,
                   style: TextStyle(color: context.textPrimary),
-                  decoration: _inputDeco(context, "Target Jumlah Penjualan (Rp)"),
-                  validator: (v) => v!.isEmpty ? "Jumlah target wajib diisi" : null,
+                  decoration: _inputDeco(
+                    context,
+                    "Target Jumlah Penjualan (Rp)",
+                  ),
+                  validator: (v) =>
+                      v!.isEmpty ? "Jumlah target wajib diisi" : null,
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
@@ -365,11 +421,22 @@ class _TargetViewState extends State<TargetView> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.buttonBg,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                       elevation: 0,
                     ),
                     onPressed: _addTarget,
-                    child: Text('Buat Target', style: TextStyle(color: context.isDark ? context.textPrimary : Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                    child: Text(
+                      'Buat Target',
+                      style: TextStyle(
+                        color: context.isDark
+                            ? context.textPrimary
+                            : Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -395,29 +462,32 @@ class _TargetViewState extends State<TargetView> {
 
     if (percent >= 1.0) {
       analysisTitle = "Target Terlampaui 🎉";
-      analysisDesc = "Luar biasa! Target penjualan untuk bulan ${target.bulan} telah tercapai sebesar $percentInt%. Kinerja penjualan sangat optimal.";
+      analysisDesc =
+          "Luar biasa! Target penjualan untuk bulan ${target.bulan} telah tercapai sebesar $percentInt%. Kinerja penjualan sangat optimal.";
       actionSteps = [
         "Pertahankan konsistensi pasokan produk terlaris.",
         "Pertimbangkan untuk menaikkan target sebesar 10-15% di bulan berikutnya.",
-        "Berikan apresiasi atau bonus kepada tim pemasaran."
+        "Berikan apresiasi atau bonus kepada tim pemasaran.",
       ];
       themeColor = const Color(0xFF10B981);
     } else if (percent >= 0.5) {
       analysisTitle = "Mendekati Target 📈";
-      analysisDesc = "Cukup baik! Pencapaian target telah menyentuh $percentInt%. Diperlukan sedikit dorongan ekstra untuk menutup sisa target Rp ${remaining.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}.";
+      analysisDesc =
+          "Cukup baik! Pencapaian target telah menyentuh $percentInt%. Diperlukan sedikit dorongan ekstra untuk menutup sisa target Rp ${remaining.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}.";
       actionSteps = [
         "Fokus pada follow-up transaksi/pesanan yang masih pending.",
         "Gencarkan penawaran bundling produk fast-moving.",
-        "Optimalkan promosi digital di sisa hari operasional."
+        "Optimalkan promosi digital di sisa hari operasional.",
       ];
       themeColor = const Color(0xFFF59E0B);
     } else {
       analysisTitle = "Perlu Evaluasi Segera ⚠️";
-      analysisDesc = "Perhatian! Pencapaian baru menyentuh $percentInt%. Diperlukan tindakan korektif segera untuk mendongkrak penjualan yang masih kurang Rp ${remaining.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}.";
+      analysisDesc =
+          "Perhatian! Pencapaian baru menyentuh $percentInt%. Diperlukan tindakan korektif segera untuk mendongkrak penjualan yang masih kurang Rp ${remaining.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}.";
       actionSteps = [
         "Evaluasi harga produk dibandingkan kompetitor.",
         "Lakukan program diskon kilat (flash sale) untuk produk lambat laku.",
-        "Tinjau ulang strategi pemasaran dan tingkatkan interaksi media sosial."
+        "Tinjau ulang strategi pemasaran dan tingkatkan interaksi media sosial.",
       ];
       themeColor = const Color(0xFFEF4444);
     }
@@ -467,7 +537,7 @@ class _TargetViewState extends State<TargetView> {
                       IconButton(
                         icon: Icon(Icons.close, color: context.iconColor),
                         onPressed: () => Navigator.pop(context),
-                      )
+                      ),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -490,7 +560,9 @@ class _TargetViewState extends State<TargetView> {
                                 value: percent > 1.0 ? 1.0 : percent,
                                 strokeWidth: 10,
                                 backgroundColor: context.dividerColor,
-                                valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  themeColor,
+                                ),
                               ),
                             ),
                             Text(
@@ -519,24 +591,33 @@ class _TargetViewState extends State<TargetView> {
                               const SizedBox(height: 8),
                               _buildMetricRow("Target:", target.targetJumlah),
                               const SizedBox(height: 4),
-                              _buildMetricRow("Tercapai:", target.tercapaiJumlah),
+                              _buildMetricRow(
+                                "Tercapai:",
+                                target.tercapaiJumlah,
+                              ),
                               const SizedBox(height: 4),
                               _buildMetricRow(
                                 remaining > 0 ? "Kurang:" : "Surplus:",
                                 remaining.abs(),
                                 isHighlight: true,
-                                highlightColor: remaining > 0 ? Colors.redAccent : const Color(0xFF10B981),
+                                highlightColor: remaining > 0
+                                    ? Colors.redAccent
+                                    : const Color(0xFF10B981),
                               ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 28),
                   Row(
                     children: [
-                      Icon(Icons.psychology_outlined, color: themeColor, size: 24),
+                      Icon(
+                        Icons.psychology_outlined,
+                        color: themeColor,
+                        size: 24,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         analysisTitle,
@@ -567,38 +648,50 @@ class _TargetViewState extends State<TargetView> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  ...actionSteps.map((step) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(Icons.check_circle_outline_rounded, color: themeColor, size: 18),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            step,
-                            style: TextStyle(
-                              color: context.textSecondary,
-                              fontSize: 13,
-                              height: 1.4,
+                  ...actionSteps.map(
+                    (step) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.check_circle_outline_rounded,
+                            color: themeColor,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              step,
+                              style: TextStyle(
+                                color: context.textSecondary,
+                                fontSize: 13,
+                                height: 1.4,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  )),
+                  ),
                   const SizedBox(height: 20),
                 ],
               ),
             );
-          }
+          },
         );
       },
     );
   }
 
-  Widget _buildMetricRow(String label, double val, {bool isHighlight = false, Color? highlightColor}) {
-    final valText = "Rp ${val.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}";
+  Widget _buildMetricRow(
+    String label,
+    double val, {
+    bool isHighlight = false,
+    Color? highlightColor,
+  }) {
+    final valText =
+        "Rp ${val.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}";
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -622,7 +715,11 @@ class _TargetViewState extends State<TargetView> {
     );
   }
 
-  InputDecoration _inputDeco(BuildContext context, String label, {Widget? suffixIcon}) {
+  InputDecoration _inputDeco(
+    BuildContext context,
+    String label, {
+    Widget? suffixIcon,
+  }) {
     return InputDecoration(
       labelText: label,
       labelStyle: TextStyle(color: context.textSecondary),
@@ -630,9 +727,18 @@ class _TargetViewState extends State<TargetView> {
       fillColor: context.inputBg,
       suffixIcon: suffixIcon,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: context.borderColor)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: context.borderColor)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: context.textPrimary)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: context.borderColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: context.borderColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: context.textPrimary),
+      ),
     );
   }
 }
@@ -680,7 +786,11 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: Icon(Icons.chevron_left_rounded, color: context.iconColor, size: 28),
+                  icon: Icon(
+                    Icons.chevron_left_rounded,
+                    color: context.iconColor,
+                    size: 28,
+                  ),
                   onPressed: () {
                     setState(() {
                       _selectedYear--;
@@ -697,7 +807,11 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.chevron_right_rounded, color: context.iconColor, size: 28),
+                  icon: Icon(
+                    Icons.chevron_right_rounded,
+                    color: context.iconColor,
+                    size: 28,
+                  ),
                   onPressed: () {
                     setState(() {
                       _selectedYear++;
@@ -746,8 +860,18 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
 
   Widget _buildMonthCard(int year, int monthIndex) {
     final List<String> indonesianMonths = [
-      "JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI",
-      "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
+      "JANUARI",
+      "FEBRUARI",
+      "MARET",
+      "APRIL",
+      "MEI",
+      "JUNI",
+      "JULI",
+      "AGUSTUS",
+      "SEPTEMBER",
+      "OKTOBER",
+      "NOVEMBER",
+      "DESEMBER",
     ];
     final monthName = indonesianMonths[monthIndex];
     final daysCount = _daysInMonth(year, monthIndex + 1);
@@ -768,10 +892,10 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
           border: Border.all(color: context.borderColor),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.01),
+              color: Colors.black.withValues(alpha: 0.01),
               blurRadius: 4,
               offset: const Offset(0, 2),
-            )
+            ),
           ],
         ),
         child: Column(
@@ -825,7 +949,9 @@ class _MonthYearPickerDialogState extends State<MonthYearPickerDialog> {
                         ? Text(
                             "$dayNumber",
                             style: TextStyle(
-                              color: isSunday ? Colors.red : context.textSecondary,
+                              color: isSunday
+                                  ? Colors.red
+                                  : context.textSecondary,
                               fontSize: 7,
                               fontWeight: FontWeight.w500,
                             ),

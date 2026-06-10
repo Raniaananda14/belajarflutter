@@ -16,6 +16,7 @@ class SessionManager {
   static const String _keyNik = "day22_user_nik";
   static const String _keyBusinessInfo = "day22_business_info";
   static const String _keyProfileImage = "day22_profile_image";
+  static const String _keyRole = "day22_user_role";
   static const String _keyNotifSales = "day22_notif_sales";
   static const String _keyNotifTarget = "day22_notif_target";
   static const String _keyNotifSystem = "day22_notif_system";
@@ -33,11 +34,13 @@ class SessionManager {
     required String name,
     required String email,
     required String nik,
+    required String role,
     String? profileImage,
   }) async {
     await _prefs.setString(_keyName, name);
     await _prefs.setString(_keyEmail, email);
     await _prefs.setString(_keyNik, nik);
+    await _prefs.setString(_keyRole, role);
     if (profileImage != null) {
       await _prefs.setString(_keyProfileImage, profileImage);
     } else {
@@ -88,6 +91,7 @@ class SessionManager {
   static String get businessInfo =>
       _prefs.getString(_keyBusinessInfo) ?? "BizGrow Jakarta Barat";
   static String get profileImage => _prefs.getString(_keyProfileImage) ?? "";
+  static String get role => _prefs.getString(_keyRole) ?? "Pembeli";
 
   static bool get notifSales => _prefs.getBool(_keyNotifSales) ?? true;
   static bool get notifTarget => _prefs.getBool(_keyNotifTarget) ?? true;
@@ -101,6 +105,7 @@ class SessionManager {
     await _prefs.remove(_keyNik);
     await _prefs.remove(_keyBusinessInfo);
     await _prefs.remove(_keyProfileImage);
+    await _prefs.remove(_keyRole);
     await _prefs.remove(_keyNotifSales);
     await _prefs.remove(_keyNotifTarget);
     await _prefs.remove(_keyNotifSystem);

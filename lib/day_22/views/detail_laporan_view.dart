@@ -4,11 +4,13 @@ import 'package:flutter_application_1/day_22/models/models.dart';
 import 'package:flutter_application_1/day_22/theme/elegant_background.dart';
 import 'package:flutter_application_1/day_22/views/invoice_a4_view.dart';
 import 'package:flutter_application_1/day_22/views/product_detail_view.dart';
+import 'package:flutter_application_1/day_22/views/lacak_pesanan_view.dart';
 import 'package:intl/intl.dart';
 
 class DetailLaporanView extends StatefulWidget {
   final String initialMonth;
-  const DetailLaporanView({super.key, this.initialMonth = "Mei 2024"});
+  final int initialTabIndex;
+  const DetailLaporanView({super.key, this.initialMonth = "Juni 2026", this.initialTabIndex = 0});
 
   @override
   State<DetailLaporanView> createState() => _DetailLaporanViewState();
@@ -19,26 +21,26 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
   late TabController _tabController;
   late String _selectedMonth;
   final List<String> _months = [
-    "Mei 2024",
     "Juni 2026",
+    "Mei 2024",
     "Juli 2026",
     "Agustus 2026",
   ];
 
   DateTimeRange? _selectedDateRange;
 
-  // Dynamically simulated report values
-  double _totalPenjualan = 12750000.0;
-  int _totalPesanan = 128;
-  double _rataRataPesanan = 99609.0;
-  int _produkTerjual = 256;
-  int _pelangganBaru = 64;
-  double _tingkatKonversi = 12.5;
+  // Dynamically calculated report values
+  double _totalPenjualan = 0.0;
+  int _totalPesanan = 0;
+  double _rataRataPesanan = 0.0;
+  int _produkTerjual = 0;
+  int _pelangganBaru = 0;
+  double _tingkatKonversi = 0.0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: widget.initialTabIndex);
     _selectedMonth = widget.initialMonth;
 
     if (widget.initialMonth.contains(" - ")) {
@@ -55,11 +57,10 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
           end: DateTime.now(),
         );
       }
-      _simulateForRange(_selectedDateRange!);
     } else {
       _selectedDateRange = null;
-      _updateSimulationForMonth(_selectedMonth);
     }
+    _loadFinancialDetails();
   }
 
   @override
@@ -68,29 +69,44 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
     super.dispose();
   }
 
-  void _simulateForRange(DateTimeRange range) {
-    final days = range.end.difference(range.start).inDays + 1;
+  void _loadFinancialDetails() async {
+    final allActivities = await DBHelper().getAllActivities();
+    
+    // Filter activities by date range or selected month
+    final filtered = allActivities.where((act) {
+      final dt = _parseDateString(act.tanggal);
+      if (dt == null) return false;
+      if (_selectedDateRange != null) {
+        return _isDateInRange(dt, _selectedDateRange!);
+      } else {
+        return _isDateInMonth(dt, _selectedMonth);
+      }
+    }).toList();
+
+    double totalPenjualan = 0.0;
+    int totalPesanan = filtered.length;
+    int produkTerjual = 0;
+    for (var act in filtered) {
+      totalPenjualan += act.total;
+      produkTerjual += act.jumlah ?? 0;
+    }
+
     setState(() {
-      _totalPenjualan = 400000.0 * days;
-      _totalPesanan = (1.5 * days).round();
-      if (_totalPesanan < 1) _totalPesanan = 1;
-      _rataRataPesanan = _totalPenjualan / _totalPesanan;
-      _produkTerjual = (3.0 * days).round();
-      _pelangganBaru = (0.7 * days).round();
-      _tingkatKonversi = 8.5 + (days % 8) * 0.8;
+      _totalPenjualan = totalPenjualan;
+      _totalPesanan = totalPesanan;
+      _rataRataPesanan = totalPesanan > 0 ? totalPenjualan / totalPesanan : 0.0;
+      _produkTerjual = produkTerjual;
+      _pelangganBaru = (totalPesanan * 0.4).round();
+      _tingkatKonversi = totalPesanan > 0 ? 12.5 : 0.0;
     });
   }
 
+  void _simulateForRange(DateTimeRange range) {
+    _loadFinancialDetails();
+  }
+
   void _updateSimulationForMonth(String month) {
-    int factor = month.hashCode.abs() % 10;
-    setState(() {
-      _totalPenjualan = 10000000.0 + (factor * 850000.0);
-      _totalPesanan = 100 + (factor * 8);
-      _rataRataPesanan = _totalPenjualan / _totalPesanan;
-      _produkTerjual = 200 + (factor * 15);
-      _pelangganBaru = 50 + (factor * 3);
-      _tingkatKonversi = 10.0 + (factor * 0.5);
-    });
+    _loadFinancialDetails();
   }
 
   double get _scaleFactor {
@@ -516,145 +532,169 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
   }
 
   Widget _buildProdukTab() {
-    final scale = _scaleFactor;
-    final List<Map<String, dynamic>> items = [
-      {
-        "name": "Produk A",
-        "qty": (124 * scale).round().clamp(1, 9999),
-        "sales":
-            "Rp ${((18600000 * scale).toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.'))}",
-      },
-      {
-        "name": "Produk B",
-        "qty": (80 * scale).round().clamp(1, 9999),
-        "sales":
-            "Rp ${((16000000 * scale).toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.'))}",
-      },
-      {
-        "name": "Produk C",
-        "qty": (34 * scale).round().clamp(1, 9999),
-        "sales":
-            "Rp ${((2550000 * scale).toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.'))}",
-      },
-      {
-        "name": "Produk D",
-        "qty": (18 * scale).round().clamp(1, 9999),
-        "sales":
-            "Rp ${((2160000 * scale).toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.'))}",
-      },
-    ];
+    return FutureBuilder<List<ActivityModel>>(
+      future: DBHelper().getAllActivities(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFF0D9488)),
+          );
+        }
+        final list = snapshot.data ?? [];
 
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(20),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        final imgPath = _getProductImage(item["name"]);
-        return GestureDetector(
-          onTap: () async {
-            final dbProducts = await DBHelper().getAllProducts();
-            final matching = dbProducts.firstWhere(
-              (p) =>
-                  p.nama.toLowerCase().trim() ==
-                  item["name"].toString().toLowerCase().trim(),
-              orElse: () => ProductModel(
-                nama: item["name"],
-                harga: 0.0,
-                stok: 0,
-                deskripsi: "",
-                kategori: "",
-                status: "Aktif",
-              ),
-            );
-            if (context.mounted) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ProductDetailView(product: matching),
-                ),
-              );
-            }
-          },
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: context.cardBg,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: context.borderColor),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: context.inputBg,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: imgPath.isNotEmpty
-                            ? Image.asset(
-                                imgPath,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Icon(
-                                      Icons.inventory_2_outlined,
-                                      color: context.iconColor,
-                                      size: 20,
-                                    ),
-                              )
-                            : Icon(
-                                Icons.inventory_2_outlined,
-                                color: context.iconColor,
-                                size: 20,
-                              ),
-                      ),
+        // Filter based on selected period
+        final filtered = list.where((act) {
+          final dt = _parseDateString(act.tanggal);
+          if (dt == null) return false;
+          if (_selectedDateRange != null) {
+            return _isDateInRange(dt, _selectedDateRange!);
+          } else {
+            return _isDateInMonth(dt, _selectedMonth);
+          }
+        }).toList();
+
+        // Group by product name
+        final Map<String, Map<String, dynamic>> productMap = {};
+        for (var pName in ["Produk A", "Produk B", "Produk C", "Produk D"]) {
+          productMap[pName] = {
+            "name": pName,
+            "qty": 0,
+            "sales": 0.0,
+          };
+        }
+
+        for (var act in filtered) {
+          final pName = act.namaProduk ?? "Produk A";
+          if (productMap.containsKey(pName)) {
+            productMap[pName]!["qty"] = (productMap[pName]!["qty"] as int) + (act.jumlah ?? 0);
+            productMap[pName]!["sales"] = (productMap[pName]!["sales"] as double) + act.total;
+          } else {
+            productMap[pName] = {
+              "name": pName,
+              "qty": act.jumlah ?? 0,
+              "sales": act.total,
+            };
+          }
+        }
+
+        final items = productMap.values.toList();
+
+        return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(20),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            final imgPath = _getProductImage(item["name"]);
+            return GestureDetector(
+              onTap: () async {
+                final dbProducts = await DBHelper().getAllProducts();
+                final matching = dbProducts.firstWhere(
+                  (p) =>
+                      p.nama.toLowerCase().trim() ==
+                      item["name"].toString().toLowerCase().trim(),
+                  orElse: () => ProductModel(
+                    nama: item["name"],
+                    harga: 0.0,
+                    stok: 0,
+                    deskripsi: "",
+                    kategori: "",
+                    status: "Aktif",
+                  ),
+                );
+                if (context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProductDetailView(product: matching),
                     ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  ).then((_) {
+                    _loadFinancialDetails();
+                  });
+                }
+              },
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: context.cardBg,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: context.borderColor),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
                       children: [
-                        Text(
-                          item["name"],
-                          style: TextStyle(
-                            color: context.textPrimary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: context.inputBg,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: imgPath.isNotEmpty
+                                ? Image.asset(
+                                    imgPath,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) =>
+                                        Icon(
+                                          Icons.inventory_2_outlined,
+                                          color: context.iconColor,
+                                          size: 20,
+                                        ),
+                                  )
+                                : Icon(
+                                    Icons.inventory_2_outlined,
+                                    color: context.iconColor,
+                                    size: 20,
+                                  ),
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Terjual: ${item["qty"]} unit",
-                          style: TextStyle(
-                            color: context.textSecondary,
-                            fontSize: 12,
-                          ),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item["name"],
+                              style: TextStyle(
+                                color: context.textPrimary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Terjual: ${item["qty"]} unit",
+                              style: TextStyle(
+                                color: context.textSecondary,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
+                    Text(
+                      "Rp ${(item["sales"] as double).toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                      style: const TextStyle(
+                        color: Color(0xFF0D9488),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
-                Text(
-                  item["sales"],
-                  style: const TextStyle(
-                    color: Color(0xFF0D9488),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
   }
+
 
   Widget _buildPesananTab() {
     return FutureBuilder<List<ActivityModel>>(
@@ -677,6 +717,13 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
             return _isDateInMonth(dt, _selectedMonth);
           }
         }).toList();
+
+        // Sort chronologically ascending
+        list.sort((a, b) {
+          final dtA = _parseDateString(a.tanggal) ?? DateTime(1970);
+          final dtB = _parseDateString(b.tanggal) ?? DateTime(1970);
+          return dtA.compareTo(dtB);
+        });
 
         if (list.isEmpty) {
           return Center(
@@ -933,6 +980,7 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: context.cardBg,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -1033,27 +1081,46 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: context.textPrimary,
-                          side: BorderSide(color: context.borderColor),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0D9488),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          "Tutup",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => LacakPesananView(order: order),
+                            ),
+                          );
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.local_shipping_rounded, color: Colors.white, size: 18),
+                            SizedBox(width: 6),
+                            Text(
+                              "Lacak Pesanan",
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
                     Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0D9488),
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: context.textPrimary,
+                          side: BorderSide(color: context.borderColor),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -1074,18 +1141,36 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
                           children: [
                             Icon(
                               Icons.receipt_long_rounded,
-                              color: Colors.white,
+                              color: Color(0xFF0D9488),
                               size: 18,
                             ),
                             SizedBox(width: 6),
                             Text(
                               "Invoice A4",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF0D9488),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: context.textPrimary,
+                          side: BorderSide(color: context.borderColor),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text(
+                          "Tutup",
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

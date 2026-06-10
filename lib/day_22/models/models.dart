@@ -5,6 +5,7 @@ class UserModelBizgrow {
   final String password;
   final String nik;
   final String? profileImage;
+  final String role;
 
   UserModelBizgrow({
     this.id,
@@ -13,6 +14,7 @@ class UserModelBizgrow {
     required this.password,
     required this.nik,
     this.profileImage,
+    this.role = "Pembeli",
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class UserModelBizgrow {
       'password': password,
       'nik': nik,
       'profileImage': profileImage,
+      'role': role,
     };
   }
 
@@ -34,6 +37,7 @@ class UserModelBizgrow {
       password: map['password'] as String? ?? '',
       nik: map['nik'] as String? ?? '',
       profileImage: map['profileImage'] as String?,
+      role: map['role'] as String? ?? 'Pembeli',
     );
   }
 }
@@ -128,6 +132,12 @@ class ActivityModel {
   final String tanggal; // e.g. "12 Mei 2024"
   final double total;
   final String status; // "Selesai" or "Pending"
+  final String? alamat;
+  final double? koordinatX;
+  final double? koordinatY;
+  final String? namaProduk;
+  final int? jumlah;
+  final String? buyerEmail; // email of the buyer who placed this order
 
   ActivityModel({
     this.id,
@@ -135,6 +145,12 @@ class ActivityModel {
     required this.tanggal,
     required this.total,
     required this.status,
+    this.alamat,
+    this.koordinatX,
+    this.koordinatY,
+    this.namaProduk,
+    this.jumlah,
+    this.buyerEmail,
   });
 
   Map<String, dynamic> toMap() {
@@ -144,6 +160,12 @@ class ActivityModel {
       'tanggal': tanggal,
       'total': total,
       'status': status,
+      'alamat': alamat,
+      'koordinatX': koordinatX,
+      'koordinatY': koordinatY,
+      'namaProduk': namaProduk,
+      'jumlah': jumlah,
+      'buyerEmail': buyerEmail,
     };
   }
 
@@ -154,6 +176,64 @@ class ActivityModel {
       tanggal: map['tanggal'] as String? ?? '',
       total: (map['total'] as num? ?? 0.0).toDouble(),
       status: map['status'] as String? ?? 'Selesai',
+      alamat: map['alamat'] as String?,
+      koordinatX: (map['koordinatX'] as num?)?.toDouble(),
+      koordinatY: (map['koordinatY'] as num?)?.toDouble(),
+      namaProduk: map['namaProduk'] as String?,
+      jumlah: map['jumlah'] as int?,
+      buyerEmail: map['buyerEmail'] as String?,
+    );
+  }
+}
+
+class CartItemModel {
+  final int? id;
+  final int productId;
+  final String buyerEmail;
+  final int jumlah;
+  
+  // Loaded via JOIN/lookups
+  final String productNama;
+  final double productHarga;
+  final String? productGambar;
+  final int productStok;
+
+  CartItemModel({
+    this.id,
+    required this.productId,
+    required this.buyerEmail,
+    required this.jumlah,
+    this.productNama = '',
+    this.productHarga = 0.0,
+    this.productGambar,
+    this.productStok = 0,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      if (id != null) 'id': id,
+      'productId': productId,
+      'buyerEmail': buyerEmail,
+      'jumlah': jumlah,
+    };
+  }
+
+  factory CartItemModel.fromMap(
+    Map<String, dynamic> map, {
+    String nama = '',
+    double harga = 0.0,
+    String? gambar,
+    int stok = 0,
+  }) {
+    return CartItemModel(
+      id: map['id'] as int?,
+      productId: map['productId'] as int? ?? 0,
+      buyerEmail: map['buyerEmail'] as String? ?? '',
+      jumlah: map['jumlah'] as int? ?? 1,
+      productNama: nama,
+      productHarga: harga,
+      productGambar: gambar,
+      productStok: stok,
     );
   }
 }

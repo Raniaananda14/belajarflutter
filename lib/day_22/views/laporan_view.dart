@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_1/day_22/theme/elegant_background.dart';
 import 'package:flutter_application_1/day_22/views/detail_laporan_view.dart';
+import 'package:flutter_application_1/day_22/database/database_helper.dart';
 
 class LaporanView extends StatefulWidget {
   const LaporanView({super.key});
@@ -11,18 +12,213 @@ class LaporanView extends StatefulWidget {
 }
 
 class _LaporanViewState extends State<LaporanView> {
-  String _selectedMonth = "Mei 2024";
-  final List<String> _months = ["Mei 2024", "Juni 2026", "Juli 2026", "Agustus 2026"];
+  String _selectedMonth = "Juni 2026";
+  final List<String> _months = ["Juni 2026", "Mei 2024", "Juli 2026", "Agustus 2026"];
   
   DateTimeRange? _selectedDateRange;
 
-  // Dynamically simulated report values
-  double _totalOmset = 42500000.0;
-  double _biaya = 8200000.0;
-  double _laba = 34300000.0;
+  // Dynamically simulated/calculated report values
+  double _totalOmset = 0.0;
+  double _biaya = 0.0;
+  double _laba = 0.0;
   double _growth = 12.5;
-  double _totalSalesChart = 12750000.0;
+  double _totalSalesChart = 0.0;
   double _kategoriChartScale = 0.6; // 60%
+  List<double> _dailySalesValues = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFinancialData();
+  }
+
+  void _loadFinancialData() async {
+    final allActivities = await DBHelper().getAllActivities();
+    
+    // Filter activities by date range or selected month
+    final filtered = allActivities.where((act) {
+      final dt = _parseDateString(act.tanggal);
+      if (dt == null) return false;
+      if (_selectedDateRange != null) {
+        return _isDateInRange(dt, _selectedDateRange!);
+      } else {
+        return _isDateInMonth(dt, _selectedMonth);
+      }
+    }).toList();
+
+    double totalOmset = 0.0;
+    for (var act in filtered) {
+      totalOmset += act.total;
+    }
+
+    // Determine the number of days in the period
+    int totalDays = 30; // default
+    DateTime startDate;
+    if (_selectedDateRange != null) {
+      startDate = DateTime(_selectedDateRange!.start.year, _selectedDateRange!.start.month, _selectedDateRange!.start.day);
+      totalDays = _selectedDateRange!.end.difference(_selectedDateRange!.start).inDays + 1;
+    } else {
+      int month = 6;
+      int year = 2026;
+      final Map<String, int> monthMapping = {
+        'januari': 1, 'februari': 2, 'maret': 3, 'april': 4, 'mei': 5, 'juni': 6,
+        'juli': 7, 'agustus': 8, 'september': 9, 'oktober': 10, 'november': 11, 'desember': 12
+      };
+      final normalized = _selectedMonth.toLowerCase().trim();
+      for (var entry in monthMapping.entries) {
+        if (normalized.contains(entry.key)) {
+          month = entry.value;
+          break;
+        }
+      }
+      final parts = normalized.split(RegExp(r'\s+'));
+      if (parts.length == 2) {
+        year = int.tryParse(parts[1]) ?? 2026;
+      }
+      startDate = DateTime(year, month, 1);
+      // number of days in this month
+      totalDays = DateTime(year, month + 1, 0).day;
+    }
+
+    final List<double> dailyValues = List.filled(totalDays, 0.0);
+
+    for (var act in filtered) {
+      final dt = _parseDateString(act.tanggal);
+      if (dt != null) {
+        int index;
+        if (_selectedDateRange != null) {
+          index = dt.difference(startDate).inDays;
+        } else {
+          index = dt.day - 1;
+        }
+        if (index >= 0 && index < totalDays) {
+          dailyValues[index] += act.total;
+        }
+      }
+    }
+
+    setState(() {
+      _totalOmset = totalOmset;
+      _biaya = totalOmset * 0.20; // 20% estimated costs
+      _laba = _totalOmset - _biaya;
+      _totalSalesChart = totalOmset;
+      _dailySalesValues = dailyValues;
+      
+      // Calculate growth relative to hardcoded base or previous period
+      _growth = totalOmset > 0 ? 12.5 : 0.0;
+      _kategoriChartScale = totalOmset > 0 ? 0.65 : 0.0;
+    });
+  }
+
+  List<String> _getChartXLabels() {
+    if (_selectedDateRange != null) {
+      final days = _selectedDateRange!.end.difference(_selectedDateRange!.start).inDays + 1;
+      if (days <= 7) {
+        final list = <String>[];
+        for (int i = 0; i < days; i++) {
+          list.add(_selectedDateRange!.start.add(Duration(days: i)).day.toString());
+        }
+        return list;
+      } else {
+        final midDay = _selectedDateRange!.start.add(Duration(days: (days / 2).round()));
+        return [
+          _selectedDateRange!.start.day.toString(),
+          midDay.day.toString(),
+          _selectedDateRange!.end.day.toString(),
+        ];
+      }
+    } else {
+      return ["1", "7", "14", "21", "28", "31"];
+    }
+  }
+
+  DateTime? _parseDateString(String dateStr) {
+    try {
+      final Map<String, String> monthMapping = {
+        'januari': '01',
+        'februari': '02',
+        'maret': '03',
+        'april': '04',
+        'mei': '05',
+        'juni': '06',
+        'juli': '07',
+        'agustus': '08',
+        'september': '09',
+        'oktober': '10',
+        'november': '11',
+        'desember': '12',
+      };
+
+      String normalized = dateStr.toLowerCase().trim();
+      for (var entry in monthMapping.entries) {
+        if (normalized.contains(entry.key)) {
+          normalized = normalized.replaceAll(entry.key, entry.value);
+          break;
+        }
+      }
+
+      final parts = normalized.split(RegExp(r'\s+'));
+      if (parts.length == 3) {
+        final day = int.parse(parts[0]);
+        final month = int.parse(parts[1]);
+        final year = int.parse(parts[2]);
+        return DateTime(year, month, day);
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  bool _isDateInRange(DateTime date, DateTimeRange range) {
+    final start = DateTime(
+      range.start.year,
+      range.start.month,
+      range.start.day,
+    );
+    final end = DateTime(
+      range.end.year,
+      range.end.month,
+      range.end.day,
+      23,
+      59,
+      59,
+    );
+    return date.isAfter(start.subtract(const Duration(seconds: 1))) &&
+        date.isBefore(end.add(const Duration(seconds: 1)));
+  }
+
+  bool _isDateInMonth(DateTime date, String monthStr) {
+    final Map<String, int> monthMapping = {
+      'januari': 1,
+      'februari': 2,
+      'maret': 3,
+      'april': 4,
+      'mei': 5,
+      'juni': 6,
+      'juli': 7,
+      'agustus': 8,
+      'september': 9,
+      'oktober': 10,
+      'november': 11,
+      'desember': 12,
+    };
+    final normalized = monthStr.toLowerCase().trim();
+    int? month;
+    int? year;
+    for (var entry in monthMapping.entries) {
+      if (normalized.contains(entry.key)) {
+        month = entry.value;
+        break;
+      }
+    }
+    final parts = normalized.split(RegExp(r'\s+'));
+    if (parts.length == 2) {
+      year = int.tryParse(parts[1]);
+    }
+    if (month != null && year != null) {
+      return date.year == year && date.month == month;
+    }
+    return false;
+  }
 
   String _getFormattedPeriod() {
     if (_selectedDateRange == null) {
@@ -61,17 +257,11 @@ class _LaporanViewState extends State<LaporanView> {
     );
 
     if (picked != null) {
-      final days = picked.end.difference(picked.start).inDays + 1;
       setState(() {
         _selectedDateRange = picked;
-        // Dynamically scale simulation based on picked date range duration
-        _totalOmset = 1450000.0 * days;
-        _biaya = 290000.0 * days;
-        _laba = _totalOmset - _biaya;
-        _totalSalesChart = _totalOmset * 0.3;
-        _growth = 3.5 + (days % 12);
-        _kategoriChartScale = 0.35 + ((days % 6) * 0.1);
       });
+      _loadFinancialData();
+      final days = picked.end.difference(picked.start).inDays + 1;
       _showSuccessSnackbar("Laporan berhasil difilter untuk $days hari!");
     }
   }
@@ -149,14 +339,8 @@ class _LaporanViewState extends State<LaporanView> {
                           onTap: () {
                             setState(() {
                               _selectedDateRange = null;
-                              // Reset standard simulation
-                              _totalOmset = 42500000.0;
-                              _biaya = 8200000.0;
-                              _laba = 34300000.0;
-                              _growth = 12.5;
-                              _totalSalesChart = 12750000.0;
-                              _kategoriChartScale = 0.6;
                             });
+                            _loadFinancialData();
                           },
                           child: Icon(Icons.cancel_rounded, size: 16, color: context.textMuted),
                         ),
@@ -172,14 +356,8 @@ class _LaporanViewState extends State<LaporanView> {
                                 setState(() {
                                   _selectedMonth = newValue;
                                   _selectedDateRange = null;
-                                  // Reset standard simulation
-                                  _totalOmset = 42500000.0;
-                                  _biaya = 8200000.0;
-                                  _laba = 34300000.0;
-                                  _growth = 12.5;
-                                  _totalSalesChart = 12750000.0;
-                                  _kategoriChartScale = 0.6;
                                 });
+                                _loadFinancialData();
                               }
                             },
                             items: _months.map<DropdownMenuItem<String>>((String value) {
@@ -208,7 +386,9 @@ class _LaporanViewState extends State<LaporanView> {
                       initialMonth: _getFormattedPeriod(),
                     ),
                   ),
-                );
+                ).then((_) {
+                  _loadFinancialData();
+                });
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
@@ -218,7 +398,7 @@ class _LaporanViewState extends State<LaporanView> {
                   border: Border.all(color: context.borderColor),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.01),
+                      color: Colors.black.withValues(alpha: 0.01),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     )
@@ -284,7 +464,9 @@ class _LaporanViewState extends State<LaporanView> {
                       initialMonth: _getFormattedPeriod(),
                     ),
                   ),
-                );
+                ).then((_) {
+                  _loadFinancialData();
+                });
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -326,7 +508,9 @@ class _LaporanViewState extends State<LaporanView> {
                       initialMonth: _getFormattedPeriod(),
                     ),
                   ),
-                );
+                ).then((_) {
+                  _loadFinancialData();
+                });
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -376,23 +560,23 @@ class _LaporanViewState extends State<LaporanView> {
                                   child: CustomPaint(
                                     size: Size.infinite,
                                     painter: CartesianChartPainter(
-                                      scaleFactor: _totalSalesChart / 12750000.0,
+                                      dataPoints: _dailySalesValues,
                                       isDark: context.isDark,
                                     ),
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                // X-Axis Labels: 1 to 31
+                                // X-Axis Labels
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("1", style: TextStyle(color: context.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
-                                    Text("7", style: TextStyle(color: context.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
-                                    Text("14", style: TextStyle(color: context.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
-                                    Text("21", style: TextStyle(color: context.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
-                                    Text("28", style: TextStyle(color: context.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
-                                    Text("31", style: TextStyle(color: context.textMuted, fontSize: 11, fontWeight: FontWeight.bold)),
-                                  ],
+                                  children: _getChartXLabels().map((lbl) => Text(
+                                    lbl,
+                                    style: TextStyle(
+                                      color: context.textMuted,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )).toList(),
                                 ),
                               ],
                             ),
@@ -498,7 +682,7 @@ class _LaporanViewState extends State<LaporanView> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: badgeColor.withOpacity(0.1),
+            color: badgeColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -533,9 +717,9 @@ class _LaporanViewState extends State<LaporanView> {
 }
 
 class CartesianChartPainter extends CustomPainter {
-  final double scaleFactor;
+  final List<double> dataPoints;
   final bool isDark;
-  CartesianChartPainter({required this.scaleFactor, required this.isDark});
+  CartesianChartPainter({required this.dataPoints, required this.isDark});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -552,7 +736,14 @@ class CartesianChartPainter extends CustomPainter {
       canvas.drawLine(Offset(0, yCoord), Offset(w, yCoord), gridPaint);
     }
 
-    // Draw the chart curve line
+    if (dataPoints.isEmpty) return;
+
+    double maxVal = 0.0;
+    for (var val in dataPoints) {
+      if (val > maxVal) maxVal = val;
+    }
+    if (maxVal == 0.0) maxVal = 1000000.0;
+
     final curveColor = isDark ? const Color(0xFF0D9488) : const Color(0xFF1E293B);
     final curvePaint = Paint()
       ..color = curveColor
@@ -565,20 +756,35 @@ class CartesianChartPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          curveColor.withOpacity(0.08),
-          curveColor.withOpacity(0.0),
+          curveColor.withValues(alpha: 0.08),
+          curveColor.withValues(alpha: 0.0),
         ],
       ).createShader(Rect.fromLTWH(0, 0, w, h))
       ..style = PaintingStyle.fill;
 
-    // Build curve points with a scale shift depending on selected date range duration
-    final path = Path()
-      ..moveTo(0, h * (0.8 - (0.1 * scaleFactor)))
-      ..lineTo(w * 0.2, h * (0.7 - (0.15 * scaleFactor)))
-      ..lineTo(w * 0.4, h * (0.85 - (0.1 * scaleFactor)))
-      ..lineTo(w * 0.6, h * (0.55 - (0.2 * scaleFactor)))
-      ..lineTo(w * 0.8, h * (0.6 - (0.15 * scaleFactor)))
-      ..lineTo(w, h * (0.35 - (0.2 * scaleFactor)));
+    final path = Path();
+    final double stepX = dataPoints.length > 1 ? w / (dataPoints.length - 1) : w;
+
+    for (int i = 0; i < dataPoints.length; i++) {
+      double valPercent = dataPoints[i] / maxVal;
+      double yCoord = h * (0.9 - (0.7 * valPercent));
+      double xCoord = i * stepX;
+
+      if (i == 0) {
+        path.moveTo(xCoord, yCoord);
+      } else {
+        final prevX = (i - 1) * stepX;
+        final prevValPercent = dataPoints[i - 1] / maxVal;
+        final prevY = h * (0.9 - (0.7 * prevValPercent));
+        
+        final controlX1 = prevX + stepX / 2;
+        final controlY1 = prevY;
+        final controlX2 = prevX + stepX / 2;
+        final controlY2 = yCoord;
+        
+        path.cubicTo(controlX1, controlY1, controlX2, controlY2, xCoord, yCoord);
+      }
+    }
 
     final fillPath = Path.from(path)
       ..lineTo(w, h)
@@ -588,14 +794,21 @@ class CartesianChartPainter extends CustomPainter {
     canvas.drawPath(fillPath, fillPaint);
     canvas.drawPath(path, curvePaint);
 
-    // Draw data points
     final dotPaint = Paint()
       ..color = curveColor
       ..style = PaintingStyle.fill;
-    canvas.drawCircle(Offset(w, h * (0.35 - (0.2 * scaleFactor))), 4, dotPaint);
+
+    for (int i = 0; i < dataPoints.length; i++) {
+      if (dataPoints[i] > 0.0) {
+        double valPercent = dataPoints[i] / maxVal;
+        double yCoord = h * (0.9 - (0.7 * valPercent));
+        double xCoord = i * stepX;
+        canvas.drawCircle(Offset(xCoord, yCoord), 4, dotPaint);
+      }
+    }
   }
 
   @override
-  bool shouldRepaint(covariant CartesianChartPainter oldDelegate) =>
-      oldDelegate.scaleFactor != scaleFactor || oldDelegate.isDark != isDark;
+  bool shouldRepaint(covariant CartesianChartPainter oldDelegate) => true;
 }
+

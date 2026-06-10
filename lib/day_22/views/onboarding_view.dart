@@ -80,12 +80,12 @@ class _OnboardingViewState extends State<OnboardingView> {
                             width: 260,
                             height: 260,
                             decoration: BoxDecoration(
-                              color: context.cardBg.withOpacity(0.7), // Transparent card
+                              color: context.cardBg.withValues(alpha: 0.7), // Transparent card
                               borderRadius: BorderRadius.circular(24),
                               border: Border.all(color: context.borderColor),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.02),
+                                  color: Colors.black.withValues(alpha: 0.02),
                                   blurRadius: 10,
                                   offset: const Offset(0, 4),
                                 )
@@ -217,7 +217,7 @@ class OnboardingVectorPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final fillPaint = Paint()
-      ..color = isDark ? const Color(0xFF334155).withOpacity(0.4) : const Color(0xFF94A3B8).withOpacity(0.4)
+      ..color = isDark ? const Color(0xFF334155).withValues(alpha: 0.4) : const Color(0xFF94A3B8).withValues(alpha: 0.4)
       ..style = PaintingStyle.fill;
 
     final accentPaint = Paint()
@@ -228,22 +228,22 @@ class OnboardingVectorPainter extends CustomPainter {
 
     if (step == 0) {
       // Step 1: Manage Business easily
-      // Draw dashboard frame, sun, hill elements from Mockup 2
-      canvas.drawCircle(Offset(w * 0.35, h * 0.35), 32, fillPaint);
-      canvas.drawCircle(Offset(w * 0.35, h * 0.35), 32, basePaint);
+      // Centered head circle
+      canvas.drawCircle(Offset(w * 0.5, h * 0.38), 32, fillPaint);
+      canvas.drawCircle(Offset(w * 0.5, h * 0.38), 32, basePaint);
 
-      // Curved hill element inside
+      // Centered and symmetric shoulder curve (hill)
       final hillPath = Path()
-        ..moveTo(w * 0.1, h * 0.8)
-        ..quadraticBezierTo(w * 0.4, h * 0.5, w * 0.9, h * 0.8)
-        ..lineTo(w * 0.9, h * 0.9)
-        ..lineTo(w * 0.1, h * 0.9)
+        ..moveTo(w * 0.2, h * 0.8)
+        ..quadraticBezierTo(w * 0.5, h * 0.55, w * 0.8, h * 0.8)
+        ..lineTo(w * 0.8, h * 0.9)
+        ..lineTo(w * 0.2, h * 0.9)
         ..close();
       canvas.drawPath(hillPath, fillPaint);
       canvas.drawPath(hillPath, basePaint);
 
-      // Decorative dots
-      canvas.drawCircle(Offset(w * 0.75, h * 0.3), 8, accentPaint);
+      // Decorative dot (teal ring)
+      canvas.drawCircle(Offset(w * 0.75, h * 0.35), 8, accentPaint);
     } else if (step == 1) {
       // Step 2: Analytics graphs
       // Draw 3 growing bars with a growth trend line
@@ -294,3 +294,4 @@ class OnboardingVectorPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+

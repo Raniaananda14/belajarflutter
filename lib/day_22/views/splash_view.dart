@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/day_22/theme/elegant_background.dart';
 import 'package:flutter_application_1/day_22/views/onboarding_view.dart';
@@ -68,7 +69,9 @@ class _SplashViewState extends State<SplashView>
                 height: 300,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF0D9488).withOpacity(0.04), // Soft Teal glow
+                  color: const Color(
+                    0xFF0D9488,
+                  ).withValues(alpha: 0.04), // Soft Teal glow
                 ),
               ),
             ),
@@ -80,7 +83,9 @@ class _SplashViewState extends State<SplashView>
                 height: 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF6366F1).withOpacity(0.04), // Soft Indigo glow
+                  color: const Color(
+                    0xFF6366F1,
+                  ).withValues(alpha: 0.04), // Soft Indigo glow
                 ),
               ),
             ),
@@ -179,7 +184,9 @@ class BizGrowLogoPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Drawing the mockup logo: three vertical bars growing and an upward arrow
     final paintBar1 = Paint()
-      ..color = isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1) // Adaptive bar colors
+      ..color = isDark
+          ? const Color(0xFF334155)
+          : const Color(0xFFCBD5E1) // Adaptive bar colors
       ..style = PaintingStyle.fill;
 
     final paintBar2 = Paint()
@@ -191,7 +198,9 @@ class BizGrowLogoPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final paintArrow = Paint()
-      ..color = isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A) // Slate 900 / Main accent
+      ..color = isDark
+          ? const Color(0xFFF8FAFC)
+          : const Color(0xFF0F172A) // Slate 900 / Main accent
       ..style = PaintingStyle.fill;
 
     // Dimensions
@@ -236,7 +245,7 @@ class BizGrowLogoPainter extends CustomPainter {
     // Draw rising arrow on top of Bar 3
     final path = Path();
     double arrowBaseY = h - bar3Height - 10;
-    
+
     // Triangle arrow head pointing up-right
     path.moveTo(bar3Left - 2, arrowBaseY + 8); // bottom-left
     path.lineTo(bar3Left + barWidth / 2, arrowBaseY - 8); // tip of arrow

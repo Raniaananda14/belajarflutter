@@ -45,6 +45,7 @@ class _LoginViewState extends State<LoginView> {
         name: user.nama,
         email: user.email,
         nik: user.nik,
+        role: user.role,
         profileImage: user.profileImage,
       );
 
@@ -244,6 +245,114 @@ class _LoginViewState extends State<LoginView> {
                               ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: context.textPrimary,
+                              side: BorderSide(color: context.borderColor, width: 1.5),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            onPressed: () async {
+                              // Register tamu in DB if not exists
+                              var user = await DBHelper().getUserByEmail("tamu@example.com");
+                              if (user == null) {
+                                final newUser = UserModelBizgrow(
+                                  nama: "Tamu",
+                                  email: "tamu@example.com",
+                                  password: "password123",
+                                  nik: "1234567890123456",
+                                  role: "Pembeli",
+                                );
+                                await DBHelper().registerUser(newUser);
+                              }
+                              // Fill text fields
+                              setState(() {
+                                _emailController.text = "tamu@example.com";
+                                _passwordController.text = "password123";
+                              });
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Kredensial Tamu terisi. Silakan ketuk tombol Masuk!"),
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.person_outline_rounded, size: 18, color: context.textPrimary),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Masuk Tamu",
+                                  style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.bold, fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0D9488), // Teal
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: () async {
+                              // Register owner in DB if not exists
+                              var user = await DBHelper().getUserByEmail("rania@gmail.com");
+                              if (user == null) {
+                                final newUser = UserModelBizgrow(
+                                  nama: "Rania Ananda",
+                                  email: "rania@gmail.com",
+                                  password: "password123",
+                                  nik: "1234567890123456",
+                                  role: "Owner",
+                                );
+                                await DBHelper().registerUser(newUser);
+                              }
+                              // Fill text fields
+                              setState(() {
+                                _emailController.text = "rania@gmail.com";
+                                _passwordController.text = "password123";
+                              });
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Kredensial Owner terisi. Silakan ketuk tombol Masuk!"),
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.admin_panel_settings_outlined, size: 18, color: Colors.white),
+                                SizedBox(width: 8),
+                                Text(
+                                  "Masuk Owner",
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 24),
 
                     // Divider
@@ -365,7 +474,7 @@ class _LoginViewState extends State<LoginView> {
     return Container(
       height: 52,
       decoration: BoxDecoration(
-        color: context.cardBg.withOpacity(0.7),
+        color: context.cardBg.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: context.borderColor),
       ),
@@ -417,6 +526,7 @@ class _LoginViewState extends State<LoginView> {
     final passReg = TextEditingController();
     final nikReg = TextEditingController();
     bool isRegObscure = true;
+    String selectedRole = "Pembeli";
 
     showModalBottomSheet(
       context: context,
@@ -519,6 +629,27 @@ class _LoginViewState extends State<LoginView> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      value: selectedRole,
+                      dropdownColor: context.cardBg,
+                      style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.bold, fontSize: 14),
+                      decoration: _buildInputDecoration(
+                        context: context,
+                        hintText: "Pilih Peran (Role)",
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: "Pembeli", child: Text("Pembeli (Hanya Belanja)")),
+                        DropdownMenuItem(value: "Owner", child: Text("Owner (Kelola Toko)")),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) {
+                          setModalState(() {
+                            selectedRole = val;
+                          });
+                        }
+                      },
+                    ),
                     const SizedBox(height: 24),
                     SizedBox(
                       height: 52,
@@ -539,6 +670,7 @@ class _LoginViewState extends State<LoginView> {
                               email: emailReg.text.trim(),
                               password: passReg.text,
                               nik: nikReg.text.trim(),
+                              role: selectedRole,
                             ),
                           );
 
@@ -589,3 +721,4 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
+

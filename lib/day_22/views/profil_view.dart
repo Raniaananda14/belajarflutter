@@ -127,7 +127,7 @@ class _ProfilViewState extends State<ProfilView> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "Owner BizGrow",
+                      "${SessionManager.role} BizGrow",
                       style: TextStyle(
                         color: context.textMuted,
                         fontSize: 12,
