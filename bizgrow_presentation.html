@@ -803,6 +803,68 @@
         display: none;
       }
     }
+
+    /* Floating Speaker Notes Panel */
+    .speaker-notes-panel {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(150%);
+      width: 90%;
+      max-width: 1200px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      max-height: 180px;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .speaker-notes-panel.open {
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .speaker-notes-header {
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--accent-light);
+    }
+
+    .close-notes-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+      transition: color 0.2s;
+    }
+
+    .close-notes-btn:hover {
+      color: var(--text-main);
+    }
+
+    .speaker-notes-body {
+      padding: 16px 24px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      overflow-y: auto;
+      font-style: italic;
+    }
   </style>
 </head>
 
@@ -972,10 +1034,9 @@
                 <p>Visualisasi pulau dengan efek bayangan elevasi (drop shadow) 3D, koordinat latitude/longitude, dan
                   grid kartografi detail.</p>
               </div>
-              <div class="info-box" style="cursor: pointer;" onclick="switchMockupTab('profile')">
-                <h3>👤 Profil & Pengaturan Peran</h3>
-                <p>Menu personal informasi dengan input "Nomor Telepon" serta tombol setelan dinamis berdasarkan peran
-                  Owner vs Pembeli.</p>
+              <div class="info-box" style="cursor: pointer;" onclick="switchMockupTab('game')">
+                <h3>🎮 Game Cargo Catcher</h3>
+                <p>Mini-game interaktif bagi pembeli & penjual untuk menangkap kargo jatuh dan koin emas guna mendapatkan reward koin yang dapat ditukar dengan voucher.</p>
               </div>
             </div>
 
@@ -991,7 +1052,7 @@
               <div class="mockup-tab-bar">
                 <div class="mockup-tab active" id="tab-invoice" onclick="switchMockupTab('invoice')">Invoice A4</div>
                 <div class="mockup-tab" id="tab-map" onclick="switchMockupTab('map')">Peta Kustom</div>
-                <div class="mockup-tab" id="tab-profile" onclick="switchMockupTab('profile')">Profil (Role)</div>
+                <div class="mockup-tab" id="tab-game" onclick="switchMockupTab('game')">Mini-Game</div>
               </div>
               <div class="mockup-body" id="mockup-content">
                 <!-- Content injected dynamically by JS -->
@@ -1065,9 +1126,8 @@
           <div class="grid-2">
             <div class="pivot-timeline">
               <div class="pivot-item">
-                <h4>1. Pembagian Fitur Pengaturan Berdasarkan Role</h4>
-                <p>Pada proposal awal, pengaturan profil bersifat generik. Kami memisahkannya: Owner mendapatkan setelan
-                  Penjualan & Target; Pembeli mendapatkan setelan Status Pesanan.</p>
+                <h4>1. Integrasi Mini-Game Cargo Catcher</h4>
+                <p>Menghadirkan game interaktif penangkap kargo & koin bagi pembeli dan penjual untuk mendapatkan koin reward yang dapat ditukarkan dengan voucher belanja.</p>
               </div>
               <div class="pivot-item">
                 <h4>2. Selector Metode Pembayaran Interaktif</h4>
@@ -1086,7 +1146,7 @@
                 <h3 style="color: var(--accent-light);">💡 Mengapa Kami Melakukan Pivot?</h3>
                 <p style="margin-bottom: 12px;">Pivot ini tidak mengubah tujuan inti aplikasi, melainkan:</p>
                 <ul>
-                  <li>Meningkatkan **keamanan data pengguna** (Penghapusan NIK wajib).</li>
+                  <li>Menstimulasi **loyalitas pengguna** (Mini-Game berhadiah koin & voucher).</li>
                   <li>Memastikan **akurasi invoice** (Pemisahan tombol checkout & bukti).</li>
                   <li>Meningkatkan **usabilitas visual** (Grid bank & visualisasi peta 3D).</li>
                 </ul>
@@ -1137,6 +1197,7 @@
     <div class="controls">
       <button class="btn btn-disabled" id="btn-prev" onclick="prevSlide()">◀ Sebelumnya</button>
       <button class="btn btn-primary" id="btn-next" onclick="nextSlide()">Berikutnya ▶</button>
+      <button class="btn" id="btn-notes" onclick="toggleSpeakerNotes()">🎤 Catatan Pembicara</button>
       <div class="progress-bar-container">
         <div class="progress-bar-fill" id="progress-bar"></div>
       </div>
@@ -1203,28 +1264,33 @@
           <div style="font-size: 10px; color: var(--text-muted); text-align: center;">Visualisasi Custom Peta Wilayah & Bayangan 3D</div>
         </div>
       `,
-      profile: `
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
-            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold;">U</div>
-            <div>
-              <div style="font-weight: bold; font-size: 12px;">Budi Santoso</div>
-              <div style="font-size: 9px; color: var(--accent);">Role: Pembeli (Buyer)</div>
+      game: `
+        <div style="display: flex; flex-direction: column; gap: 8px; height: 100%;">
+          <div style="position: relative; height: 120px; background: #020617; border-radius: 8px; border: 1px solid #1e293b; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 6px;">
+            <div style="display: flex; justify-content: space-between; font-size: 8px; color: var(--accent-light); font-family: monospace;">
+              <span>Koin: 120 🪙</span>
+              <span>Skor: 3500</span>
+            </div>
+            
+            <svg width="100%" height="80" style="background: #090d16; border-radius: 4px;">
+              <circle cx="50" cy="25" r="4" fill="#fbbf24" />
+              <text x="47" y="28" fill="#78350f" font-size="8" font-weight="bold">$</text>
+              
+              <circle cx="120" cy="45" r="4" fill="#fbbf24" />
+              <text x="117" y="48" fill="#78350f" font-size="8" font-weight="bold">$</text>
+              
+              <circle cx="170" cy="30" r="5" fill="#ef4444" />
+              
+              <rect x="90" y="68" width="35" height="8" rx="2" fill="#0d9488" stroke="#14b8a6" stroke-width="1" />
+              <text x="98" y="75" fill="white" font-size="6" font-weight="bold">BIZGROW</text>
+            </svg>
+            
+            <div style="text-align: center; font-size: 8px; color: var(--text-muted); font-family: monospace;">
+              Gunakan tombol A/D untuk menggerakkan kurir!
             </div>
           </div>
-          <div style="display: flex; flex-direction: column; gap: 6px; font-size: 10px;">
-            <div style="display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px;">
-              <span>Nomor Telepon</span>
-              <span style="font-weight: bold; color: var(--text-main);">0812-3456-7890</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px;">
-              <span>Notifikasi Pesanan</span>
-              <span style="color: var(--success); font-weight: bold;">AKTIF</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px; opacity: 0.4;">
-              <span>Target & Penjualan (Owner Only)</span>
-              <span>🔒 Terkunci</span>
-            </div>
+          <div style="font-size: 9px; color: var(--success); font-weight: bold; text-align: center;">
+            Koin terkumpul bisa ditukar voucher diskon s/d 50%
           </div>
         </div>
       `
@@ -1262,6 +1328,12 @@
         btnNext.innerText = "Selesai 🎉";
       } else {
         btnNext.innerText = "Berikutnya ▶";
+      }
+
+      // Update speaking notes content
+      const speakerNotesContent = document.getElementById('speaker-notes-content');
+      if (speakerNotesContent && typeof speakingNotes !== 'undefined') {
+        speakerNotesContent.innerText = speakingNotes[currentSlideIndex];
       }
     }
 
@@ -1302,6 +1374,33 @@
       document.getElementById('mockup-content').innerHTML = mockContent[tabName];
     }
 
+    // Speaker notes functionality
+    let notesOpen = false;
+    const speakerNotesPanel = document.getElementById('speaker-notes-panel');
+    
+    const speakingNotes = {
+      1: "Selamat pagi/siang rekan-rekan. Hari ini saya akan mempresentasikan BizGrow MVP Showcase, sebuah prototipe aplikasi digital terintegrasi yang dibangun menggunakan Flutter dan SQLite untuk menghadirkan solusi bisnis modern yang handal.",
+      2: "Pada bagian teknis, aplikasi ini menggunakan Flutter di sisi frontend, SQLite untuk data lokal offline-first, CustomPainter untuk visualisasi peta wilayah interaktif, serta implementasi sistem keamanan pertanyaan rahasia untuk sesi pengguna.",
+      3: "Seluruh modul utama mulai dari sistem login, dashboard penjualan, manajemen stok produk, peta wilayah kustom, hingga pembuatan invoice A4 dan tracker pesanan telah berhasil kami kembangkan 100%.",
+      4: "Mari kita lihat demo interaktif emulator BizGrow. Di sini kita bisa melihat pratinjau tampilan Invoice format A4 yang ramah cetak, peta wilayah interaktif hasil lukisan CustomPainter, serta mini-game Cargo Catcher.",
+      5: "Dari hasil pengujian pengguna, kami melakukan perbaikan penting: mengganti input NIK menjadi nomor telepon untuk privasi, memisahkan tombol checkout agar transaksi tidak tidak sengaja selesai, serta membuat layout invoice scrollable untuk menghindari overflow.",
+      6: "Beberapa penyesuaian arah bisnis yang kami lakukan meliputi integrasi mini-game Cargo Catcher agar pembeli/penjual mendapatkan koin untuk ditukarkan dengan voucher belanja, penempatan input bank teks manual menjadi grid selector interaktif, serta menyediakan tombol 'Lihat Invoice' langsung di riwayat pesanan.",
+      7: "Sebagai kesimpulan, BizGrow MVP telah siap berjalan lancar 60 FPS offline. Rencana ke depan adalah menambahkan sinkronisasi online-first REST API dan fitur prediksi penjualan berbasis AI."
+    };
+
+    function toggleSpeakerNotes() {
+      notesOpen = !notesOpen;
+      if (notesOpen) {
+        speakerNotesPanel.classList.add('open');
+        document.getElementById('btn-notes').style.background = 'rgba(20, 184, 166, 0.2)';
+        document.getElementById('btn-notes').style.borderColor = 'var(--primary)';
+      } else {
+        speakerNotesPanel.classList.remove('open');
+        document.getElementById('btn-notes').style.background = 'rgba(255, 255, 255, 0.05)';
+        document.getElementById('btn-notes').style.borderColor = 'rgba(255, 255, 255, 0.08)';
+      }
+    }
+
     // Key board navigation support
     document.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowRight' || event.key === ' ') {
@@ -1315,6 +1414,17 @@
     updateSlide();
     switchMockupTab('invoice');
   </script>
+
+  <!-- Floating Speaker Notes Panel -->
+  <div class="speaker-notes-panel" id="speaker-notes-panel">
+    <div class="speaker-notes-header">
+      <span>🎤 Catatan Pembicara (Speaking Notes)</span>
+      <button class="close-notes-btn" onclick="toggleSpeakerNotes()">✕</button>
+    </div>
+    <div class="speaker-notes-body" id="speaker-notes-content">
+      <!-- Dynamic speaking notes content here -->
+    </div>
+  </div>
 </body>
 
 </html>
