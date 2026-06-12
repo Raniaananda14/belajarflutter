@@ -3,14 +3,18 @@ import 'package:flutter_application_1/day_22/database/database_helper.dart';
 import 'package:flutter_application_1/day_22/models/models.dart';
 import 'package:flutter_application_1/day_22/theme/elegant_background.dart';
 import 'package:flutter_application_1/day_22/views/invoice_a4_view.dart';
-import 'package:flutter_application_1/day_22/views/product_detail_view.dart';
 import 'package:flutter_application_1/day_22/views/lacak_pesanan_view.dart';
+import 'package:flutter_application_1/day_22/views/product_detail_view.dart';
 import 'package:intl/intl.dart';
 
 class DetailLaporanView extends StatefulWidget {
   final String initialMonth;
   final int initialTabIndex;
-  const DetailLaporanView({super.key, this.initialMonth = "Juni 2026", this.initialTabIndex = 0});
+  const DetailLaporanView({
+    super.key,
+    this.initialMonth = "Juni 2026",
+    this.initialTabIndex = 0,
+  });
 
   @override
   State<DetailLaporanView> createState() => _DetailLaporanViewState();
@@ -40,7 +44,11 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: widget.initialTabIndex);
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: widget.initialTabIndex,
+    );
     _selectedMonth = widget.initialMonth;
 
     if (widget.initialMonth.contains(" - ")) {
@@ -71,7 +79,7 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
 
   void _loadFinancialDetails() async {
     final allActivities = await DBHelper().getAllActivities();
-    
+
     // Filter activities by date range or selected month
     final filtered = allActivities.where((act) {
       final dt = _parseDateString(act.tanggal);
@@ -545,7 +553,9 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
         }
         final results = snapshot.data ?? [[], []];
         final List<ActivityModel> list = List<ActivityModel>.from(results[0]);
-        final List<ProductModel> dbProducts = List<ProductModel>.from(results[1]);
+        final List<ProductModel> dbProducts = List<ProductModel>.from(
+          results[1],
+        );
 
         // Filter based on selected period
         final filtered = list.where((act) {
@@ -561,7 +571,17 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
         // Group by product name
         final Map<String, Map<String, dynamic>> productMap = {};
         for (var pName in ["Produk A", "Produk B", "Produk C", "Produk D"]) {
-          final dbProd = dbProducts.firstWhere((p) => p.nama == pName, orElse: () => ProductModel(nama: pName, harga: 0.0, stok: 0, deskripsi: "", kategori: "", status: "Aktif"));
+          final dbProd = dbProducts.firstWhere(
+            (p) => p.nama == pName,
+            orElse: () => ProductModel(
+              nama: pName,
+              harga: 0.0,
+              stok: 0,
+              deskripsi: "",
+              kategori: "",
+              status: "Aktif",
+            ),
+          );
           productMap[pName] = {
             "name": pName,
             "qty": 0,
@@ -572,10 +592,22 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
 
         for (var act in filtered) {
           final pName = act.namaProduk ?? "Produk A";
-          final dbProd = dbProducts.firstWhere((p) => p.nama == pName, orElse: () => ProductModel(nama: pName, harga: 0.0, stok: 0, deskripsi: "", kategori: "", status: "Aktif"));
+          final dbProd = dbProducts.firstWhere(
+            (p) => p.nama == pName,
+            orElse: () => ProductModel(
+              nama: pName,
+              harga: 0.0,
+              stok: 0,
+              deskripsi: "",
+              kategori: "",
+              status: "Aktif",
+            ),
+          );
           if (productMap.containsKey(pName)) {
-            productMap[pName]!["qty"] = (productMap[pName]!["qty"] as int) + (act.jumlah ?? 0);
-            productMap[pName]!["sales"] = (productMap[pName]!["sales"] as double) + act.total;
+            productMap[pName]!["qty"] =
+                (productMap[pName]!["qty"] as int) + (act.jumlah ?? 0);
+            productMap[pName]!["sales"] =
+                (productMap[pName]!["sales"] as double) + act.total;
             productMap[pName]!["gambar"] = dbProd.gambar;
           } else {
             productMap[pName] = {
@@ -649,8 +681,8 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
                                 ? Image.asset(
                                     imgPath,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) =>
-                                        Icon(
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Icon(
                                           Icons.inventory_2_outlined,
                                           color: context.iconColor,
                                           size: 20,
@@ -704,7 +736,6 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
       },
     );
   }
-
 
   Widget _buildPesananTab() {
     return FutureBuilder<List<ActivityModel>>(
@@ -1111,11 +1142,18 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.local_shipping_rounded, color: Colors.white, size: 18),
+                            Icon(
+                              Icons.local_shipping_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
                             SizedBox(width: 6),
                             Text(
                               "Lacak Pesanan",
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),

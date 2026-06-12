@@ -27,15 +27,24 @@ class _LoginViewState extends State<LoginView> {
     "Apa makanan favorit Anda?",
   ];
 
-  void _showTopSnackBar(BuildContext ctx, String message, {bool isError = true}) {
+  void _showTopSnackBar(
+    BuildContext ctx,
+    String message, {
+    bool isError = true,
+  }) {
     ScaffoldMessenger.of(ctx).clearSnackBars();
     ScaffoldMessenger.of(ctx).showSnackBar(
       SnackBar(
         content: Text(
           message,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: isError ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+        backgroundColor: isError
+            ? const Color(0xFFEF4444)
+            : const Color(0xFF10B981),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 4),
         margin: EdgeInsets.only(
@@ -43,14 +52,17 @@ class _LoginViewState extends State<LoginView> {
           left: 16,
           right: 16,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
 
-  void _showSnackBar(BuildContext ctx, String message, {Color? backgroundColor, Duration duration = const Duration(milliseconds: 4000)}) {
+  void _showSnackBar(
+    BuildContext ctx,
+    String message, {
+    Color? backgroundColor,
+    Duration duration = const Duration(milliseconds: 4000),
+  }) {
     ScaffoldMessenger.of(ctx).clearSnackBars();
     ScaffoldMessenger.of(ctx).showSnackBar(
       SnackBar(
@@ -63,9 +75,7 @@ class _LoginViewState extends State<LoginView> {
           left: 16,
           right: 16,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -141,7 +151,7 @@ class _LoginViewState extends State<LoginView> {
     bool obscureNew = true;
     bool obscureConfirm = true;
     bool isVerifying = false;
-    
+
     // Security question states
     bool isEmailVerified = false;
     String userQuestion = "";
@@ -183,7 +193,11 @@ class _LoginViewState extends State<LoginView> {
                     const SizedBox(height: 20),
                     Row(
                       children: [
-                        const Icon(Icons.lock_reset_rounded, color: Color(0xFF0D9488), size: 30),
+                        const Icon(
+                          Icons.lock_reset_rounded,
+                          color: Color(0xFF0D9488),
+                          size: 30,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           "Atur Ulang Sandi",
@@ -197,13 +211,16 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      isEmailVerified 
+                      isEmailVerified
                           ? "Jawab pertanyaan keamanan Anda untuk menyetel kata sandi baru."
                           : "Masukkan email Anda untuk mengambil pertanyaan keamanan akun.",
-                      style: TextStyle(fontSize: 13, color: context.textSecondary),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: context.textSecondary,
+                      ),
                     ),
                     const SizedBox(height: 20),
-                    
+
                     // Email input (read-only if verified)
                     Text(
                       "Email Akun",
@@ -217,8 +234,15 @@ class _LoginViewState extends State<LoginView> {
                     TextFormField(
                       controller: emailController,
                       enabled: !isEmailVerified,
-                      style: TextStyle(color: isEmailVerified ? context.textMuted : context.textPrimary),
-                      decoration: _buildInputDecoration(context: context, hintText: "email@example.com"),
+                      style: TextStyle(
+                        color: isEmailVerified
+                            ? context.textMuted
+                            : context.textPrimary,
+                      ),
+                      decoration: _buildInputDecoration(
+                        context: context,
+                        hintText: "email@example.com",
+                      ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -244,47 +268,59 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             elevation: 0,
                           ),
-                          onPressed: isVerifying ? null : () async {
-                            if (!formKey.currentState!.validate()) return;
-                            setModalState(() {
-                              isVerifying = true;
-                            });
+                          onPressed: isVerifying
+                              ? null
+                              : () async {
+                                  if (!formKey.currentState!.validate()) return;
+                                  setModalState(() {
+                                    isVerifying = true;
+                                  });
 
-                            final email = emailController.text.trim();
-                            final user = await DBHelper().getUserByEmail(email);
+                                  final email = emailController.text.trim();
+                                  final user = await DBHelper().getUserByEmail(
+                                    email,
+                                  );
 
-                            setModalState(() {
-                              isVerifying = false;
-                            });
+                                  setModalState(() {
+                                    isVerifying = false;
+                                  });
 
-                            if (user == null) {
-                              _showTopSnackBar(context, "Email '$email' tidak terdaftar!");
-                              return;
-                            }
+                                  if (user == null) {
+                                    _showTopSnackBar(
+                                      context,
+                                      "Email '$email' tidak terdaftar!",
+                                    );
+                                    return;
+                                  }
 
-                            // Check if security question is set
-                            if (user.securityQuestion == null || user.securityQuestion!.isEmpty) {
-                              // Old seed user bypass or message
-                              setModalState(() {
-                                userQuestion = "Bypass Keamanan: (User lama belum menyetel pertanyaan. Ketik 'bypass' untuk melanjutkan)";
-                                correctSecurityAnswer = "bypass";
-                                isEmailVerified = true;
-                              });
-                            } else {
-                              setModalState(() {
-                                userQuestion = user.securityQuestion!;
-                                correctSecurityAnswer = user.securityAnswer ?? "";
-                                isEmailVerified = true;
-                              });
-                            }
-                          },
+                                  // Check if security question is set
+                                  if (user.securityQuestion == null ||
+                                      user.securityQuestion!.isEmpty) {
+                                    // Old seed user bypass or message
+                                    setModalState(() {
+                                      userQuestion =
+                                          "Bypass Keamanan: (User lama belum menyetel pertanyaan. Ketik 'bypass' untuk melanjutkan)";
+                                      correctSecurityAnswer = "bypass";
+                                      isEmailVerified = true;
+                                    });
+                                  } else {
+                                    setModalState(() {
+                                      userQuestion = user.securityQuestion!;
+                                      correctSecurityAnswer =
+                                          user.securityAnswer ?? "";
+                                      isEmailVerified = true;
+                                    });
+                                  }
+                                },
                           child: isVerifying
                               ? const SizedBox(
                                   height: 20,
                                   width: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
                                   ),
                                 )
                               : const Text(
@@ -304,7 +340,9 @@ class _LoginViewState extends State<LoginView> {
                         decoration: BoxDecoration(
                           color: const Color(0xFF0D9488).withOpacity(0.08),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFF0D9488).withOpacity(0.2)),
+                          border: Border.all(
+                            color: const Color(0xFF0D9488).withOpacity(0.2),
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,7 +382,10 @@ class _LoginViewState extends State<LoginView> {
                       TextFormField(
                         controller: answerController,
                         style: TextStyle(color: context.textPrimary),
-                        decoration: _buildInputDecoration(context: context, hintText: "Masukkan jawaban Anda"),
+                        decoration: _buildInputDecoration(
+                          context: context,
+                          hintText: "Masukkan jawaban Anda",
+                        ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return "Jawaban keamanan wajib diisi";
@@ -373,7 +414,9 @@ class _LoginViewState extends State<LoginView> {
                           hintText: "••••••••",
                           suffixIcon: IconButton(
                             icon: Icon(
-                              obscureNew ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                              obscureNew
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
                               color: context.textSecondary,
                               size: 20,
                             ),
@@ -415,7 +458,9 @@ class _LoginViewState extends State<LoginView> {
                           hintText: "••••••••",
                           suffixIcon: IconButton(
                             icon: Icon(
-                              obscureConfirm ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                              obscureConfirm
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
                               color: context.textSecondary,
                               size: 20,
                             ),
@@ -449,43 +494,52 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             elevation: 0,
                           ),
-                          onPressed: isVerifying ? null : () async {
-                            if (!formKey.currentState!.validate()) return;
-                            
-                            // Check answer (case-insensitive, trimmed)
-                            final ans = answerController.text.trim();
-                            if (ans.toLowerCase() != correctSecurityAnswer.toLowerCase()) {
-                              _showTopSnackBar(context, "Verifikasi Gagal: Jawaban keamanan Anda salah!");
-                              return;
-                            }
+                          onPressed: isVerifying
+                              ? null
+                              : () async {
+                                  if (!formKey.currentState!.validate()) return;
 
-                            setModalState(() {
-                              isVerifying = true;
-                            });
+                                  // Check answer (case-insensitive, trimmed)
+                                  final ans = answerController.text.trim();
+                                  if (ans.toLowerCase() !=
+                                      correctSecurityAnswer.toLowerCase()) {
+                                    _showTopSnackBar(
+                                      context,
+                                      "Verifikasi Gagal: Jawaban keamanan Anda salah!",
+                                    );
+                                    return;
+                                  }
 
-                            final email = emailController.text.trim();
-                            final newPass = newPasswordController.text;
+                                  setModalState(() {
+                                    isVerifying = true;
+                                  });
 
-                            final success = await DBHelper().updateUserPassword(email, newPass);
-                            
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                              _showTopSnackBar(
-                                context,
-                                success
-                                    ? "Kata sandi untuk $email berhasil diatur ulang! silakan masuk."
-                                    : "Gagal memperbarui kata sandi. Silakan coba lagi.",
-                                isError: !success,
-                              );
-                            }
-                          },
+                                  final email = emailController.text.trim();
+                                  final newPass = newPasswordController.text;
+
+                                  final success = await DBHelper()
+                                      .updateUserPassword(email, newPass);
+
+                                  if (context.mounted) {
+                                    Navigator.pop(context);
+                                    _showTopSnackBar(
+                                      context,
+                                      success
+                                          ? "Kata sandi untuk $email berhasil diatur ulang! silakan masuk."
+                                          : "Gagal memperbarui kata sandi. Silakan coba lagi.",
+                                      isError: !success,
+                                    );
+                                  }
+                                },
                           child: isVerifying
                               ? const SizedBox(
                                   height: 20,
                                   width: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
                                   ),
                                 )
                               : const Text(
@@ -675,7 +729,10 @@ class _LoginViewState extends State<LoginView> {
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               foregroundColor: context.textPrimary,
-                              side: BorderSide(color: context.borderColor, width: 1.5),
+                              side: BorderSide(
+                                color: context.borderColor,
+                                width: 1.5,
+                              ),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -683,7 +740,9 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             onPressed: () async {
                               // Register tamu in DB if not exists
-                              var user = await DBHelper().getUserByEmail("tamu@example.com");
+                              var user = await DBHelper().getUserByEmail(
+                                "tamu@example.com",
+                              );
                               if (user == null) {
                                 final newUser = UserModelBizgrow(
                                   nama: "Tamu",
@@ -718,11 +777,19 @@ class _LoginViewState extends State<LoginView> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.person_outline_rounded, size: 18, color: context.textPrimary),
+                                Icon(
+                                  Icons.person_outline_rounded,
+                                  size: 18,
+                                  color: context.textPrimary,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   "Masuk Tamu",
-                                  style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.bold, fontSize: 13),
+                                  style: TextStyle(
+                                    color: context.textPrimary,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ],
                             ),
@@ -741,7 +808,9 @@ class _LoginViewState extends State<LoginView> {
                             ),
                             onPressed: () async {
                               // Register owner in DB if not exists
-                              var user = await DBHelper().getUserByEmail("rania@gmail.com");
+                              var user = await DBHelper().getUserByEmail(
+                                "rania@gmail.com",
+                              );
                               if (user == null) {
                                 final newUser = UserModelBizgrow(
                                   nama: "Rania Ananda",
@@ -768,11 +837,19 @@ class _LoginViewState extends State<LoginView> {
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.admin_panel_settings_outlined, size: 18, color: Colors.white),
+                                Icon(
+                                  Icons.admin_panel_settings_outlined,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
                                 SizedBox(width: 8),
                                 Text(
                                   "Masuk Owner",
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ],
                             ),
@@ -843,6 +920,18 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 24),
+                    Center(
+                      child: Text(
+                        "BizGrow App • Made with by Ranski ❤️",
+                        style: TextStyle(
+                          color: context.textMuted,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -890,11 +979,7 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget _buildSocialButton(
-    String label,
-    String assetPath,
-    Color iconColor,
-  ) {
+  Widget _buildSocialButton(String label, String assetPath, Color iconColor) {
     return Container(
       height: 52,
       decoration: BoxDecoration(
@@ -963,7 +1048,7 @@ class _LoginViewState extends State<LoginView> {
         role: user.role,
         profileImage: user.profileImage,
       );
-      
+
       // Set guest/personal business info for social logins (except Owner)
       if (user.role == "Owner") {
         await SessionManager.updateBusinessInfo("BizGrow Jakarta Barat");
@@ -978,7 +1063,7 @@ class _LoginViewState extends State<LoginView> {
         "Masuk otomatis via $provider: ${user.nama} 👋",
         backgroundColor: const Color(0xFF10B981),
       );
-      
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const MainNavigation()),
@@ -997,7 +1082,10 @@ class _LoginViewState extends State<LoginView> {
       builder: (context) {
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 20.0,
+            ),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1017,7 +1105,11 @@ class _LoginViewState extends State<LoginView> {
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.g_mobiledata_rounded, color: Colors.redAccent, size: 36),
+                      Icon(
+                        Icons.g_mobiledata_rounded,
+                        color: Colors.redAccent,
+                        size: 36,
+                      ),
                       SizedBox(width: 4),
                       Text(
                         "Pilih Akun Google",
@@ -1044,7 +1136,11 @@ class _LoginViewState extends State<LoginView> {
                     avatarInitials: "RA",
                     onTap: () {
                       Navigator.pop(context);
-                      _performSocialLogin("rania@gmail.com", "Rania Ananda", "Google");
+                      _performSocialLogin(
+                        "rania@gmail.com",
+                        "Rania Ananda",
+                        "Google",
+                      );
                     },
                   ),
                   const Divider(),
@@ -1064,20 +1160,34 @@ class _LoginViewState extends State<LoginView> {
                     avatarInitials: "AC",
                     onTap: () {
                       Navigator.pop(context);
-                      _performSocialLogin("alex.cooper@gmail.com", "Alex Cooper", "Google");
+                      _performSocialLogin(
+                        "alex.cooper@gmail.com",
+                        "Alex Cooper",
+                        "Google",
+                      );
                     },
                   ),
                   const Divider(),
                   ListTile(
                     leading: CircleAvatar(
                       backgroundColor: context.inputBg,
-                      child: Icon(Icons.person_add_alt_1_rounded, color: context.iconColor, size: 20),
+                      child: Icon(
+                        Icons.person_add_alt_1_rounded,
+                        color: context.iconColor,
+                        size: 20,
+                      ),
                     ),
                     title: const Text(
                       "Gunakan akun lain",
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 12),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 12,
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                       _showCustomEmailGoogleLoginDialog();
@@ -1133,12 +1243,21 @@ class _LoginViewState extends State<LoginView> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: this.context.cardBg,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: const Row(
             children: [
-              Icon(Icons.g_mobiledata_rounded, color: Colors.redAccent, size: 32),
+              Icon(
+                Icons.g_mobiledata_rounded,
+                color: Colors.redAccent,
+                size: 32,
+              ),
               SizedBox(width: 8),
-              Text("Google Sign-In", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                "Google Sign-In",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
           content: Form(
@@ -1149,7 +1268,10 @@ class _LoginViewState extends State<LoginView> {
                 TextFormField(
                   controller: nameController,
                   style: TextStyle(color: this.context.textPrimary),
-                  decoration: _buildInputDecoration(context: this.context, hintText: "Nama Pengguna"),
+                  decoration: _buildInputDecoration(
+                    context: this.context,
+                    hintText: "Nama Pengguna",
+                  ),
                   validator: (v) => v!.isEmpty ? "Nama wajib diisi" : null,
                 ),
                 const SizedBox(height: 12),
@@ -1157,7 +1279,10 @@ class _LoginViewState extends State<LoginView> {
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(color: this.context.textPrimary),
-                  decoration: _buildInputDecoration(context: this.context, hintText: "nama@gmail.com"),
+                  decoration: _buildInputDecoration(
+                    context: this.context,
+                    hintText: "nama@gmail.com",
+                  ),
                   validator: (v) {
                     if (v == null || v.isEmpty) return "Email wajib diisi";
                     if (!v.contains("@")) return "Format email tidak valid";
@@ -1170,12 +1295,17 @@ class _LoginViewState extends State<LoginView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text("Batal", style: TextStyle(color: this.context.textSecondary)),
+              child: Text(
+                "Batal",
+                style: TextStyle(color: this.context.textSecondary),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF0D9488),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () {
                 if (!formKey.currentState!.validate()) return;
@@ -1184,7 +1314,13 @@ class _LoginViewState extends State<LoginView> {
                 Navigator.pop(context);
                 _performSocialLogin(email, name, "Google");
               },
-              child: const Text("Masuk", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: const Text(
+                "Masuk",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         );
@@ -1216,7 +1352,10 @@ class _LoginViewState extends State<LoginView> {
               expand: false,
               builder: (context, scrollController) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -1310,14 +1449,19 @@ class _LoginViewState extends State<LoginView> {
                           ),
                           onPressed: isAgreed
                               ? () async {
-                                  final success = await DBHelper().registerUser(userToRegister);
+                                  final success = await DBHelper().registerUser(
+                                    userToRegister,
+                                  );
                                   if (success) {
                                     if (!context.mounted) return;
                                     Navigator.pop(context); // Close T&C sheet
                                     onSuccess();
                                   } else {
                                     if (!context.mounted) return;
-                                    _showTopSnackBar(context, "Pendaftaran gagal! Silakan coba lagi.");
+                                    _showTopSnackBar(
+                                      context,
+                                      "Pendaftaran gagal! Silakan coba lagi.",
+                                    );
                                   }
                                 }
                               : null,
@@ -1398,11 +1542,15 @@ class _LoginViewState extends State<LoginView> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Nama Lengkap
                       Text(
                         "Nama Lengkap",
-                        style: TextStyle(color: context.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       TextFormField(
@@ -1412,15 +1560,20 @@ class _LoginViewState extends State<LoginView> {
                           context: context,
                           hintText: "Nama Lengkap",
                         ),
-                        validator: (v) =>
-                            v == null || v.trim().isEmpty ? "Nama Lengkap wajib diisi" : null,
+                        validator: (v) => v == null || v.trim().isEmpty
+                            ? "Nama Lengkap wajib diisi"
+                            : null,
                       ),
                       const SizedBox(height: 12),
 
                       // Email
                       Text(
                         "Email",
-                        style: TextStyle(color: context.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       TextFormField(
@@ -1432,8 +1585,10 @@ class _LoginViewState extends State<LoginView> {
                           hintText: "Email",
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return "Email wajib diisi";
-                          if (!v.contains("@")) return "Format email tidak valid";
+                          if (v == null || v.trim().isEmpty)
+                            return "Email wajib diisi";
+                          if (!v.contains("@"))
+                            return "Format email tidak valid";
                           return null;
                         },
                       ),
@@ -1442,7 +1597,11 @@ class _LoginViewState extends State<LoginView> {
                       // Nomor Telepon (saved in nik field)
                       Text(
                         "Nomor Telepon",
-                        style: TextStyle(color: context.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       TextFormField(
@@ -1454,8 +1613,10 @@ class _LoginViewState extends State<LoginView> {
                           hintText: "Nomor Telepon",
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return "Nomor telepon wajib diisi";
-                          if (v.length < 9) return "Nomor telepon minimal 9 digit";
+                          if (v == null || v.trim().isEmpty)
+                            return "Nomor telepon wajib diisi";
+                          if (v.length < 9)
+                            return "Nomor telepon minimal 9 digit";
                           return null;
                         },
                       ),
@@ -1464,7 +1625,11 @@ class _LoginViewState extends State<LoginView> {
                       // Kata Sandi
                       Text(
                         "Kata Sandi",
-                        style: TextStyle(color: context.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       TextFormField(
@@ -1489,8 +1654,10 @@ class _LoginViewState extends State<LoginView> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return "Kata sandi wajib diisi";
-                          if (v.length < 6) return "Kata sandi minimal 6 karakter";
+                          if (v == null || v.isEmpty)
+                            return "Kata sandi wajib diisi";
+                          if (v.length < 6)
+                            return "Kata sandi minimal 6 karakter";
                           return null;
                         },
                       ),
@@ -1499,20 +1666,34 @@ class _LoginViewState extends State<LoginView> {
                       // Role Dropdown
                       Text(
                         "Peran (Role)",
-                        style: TextStyle(color: context.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       DropdownButtonFormField<String>(
-                        value: selectedRole,
+                        initialValue: selectedRole,
                         dropdownColor: context.cardBg,
-                        style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.bold, fontSize: 14),
+                        style: TextStyle(
+                          color: context.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                         decoration: _buildInputDecoration(
                           context: context,
                           hintText: "Pilih Peran (Role)",
                         ),
                         items: const [
-                          DropdownMenuItem(value: "Pembeli", child: Text("Pembeli (Hanya Belanja)")),
-                          DropdownMenuItem(value: "Owner", child: Text("Owner (Kelola Toko)")),
+                          DropdownMenuItem(
+                            value: "Pembeli",
+                            child: Text("Pembeli (Hanya Belanja)"),
+                          ),
+                          DropdownMenuItem(
+                            value: "Owner",
+                            child: Text("Owner (Kelola Toko)"),
+                          ),
                         ],
                         onChanged: (val) {
                           if (val != null) {
@@ -1527,23 +1708,33 @@ class _LoginViewState extends State<LoginView> {
                       // Security Question Dropdown
                       Text(
                         "Pertanyaan Keamanan",
-                        style: TextStyle(color: context.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       DropdownButtonFormField<String>(
-                        value: selectedQuestion,
+                        initialValue: selectedQuestion,
                         dropdownColor: context.cardBg,
                         isExpanded: true,
-                        style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.bold, fontSize: 14),
+                        style: TextStyle(
+                          color: context.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                         decoration: _buildInputDecoration(
                           context: context,
                           hintText: "Pilih Pertanyaan Keamanan",
                         ),
                         items: _securityQuestions
-                            .map((q) => DropdownMenuItem(
-                                  value: q,
-                                  child: Text(q, overflow: TextOverflow.ellipsis),
-                                ))
+                            .map(
+                              (q) => DropdownMenuItem(
+                                value: q,
+                                child: Text(q, overflow: TextOverflow.ellipsis),
+                              ),
+                            )
                             .toList(),
                         onChanged: (val) {
                           if (val != null) {
@@ -1552,14 +1743,20 @@ class _LoginViewState extends State<LoginView> {
                             });
                           }
                         },
-                        validator: (v) => v == null ? "Pilih salah satu pertanyaan keamanan" : null,
+                        validator: (v) => v == null
+                            ? "Pilih salah satu pertanyaan keamanan"
+                            : null,
                       ),
                       const SizedBox(height: 12),
 
                       // Security Answer
                       Text(
                         "Jawaban Keamanan Anda",
-                        style: TextStyle(color: context.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       TextFormField(
@@ -1569,8 +1766,9 @@ class _LoginViewState extends State<LoginView> {
                           context: context,
                           hintText: "Masukkan jawaban Anda",
                         ),
-                        validator: (v) =>
-                            v == null || v.trim().isEmpty ? "Jawaban keamanan wajib diisi" : null,
+                        validator: (v) => v == null || v.trim().isEmpty
+                            ? "Jawaban keamanan wajib diisi"
+                            : null,
                       ),
                       const SizedBox(height: 24),
 
@@ -1590,10 +1788,14 @@ class _LoginViewState extends State<LoginView> {
 
                             final email = emailReg.text.trim();
                             // Check unique email
-                            final existingUser = await DBHelper().getUserByEmail(email);
+                            final existingUser = await DBHelper()
+                                .getUserByEmail(email);
                             if (existingUser != null) {
                               if (!context.mounted) return;
-                              _showTopSnackBar(context, "Registrasi Gagal: Email '$email' sudah terdaftar!");
+                              _showTopSnackBar(
+                                context,
+                                "Registrasi Gagal: Email '$email' sudah terdaftar!",
+                              );
                               return;
                             }
 
@@ -1601,14 +1803,15 @@ class _LoginViewState extends State<LoginView> {
                               nama: nameReg.text.trim(),
                               email: email,
                               password: passReg.text,
-                              nik: phoneReg.text.trim(), // Storing phone number in NIK
+                              nik: phoneReg.text
+                                  .trim(), // Storing phone number in NIK
                               role: selectedRole,
                               securityQuestion: selectedQuestion,
                               securityAnswer: answerReg.text.trim(),
                             );
 
                             if (!context.mounted) return;
-                            
+
                             // Show Terms & Conditions Sheet
                             _showTermsAndConditionsSheet(
                               context,
@@ -1616,7 +1819,9 @@ class _LoginViewState extends State<LoginView> {
                               passReg.text,
                               () {
                                 // On T&C accepted and successfully registered
-                                Navigator.pop(context); // Close Registration bottom sheet
+                                Navigator.pop(
+                                  context,
+                                ); // Close Registration bottom sheet
                                 _showTopSnackBar(
                                   context,
                                   "Registrasi Sukses! Silakan masuk.",
@@ -1650,4 +1855,3 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
-
