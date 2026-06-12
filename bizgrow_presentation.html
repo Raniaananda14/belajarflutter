@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizGrow - Presentation: Prototype Stage (Hasil)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --primary: #0d9488;
+      --primary-light: #14b8a6;
+      --accent: #f59e0b;
+      --accent-light: #fbbf24;
+      --success: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --slide-transition: 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    /* Animated background gradient bubbles */
+    .bg-animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      filter: blur(100px);
+      opacity: 0.45;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--primary);
+      animation: float 25s infinite ease-in-out;
+    }
+
+    .bubble-1 {
+      width: 400px;
+      height: 400px;
+      top: -10%;
+      left: -10%;
+      background: var(--primary);
+    }
+
+    .bubble-2 {
+      width: 500px;
+      height: 500px;
+      bottom: -15%;
+      right: -10%;
+      background: var(--accent);
+      animation-delay: -5s;
+      animation-duration: 30s;
+    }
+
+    .bubble-3 {
+      width: 300px;
+      height: 300px;
+      top: 40%;
+      left: 50%;
+      background: var(--success);
+      animation-delay: -10s;
+      animation-duration: 20s;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate(80px, 50px) scale(1.15);
+      }
+    }
+
+    /* Presentation Wrapper */
+    header {
+      padding: 24px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      color: white;
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+    }
+
+    .logo-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .logo-text span {
+      color: var(--accent);
+    }
+
+    .stage-badge {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--accent);
+      color: var(--accent-light);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Slides container */
+    .slides-viewport {
+      flex-grow: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .slide {
+      position: absolute;
+      width: 90%;
+      max-width: 1200px;
+      height: 85%;
+      max-height: 700px;
+      opacity: 0;
+      transform: scale(0.9) translateY(40px);
+      pointer-events: none;
+      transition: opacity var(--slide-transition), transform var(--slide-transition);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    /* Slide Content Card styling */
+    .slide-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 48px;
+      height: 100%;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary), var(--accent));
+    }
+
+    /* Slide headers */
+    .slide-num {
+      position: absolute;
+      top: 32px;
+      right: 48px;
+      font-size: 80px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.03);
+      line-height: 0.8;
+      user-select: none;
+    }
+
+    .slide-tagline {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .slide-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 38px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      color: var(--text-muted);
+      font-size: 16px;
+      margin-bottom: 30px;
+      max-width: 800px;
+      line-height: 1.5;
+    }
+
+    .slide-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+      padding-right: 8px;
+    }
+
+    /* Custom layout structures */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      height: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+      height: 100%;
+    }
+
+    /* Card widgets */
+    .info-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 24px;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .info-box:hover {
+      transform: translateY(-4px);
+      border-color: rgba(13, 148, 136, 0.3);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .info-box h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary-light);
+    }
+
+    .info-box p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .info-box ul {
+      list-style-type: none;
+      margin-top: 10px;
+    }
+
+    .info-box li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .info-box li::before {
+      content: "➔";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 12px;
+    }
+
+    /* Interactive checklist */
+    .checklist-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 16px 20px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .checklist-item:hover {
+      background: rgba(13, 148, 136, 0.05);
+      border-color: rgba(13, 148, 136, 0.2);
+    }
+
+    .checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: transparent;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .checklist-item.checked .checkbox {
+      background: var(--primary);
+      color: white;
+    }
+
+    .checklist-item.checked .checklist-text {
+      text-decoration: line-through;
+      color: var(--text-muted);
+      opacity: 0.75;
+    }
+
+    .checklist-text {
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .checklist-tag {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .tag-ui {
+      background: rgba(20, 184, 166, 0.15);
+      color: #2dd4bf;
+    }
+
+    .tag-logic {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+    }
+
+    .tag-data {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+    }
+
+    /* Interactive Mockup Widget */
+    .mockup-frame {
+      background: #020617;
+      border: 6px solid #1e293b;
+      border-radius: 20px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .mockup-header {
+      background: #0f172a;
+      padding: 10px 16px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-red {
+      background: #ef4444;
+    }
+
+    .dot-yellow {
+      background: #f59e0b;
+    }
+
+    .dot-green {
+      background: #10b981;
+    }
+
+    .mockup-tab-bar {
+      display: flex;
+      background: #0f172a;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .mockup-tab {
+      padding: 10px 18px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-muted);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      background: #0b0f19;
+      transition: all 0.2s ease;
+    }
+
+    .mockup-tab.active {
+      background: #1e293b;
+      color: white;
+      font-weight: 700;
+    }
+
+    .mockup-body {
+      flex-grow: 1;
+      padding: 16px;
+      overflow-y: auto;
+      font-size: 12px;
+      background: #0b0f19;
+    }
+
+    /* Feedback list */
+    .feedback-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feedback-card {
+      display: flex;
+      gap: 16px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 20px;
+      border-radius: 16px;
+    }
+
+    .feedback-icon {
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .feedback-content h4 {
+      font-size: 16px;
+      margin-bottom: 6px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .feedback-content .quote {
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .feedback-content .solution {
+      color: var(--success);
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Pivot timeline */
+    .pivot-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .pivot-timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .pivot-item {
+      position: relative;
+    }
+
+    .pivot-item::before {
+      content: '';
+      position: absolute;
+      left: -22px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid var(--bg-dark);
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+    }
+
+    .pivot-item h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      color: var(--accent-light);
+      margin-bottom: 4px;
+    }
+
+    .pivot-item p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Footer / Controls */
+    footer {
+      padding: 24px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      border-top: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary-light);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-light);
+      box-shadow: 0 0 15px rgba(20, 184, 166, 0.4);
+    }
+
+    .btn-disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .nav-indicator {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-container {
+      width: 150px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-left: 16px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    /* Title Slide Specific Styling */
+    .title-slide-content {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      height: 100%;
+      position: relative;
+    }
+
+    .hero-icon {
+      font-size: 64px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      width: 120px;
+      height: 120px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      margin-bottom: 10px;
+      animation: pulse 3s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .main-hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 62px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(to bottom right, #ffffff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0;
+    }
+
+    .main-hero-title span {
+      background: linear-gradient(to right, var(--primary-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .meta-pills {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Technical diagram graphic */
+    .tech-diagram {
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .diagram-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .diagram-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-grow: 1;
+      justify-content: center;
+    }
+
+    .flow-node {
+      background: rgba(13, 148, 136, 0.08);
+      border: 1px solid rgba(13, 148, 136, 0.2);
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--primary-light);
+    }
+
+    .flow-arrow {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    /* Print styling */
+    @media print {
+      body {
+        overflow: visible;
+        height: auto;
+        background: white;
+        color: black;
+      }
+
+      .slide {
+        position: relative;
+        opacity: 1;
+        transform: none;
+        page-break-after: always;
+        height: auto;
+        max-height: none;
+        margin-bottom: 40px;
+      }
+
+      header,
+      footer,
+      .bg-animation {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="bg-animation">
+    <div class="bubble bubble-1"></div>
+    <div class="bubble bubble-2"></div>
+    <div class="bubble bubble-3"></div>
+  </div>
+
+  <header>
+    <div class="logo-container">
+      <div class="logo-badge">BG</div>
+      <div class="logo-text">Biz<span>Grow</span></div>
+    </div>
+    <div class="stage-badge">Stage: Prototype (Hasil)</div>
+  </header>
+
+  <div class="slides-viewport">
+
+    <!-- Slide 1: Cover -->
+    <div class="slide active" id="slide-1">
+      <div class="slide-card">
+        <div class="title-slide-content">
+          <div class="hero-icon">📈</div>
+          <h1 class="main-hero-title">BizGrow <span>MVP Showcase</span></h1>
+          <p style="font-size: 18px; color: var(--text-muted); max-width: 600px;">
+            Mengubah gagasan bisnis digital terintegrasi menjadi aplikasi Flutter nyata yang andal, aman, dan siap uji
+            coba.
+          </p>
+          <div class="meta-pills">
+            <span class="pill">🚀 Prototype Stage (Hasil)</span>
+            <span class="pill">⚙️ Flutter & SQLite</span>
+            <span class="pill">📅 Juni 2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2: Deskripsi Teknis -->
+    <div class="slide" id="slide-2">
+      <div class="slide-card">
+        <div class="slide-num">01</div>
+        <div>
+          <div class="slide-tagline">Arsitektur & Landasan Sistem</div>
+          <h2 class="slide-title">Deskripsi Teknis</h2>
+          <p class="slide-subtitle">Detail tumpukan teknologi (tech stack) dan implementasi logika inti BizGrow untuk
+            menjamin fungsionalitas luring (offline) yang optimal dan performa tinggi.</p>
+        </div>
+        <div class="slide-body">
+          <div class="grid-2">
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="info-box">
+                <h3>🖥️ UI & Framework Layer</h3>
+                <p>Membangun antarmuka modern yang reaktif menggunakan <strong>Flutter SDK</strong> dengan struktur
+                  Stateful/Stateless widget modular dan sistem tema adaptif (Context Extensions).</p>
+              </div>
+              <div class="info-box">
+                <h3>💾 Data Persistence Layer</h3>
+                <p>Penyimpanan data relasional lokal yang efisien menggunakan <strong>SQLite</strong> (via database
+                  helper terpusat). Mendukung migrasi skema dinamis dan kueri relasional cepat.</p>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="info-box">
+                <h3>🗺️ Custom Painting Layer</h3>
+                <p>Menggambar wilayah peta interaktif tanpa ketergantungan API eksternal menggunakan
+                  <strong>CustomPainter</strong> dan Canvas API. Menyajikan bayangan elevasi (drop shadow) 3D dan grid
+                  koordinat presisi.</p>
+              </div>
+              <div class="info-box">
+                <h3>🔒 Security & Session Management</h3>
+                <p>Manajemen sesi pengguna berbasis waktu, hashing sederhana, serta pemulihan kredensial via mekanisme
+                  <strong>Security Questions</strong> di halaman login.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Checklist Fitur -->
+    <div class="slide" id="slide-3">
+      <div class="slide-card">
+        <div class="slide-num">02</div>
+        <div>
+          <div class="slide-tagline">Evaluasi Hasil Implementasi</div>
+          <h2 class="slide-title">Fitur Implementasi (Checklist)</h2>
+          <p class="slide-subtitle">Daftar modul fungsional utama yang telah sepenuhnya dikembangkan dan diintegrasikan
+            ke dalam basis kode BizGrow.</p>
+        </div>
+        <div class="slide-body">
+          <div class="grid-2">
+            <div class="checklist-container">
+              <div class="checklist-item checked" onclick="toggleChecklist(this)">
+                <div class="checkbox">✓</div>
+                <div class="checklist-text">Login & Keamanan Akun (Security Questions)</div>
+                <span class="checklist-tag tag-logic">Logic</span>
+              </div>
+              <div class="checklist-item checked" onclick="toggleChecklist(this)">
+                <div class="checkbox">✓</div>
+                <div class="checklist-text">Dashboard Penjualan & Rank Badges</div>
+                <span class="checklist-tag tag-ui">UI</span>
+              </div>
+              <div class="checklist-item checked" onclick="toggleChecklist(this)">
+                <div class="checkbox">✓</div>
+                <div class="checklist-text">Stok & Status Ketersediaan Produk Aktif</div>
+                <span class="checklist-tag tag-data">Data</span>
+              </div>
+              <div class="checklist-item checked" onclick="toggleChecklist(this)">
+                <div class="checkbox">✓</div>
+                <div class="checklist-text">Filter Produk Kategori & Toko Terdekat</div>
+                <span class="checklist-tag tag-ui">UI</span>
+              </div>
+            </div>
+
+            <div class="checklist-container">
+              <div class="checklist-item checked" onclick="toggleChecklist(this)">
+                <div class="checkbox">✓</div>
+                <div class="checklist-text">Layout Invoice A4 Scrollable Wrap & Date Picker</div>
+                <span class="checklist-tag tag-ui">UI</span>
+              </div>
+              <div class="checklist-item checked" onclick="toggleChecklist(this)">
+                <div class="checkbox">✓</div>
+                <div class="checklist-text">Dynamic Payment Grid & Decoupled Checkout</div>
+                <span class="checklist-tag tag-logic">Logic</span>
+              </div>
+              <div class="checklist-item checked" onclick="toggleChecklist(this)">
+                <div class="checkbox">✓</div>
+                <div class="checklist-text">Peta Kustom dengan Drop Shadow & Grid Label</div>
+                <span class="checklist-tag tag-ui">UI</span>
+              </div>
+              <div class="checklist-item checked" onclick="toggleChecklist(this)">
+                <div class="checkbox">✓</div>
+                <div class="checklist-text">Role-based Profile Settings & Order Tracker</div>
+                <span class="checklist-tag tag-data">Data</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: UI Preview -->
+    <div class="slide" id="slide-4">
+      <div class="slide-card">
+        <div class="slide-num">03</div>
+        <div>
+          <div class="slide-tagline">Visualisasi & Antarmuka Pengguna</div>
+          <h2 class="slide-title">UI Preview & Interactive Demo</h2>
+          <p class="slide-subtitle">Simulasi antarmuka BizGrow yang interaktif untuk meninjau tata letak, warna, dan
+            alur pengerjaan aplikasi secara langsung.</p>
+        </div>
+        <div class="slide-body">
+          <div class="grid-2">
+            <!-- Left Side: Interactive controls -->
+            <div style="display: flex; flex-direction: column; gap: 16px; justify-content: center;">
+              <div class="info-box" style="cursor: pointer;" onclick="switchMockupTab('invoice')">
+                <h3>📄 Preview Invoice A4</h3>
+                <p>Struktur tata letak A4 yang ramah cetak, daftar belanja yang scrollable jika banyak produk, dan
+                  tombol bukti transfer yang dipisah.</p>
+              </div>
+              <div class="info-box" style="cursor: pointer;" onclick="switchMockupTab('map')">
+                <h3>🗺️ Peta Lokasi (Custom Canvas)</h3>
+                <p>Visualisasi pulau dengan efek bayangan elevasi (drop shadow) 3D, koordinat latitude/longitude, dan
+                  grid kartografi detail.</p>
+              </div>
+              <div class="info-box" style="cursor: pointer;" onclick="switchMockupTab('profile')">
+                <h3>👤 Profil & Pengaturan Peran</h3>
+                <p>Menu personal informasi dengan input "Nomor Telepon" serta tombol setelan dinamis berdasarkan peran
+                  Owner vs Pembeli.</p>
+              </div>
+            </div>
+
+            <!-- Right Side: Interactive Mockup Container -->
+            <div class="mockup-frame">
+              <div class="mockup-header">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+                <span
+                  style="font-size: 11px; margin-left: 8px; color: var(--text-muted); font-family: monospace;">BizGrow_Emulator_v1.0</span>
+              </div>
+              <div class="mockup-tab-bar">
+                <div class="mockup-tab active" id="tab-invoice" onclick="switchMockupTab('invoice')">Invoice A4</div>
+                <div class="mockup-tab" id="tab-map" onclick="switchMockupTab('map')">Peta Kustom</div>
+                <div class="mockup-tab" id="tab-profile" onclick="switchMockupTab('profile')">Profil (Role)</div>
+              </div>
+              <div class="mockup-body" id="mockup-content">
+                <!-- Content injected dynamically by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: User Testing & Feedback -->
+    <div class="slide" id="slide-5">
+      <div class="slide-card">
+        <div class="slide-num">04</div>
+        <div>
+          <div class="slide-tagline">Iterasi Berdasarkan Masukan</div>
+          <h2 class="slide-title">User Testing & Feedback</h2>
+          <p class="slide-subtitle">Bagaimana tim BizGrow menanggapi dan mengimplementasikan masukan dari pengguna
+            selama fase pengujian prototype.</p>
+        </div>
+        <div class="slide-body">
+          <div class="feedback-list">
+            <div class="feedback-card">
+              <div class="feedback-icon">⚠️</div>
+              <div class="feedback-content">
+                <h4>Form Informasi Pribadi (Input NIK)</h4>
+                <p class="quote">"Pengguna merasa keberatan memasukkan NIK asli saat mendaftar karena masalah privasi
+                  data pribadi."</p>
+                <p class="solution">✓ <strong>Solusi:</strong> Mengubah label input NIK menjadi "Nomor Telepon" dan
+                  memetakan datanya ke dalam kolom database 'nik' agar kompatibilitas data tetap terjaga.</p>
+              </div>
+            </div>
+
+            <div class="feedback-card">
+              <div class="feedback-icon">🛑</div>
+              <div class="feedback-content">
+                <h4>Unggah Bukti Pembayaran</h4>
+                <p class="quote">"Setelah memilih gambar bukti pembayaran, sistem langsung melakukan checkout otomatis
+                  secara tiba-tiba."</p>
+                <p class="solution">✓ <strong>Solusi:</strong> Memisahkan logika pengunggahan. Unggahan hanya memicu
+                  snackbar notifikasi sukses, pengguna harus menekan tombol "Checkout Sekarang" secara manual.</p>
+              </div>
+            </div>
+
+            <div class="feedback-card">
+              <div class="feedback-icon">📐</div>
+              <div class="feedback-content">
+                <h4>Invoice A4 Overflow saat Multi-Product</h4>
+                <p class="quote">"Ketika membeli lebih dari 2 produk, catatan invoice dan daftar produk bertabrakan dan
+                  menghasilkan error overflow."</p>
+                <p class="solution">✓ <strong>Solusi:</strong> Membungkus daftar belanjaan dan catatan tambahan dalam
+                  layout scrollable dinamis dengan tinggi fleksibel.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Perubahan dari Proposal -->
+    <div class="slide" id="slide-6">
+      <div class="slide-card">
+        <div class="slide-num">05</div>
+        <div>
+          <div class="slide-tagline">Evolusi Pengembangan</div>
+          <h2 class="slide-title">Perubahan dari Proposal (Pivot)</h2>
+          <p class="slide-subtitle">Penyesuaian arah pengembangan dari desain awal guna meningkatkan efektivitas bisnis
+            dan pengalaman pengguna (UX).</p>
+        </div>
+        <div class="slide-body">
+          <div class="grid-2">
+            <div class="pivot-timeline">
+              <div class="pivot-item">
+                <h4>1. Pembagian Fitur Pengaturan Berdasarkan Role</h4>
+                <p>Pada proposal awal, pengaturan profil bersifat generik. Kami memisahkannya: Owner mendapatkan setelan
+                  Penjualan & Target; Pembeli mendapatkan setelan Status Pesanan.</p>
+              </div>
+              <div class="pivot-item">
+                <h4>2. Selector Metode Pembayaran Interaktif</h4>
+                <p>Mengubah kolom input teks bank manual menjadi grid selector visual yang interaktif (Mandiri, BCA,
+                  BRI, QRIS, OVO, Tunai) dengan instruksi transfer yang dinamis.</p>
+              </div>
+              <div class="pivot-item">
+                <h4>3. Akses Invoice Mandiri dari Tracking Order</h4>
+                <p>Menambahkan tombol "Lihat Invoice" (Read-Only) pada daftar pesanan selesai di menu "Pesanan Saya"
+                  untuk memudahkan pencatatan tanpa harus masuk ke alur transaksi baru.</p>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; justify-content: center; gap: 16px;">
+              <div class="info-box" style="border-left: 4px solid var(--accent); background: rgba(245, 158, 11, 0.03);">
+                <h3 style="color: var(--accent-light);">💡 Mengapa Kami Melakukan Pivot?</h3>
+                <p style="margin-bottom: 12px;">Pivot ini tidak mengubah tujuan inti aplikasi, melainkan:</p>
+                <ul>
+                  <li>Meningkatkan **keamanan data pengguna** (Penghapusan NIK wajib).</li>
+                  <li>Memastikan **akurasi invoice** (Pemisahan tombol checkout & bukti).</li>
+                  <li>Meningkatkan **usabilitas visual** (Grid bank & visualisasi peta 3D).</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Output MVP & Roadmap -->
+    <div class="slide" id="slide-7">
+      <div class="slide-card">
+        <div class="slide-num">06</div>
+        <div>
+          <div class="slide-tagline">Kesimpulan & Langkah Berikutnya</div>
+          <h2 class="slide-title">Output MVP & Langkah Ideation</h2>
+          <p class="slide-subtitle">BizGrow siap dikembangkan lebih lanjut menuju fase produksi penuh berdasarkan
+            landasan kokoh prototype saat ini.</p>
+        </div>
+        <div class="slide-body">
+          <div class="grid-3">
+            <div class="info-box">
+              <h3>📦 Status MVP</h3>
+              <p>Kode bersih dan modular bebas error kompilasi. Semua fungsionalitas utama yang diuji luring (offline)
+                berjalan dengan performa rendering 60 FPS pada emulator Android/iOS.</p>
+            </div>
+
+            <div class="info-box">
+              <h3>⚡ Rencana Optimasi</h3>
+              <p>Menambahkan integrasi REST API atau Firebase sync untuk menyinkronkan database SQLite lokal secara
+                berkala saat perangkat terhubung ke internet (online-first sync).</p>
+            </div>
+
+            <div class="info-box">
+              <h3>🚀 Fitur Ideation Baru</h3>
+              <p>Menerapkan kecerdasan buatan sederhana untuk memprediksi tren penjualan mingguan langsung di dashboard
+                Owner berdasarkan riwayat transaksi lokal.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="controls">
+      <button class="btn btn-disabled" id="btn-prev" onclick="prevSlide()">◀ Sebelumnya</button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextSlide()">Berikutnya ▶</button>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+    </div>
+    <div class="nav-indicator" id="slide-indicator">Slide 1 dari 7</div>
+  </footer>
+
+  <script>
+    let currentSlideIndex = 1;
+    const totalSlides = 7;
+
+    const mockContent = {
+      invoice: `
+        <div style="background: white; color: #1e293b; padding: 12px; border-radius: 8px; font-family: monospace; border: 1px dashed #cbd5e1;">
+          <div style="text-align: center; font-weight: bold; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">INVOICE PENJUALAN</div>
+          <div style="margin: 8px 0; font-size: 10px;">
+            <div>TANGGAL: 12 Juni 2026</div>
+            <div>STATUS : <span style="color: #10b981; font-weight: bold;">LUNAS</span></div>
+            <div>METODE : MANDIRI VA</div>
+          </div>
+          <table style="width: 100%; font-size: 10px; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 1px solid #e2e8f0; text-align: left;">
+                <th>Produk</th>
+                <th>Qty</th>
+                <th>Harga</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Semen Tiga Roda</td><td>10</td><td>Rp650k</td></tr>
+              <tr><td>Batu Bata Merah</td><td>500</td><td>Rp450k</td></tr>
+            </tbody>
+          </table>
+          <div style="border-top: 1px solid #e2e8f0; margin-top: 8px; padding-top: 4px; text-align: right; font-weight: bold; font-size: 11px;">
+            Total: Rp1.100.000
+          </div>
+        </div>
+      `,
+      map: `
+        <div style="height: 100%; display: flex; flex-direction: column; gap: 8px;">
+          <div style="position: relative; height: 120px; background: #0f172a; border-radius: 8px; border: 1px solid #1e293b; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <!-- Simple SVG mockup of Map with shadows -->
+            <svg width="100%" height="100%" style="background: #0b0f19;">
+              <!-- Grid lines -->
+              <line x1="20" y1="0" x2="20" y2="120" stroke="rgba(255,255,255,0.05)" />
+              <line x1="80" y1="0" x2="80" y2="120" stroke="rgba(255,255,255,0.05)" />
+              <line x1="140" y1="0" x2="140" y2="120" stroke="rgba(255,255,255,0.05)" />
+              <line x1="0" y1="30" x2="250" y2="30" stroke="rgba(255,255,255,0.05)" />
+              <line x1="0" y1="90" x2="250" y2="90" stroke="rgba(255,255,255,0.05)" />
+              
+              <!-- Island shadow -->
+              <path d="M44 45 Q74 15 104 45 T164 45 Q194 75 144 95 Z" fill="rgba(0,0,0,0.4)" filter="blur(2px)" transform="translate(3, 4)" />
+              <!-- Island Land -->
+              <path d="M44 45 Q74 15 104 45 T164 45 Q194 75 144 95 Z" fill="#0d9488" stroke="#14b8a6" stroke-width="1.5" />
+              <!-- Coordinates Text -->
+              <text x="5" y="15" fill="#f59e0b" font-size="8" font-family="monospace">106.81° E</text>
+              <text x="5" y="110" fill="#f59e0b" font-size="8" font-family="monospace">-6.20° S</text>
+              
+              <!-- Selected Marker -->
+              <circle cx="104" cy="45" r="4" fill="#ef4444" />
+              <circle cx="104" cy="45" r="8" fill="none" stroke="#ef4444" stroke-width="1" opacity="0.7"/>
+            </svg>
+          </div>
+          <div style="font-size: 10px; color: var(--text-muted); text-align: center;">Visualisasi Custom Peta Wilayah & Bayangan 3D</div>
+        </div>
+      `,
+      profile: `
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold;">U</div>
+            <div>
+              <div style="font-weight: bold; font-size: 12px;">Budi Santoso</div>
+              <div style="font-size: 9px; color: var(--accent);">Role: Pembeli (Buyer)</div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; font-size: 10px;">
+            <div style="display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px;">
+              <span>Nomor Telepon</span>
+              <span style="font-weight: bold; color: var(--text-main);">0812-3456-7890</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px;">
+              <span>Notifikasi Pesanan</span>
+              <span style="color: var(--success); font-weight: bold;">AKTIF</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px; opacity: 0.4;">
+              <span>Target & Penjualan (Owner Only)</span>
+              <span>🔒 Terkunci</span>
+            </div>
+          </div>
+        </div>
+      `
+    };
+
+    function updateSlide() {
+      // Toggle active classes
+      for (let i = 1; i <= totalSlides; i++) {
+        const slide = document.getElementById(`slide-${i}`);
+        if (i === currentSlideIndex) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      }
+
+      // Update progress bar
+      const fillPercentage = ((currentSlideIndex - 1) / (totalSlides - 1)) * 100;
+      document.getElementById('progress-bar').style.width = `${fillPercentage}%`;
+
+      // Update indicator text
+      document.getElementById('slide-indicator').innerText = `Slide ${currentSlideIndex} dari ${totalSlides}`;
+
+      // Update button disabled state
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+
+      if (currentSlideIndex === 1) {
+        btnPrev.classList.add('btn-disabled');
+      } else {
+        btnPrev.classList.remove('btn-disabled');
+      }
+
+      if (currentSlideIndex === totalSlides) {
+        btnNext.innerText = "Selesai 🎉";
+      } else {
+        btnNext.innerText = "Berikutnya ▶";
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlideIndex < totalSlides) {
+        currentSlideIndex++;
+        updateSlide();
+      } else {
+        // Wrap or show completion animation
+        alert("Terima kasih! Semoga presentasi Anda sukses.");
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlideIndex > 1) {
+        currentSlideIndex--;
+        updateSlide();
+      }
+    }
+
+    function toggleChecklist(element) {
+      element.classList.toggle('checked');
+      const checkbox = element.querySelector('.checkbox');
+      if (element.classList.contains('checked')) {
+        checkbox.innerText = '✓';
+      } else {
+        checkbox.innerText = ' ';
+      }
+    }
+
+    function switchMockupTab(tabName) {
+      // Update tabs active state
+      const tabs = document.querySelectorAll('.mockup-tab');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+
+      // Update content
+      document.getElementById('mockup-content').innerHTML = mockContent[tabName];
+    }
+
+    // Key board navigation support
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight' || event.key === ' ') {
+        nextSlide();
+      } else if (event.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    // Initialize
+    updateSlide();
+    switchMockupTab('invoice');
+  </script>
+</body>
+
+</html>

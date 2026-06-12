@@ -29,9 +29,64 @@ class _InvoiceA4ViewState extends State<InvoiceA4View> {
   late int _qty;
   late double _unitPrice;
   late String _prodName;
-  DateTime _selectedDate = DateTime(2026, 6, 10);
+  DateTime _selectedDate = DateTime.now();
   List<ActivityModel> _invoiceItems = [];
   bool _isLoading = true;
+  bool _isPaid = false;
+  bool _isUploading = false;
+  String? _uploadedFileName;
+  String _selectedMethodId = "Mandiri VA";
+
+  final List<Map<String, dynamic>> _paymentMethods = [
+    {
+      "id": "Mandiri VA",
+      "label": "Mandiri VA",
+      "bank": "MANDIRI",
+      "color": const Color(0xFFF59E0B),
+      "icon": Icons.account_balance_rounded,
+      "va": "88081234567890",
+    },
+    {
+      "id": "BCA VA",
+      "label": "BCA VA",
+      "bank": "BCA",
+      "color": const Color(0xFF0D9488),
+      "icon": Icons.account_balance_rounded,
+      "va": "800081234567890",
+    },
+    {
+      "id": "BRI VA",
+      "label": "BRI VA",
+      "bank": "BRI",
+      "color": const Color(0xFF2563EB),
+      "icon": Icons.account_balance_rounded,
+      "va": "8801234567890123",
+    },
+    {
+      "id": "QRIS",
+      "label": "QRIS",
+      "bank": "QRIS",
+      "color": const Color(0xFFDC2626),
+      "icon": Icons.qr_code_2_rounded,
+      "va": "BIZGROW-QRIS-9921",
+    },
+    {
+      "id": "OVO",
+      "label": "OVO",
+      "bank": "OVO",
+      "color": const Color(0xFF4F46E5),
+      "icon": Icons.account_balance_wallet_rounded,
+      "va": "081234567890",
+    },
+    {
+      "id": "Tunai",
+      "label": "Tunai atau Cash",
+      "bank": "TUNAI",
+      "color": const Color(0xFF16A34A),
+      "icon": Icons.payments_rounded,
+      "va": "Bayar Langsung ke Kasir",
+    },
+  ];
 
   String _formatIndonesianDate(DateTime dt) {
     final months = [
@@ -109,8 +164,9 @@ class _InvoiceA4ViewState extends State<InvoiceA4View> {
         );
       }
       
-      // Clear the cart
-      await DBHelper().clearCart(SessionManager.email);
+      // Clear only the checked-out items from the cart
+      final productNames = _invoiceItems.map((item) => item.namaProduk ?? '').toList();
+      await DBHelper().clearSelectedCartItems(SessionManager.email, productNames);
     }
 
     if (mounted) {
@@ -204,528 +260,584 @@ class _InvoiceA4ViewState extends State<InvoiceA4View> {
               Center(
                 child: AspectRatio(
                   aspectRatio: 1 / 1.414,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 15,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Header
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  width: 28,
-                                  height: 28,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF0D9488),
-                                    borderRadius: BorderRadius.circular(6),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(
-                                          0xFF0D9488,
-                                        ).withValues(alpha: 0.2),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 1.5),
-                                      ),
-                                    ],
-                                  ),
-                                  child: const Icon(
-                                    Icons.auto_graph_rounded,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    const Text(
-                                      "BIZGROW",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF0F172A),
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      "Solusi Tumbuh Bisnis Anda",
-                                      style: TextStyle(
-                                        fontSize: 8,
-                                        color: const Color(0xFF475569),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                const Text(
-                                  "INVOICE",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w900,
-                                    color: Color(0xFF0F172A),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "No: INV-${widget.order.kodePesanan.replaceAll('#', '')}",
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF64748B),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Container(height: 1, color: const Color(0xFFCBD5E1)),
-                        const SizedBox(height: 16),
-
-                        // Billing Details
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "DITERBITKAN UNTUK:",
-                                    style: TextStyle(
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color(0xFF64748B),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    SessionManager.name,
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF0F172A),
-                                    ),
-                                  ),
-                                  Text(
-                                    SessionManager.email,
-                                    style: const TextStyle(
-                                      fontSize: 9,
-                                      color: Color(0xFF64748B),
-                                    ),
-                                  ),
-                                  Text(
-                                    widget.address,
-                                    style: const TextStyle(
-                                      fontSize: 9,
-                                      color: Color(0xFF64748B),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  "TANGGAL TRANSAKSI:",
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF64748B),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  widget.isReadOnly
-                                      ? widget.order.tanggal
-                                      : _formatIndonesianDate(_selectedDate),
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF0F172A),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  "METODE PEMBAYARAN:",
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF64748B),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                const Text(
-                                  "Transfer Bank",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF0F172A),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Table Headers
-                        Container(
-                          color: const Color(0xFFF1F5F9),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 8,
-                          ),
-                          child: const Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  "DESKRIPSI PRODUK",
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF0F172A),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  "QTY",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF0F172A),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  "HARGA",
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF0F172A),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  "TOTAL",
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF0F172A),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Table Item Rows
-                        if (_isLoading)
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.0),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Color(0xFF0D9488),
-                              ),
-                            ),
-                          )
-                        else if (_invoiceItems.length <= 1)
-                          Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0,
-                                  vertical: 12.0,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            _prodName,
-                                            style: const TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF0F172A),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            "Produk premium pilihan",
-                                            style: TextStyle(
-                                              fontSize: 8,
-                                              color: const Color(0xFF64748B),
-                                            ),
+                                    Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF0D9488),
+                                        borderRadius: BorderRadius.circular(6),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(
+                                              0xFF0D9488,
+                                            ).withValues(alpha: 0.2),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 1.5),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text(
-                                        "$_qty",
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF0F172A),
-                                        ),
+                                      child: const Icon(
+                                        Icons.auto_graph_rounded,
+                                        color: Colors.white,
+                                        size: 16,
                                       ),
                                     ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text(
-                                        "Rp ${_unitPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
-                                        textAlign: TextAlign.right,
-                                        style: const TextStyle(
-                                          fontSize: 9,
-                                          color: Color(0xFF0F172A),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text(
-                                        "Rp ${subtotal.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
-                                        textAlign: TextAlign.right,
-                                        style: const TextStyle(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF0F172A),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(height: 0.5, color: const Color(0xFFE2E8F0)),
-                            ],
-                          )
-                        else
-                          Column(
-                            children: _invoiceItems.map((item) {
-                              final double itemPrice = item.total / (item.jumlah ?? 1);
-                              return Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0,
-                                      vertical: 12.0,
-                                    ),
-                                    child: Row(
+                                    const SizedBox(width: 8),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(
-                                          flex: 3,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                item.namaProduk ?? "-",
-                                                style: const TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color(0xFF0F172A),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 2),
-                                              Text(
-                                                "Produk premium pilihan",
-                                                style: TextStyle(
-                                                  fontSize: 8,
-                                                  color: const Color(0xFF64748B),
-                                                ),
-                                              ),
-                                            ],
+                                        const Text(
+                                          "BIZGROW",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF0F172A),
+                                            letterSpacing: 0.5,
                                           ),
                                         ),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(
-                                            "${item.jumlah}",
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                              fontSize: 9,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF0F172A),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(
-                                            "Rp ${itemPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
-                                            textAlign: TextAlign.right,
-                                            style: const TextStyle(
-                                              fontSize: 9,
-                                              color: Color(0xFF0F172A),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(
-                                            "Rp ${item.total.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
-                                            textAlign: TextAlign.right,
-                                            style: const TextStyle(
-                                              fontSize: 9,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF0F172A),
-                                            ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          "Solusi Tumbuh Bisnis Anda",
+                                          style: TextStyle(
+                                            fontSize: 8,
+                                            color: const Color(0xFF475569),
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  Container(height: 0.5, color: const Color(0xFFE2E8F0)),
-                                ],
-                              );
-                            }).toList(),
-                          ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    const Text(
+                                      "INVOICE",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w900,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "No: INV-${widget.order.kodePesanan.replaceAll('#', '')}",
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF64748B),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Container(height: 1, color: const Color(0xFFCBD5E1)),
+                            const SizedBox(height: 16),
 
-                        const Spacer(),
-
-                        // Subtotal & Calculations
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            CustomSizedWidthBox(
-                              width: 180,
-                              child: Column(
-                                children: [
-                                  _buildInvoiceSummaryRow("Subtotal", subtotal),
-                                  const SizedBox(height: 6),
-                                  _buildInvoiceSummaryRow("PPN (11%)", tax),
-                                  const SizedBox(height: 6),
-                                  Container(
-                                    height: 1,
-                                    color: const Color(0xFFCBD5E1),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                            // Billing Details
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
-                                        "Total Akhir",
+                                      Text(
+                                        "DITERBITKAN UNTUK:",
                                         style: TextStyle(
-                                          fontSize: 10,
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color(0xFF64748B),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        SessionManager.name,
+                                        style: const TextStyle(
+                                          fontSize: 11,
                                           fontWeight: FontWeight.bold,
                                           color: Color(0xFF0F172A),
                                         ),
                                       ),
                                       Text(
-                                        "Rp ${total.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                                        SessionManager.email,
                                         style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF0D9488),
+                                          fontSize: 9,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                      ),
+                                      Text(
+                                        widget.address,
+                                        style: const TextStyle(
+                                          fontSize: 9,
+                                          color: Color(0xFF64748B),
                                         ),
                                       ),
                                     ],
                                   ),
+                                ),
+                                const SizedBox(width: 16),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      "TANGGAL TRANSAKSI:",
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xFF64748B),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      widget.isReadOnly
+                                          ? widget.order.tanggal
+                                          : _formatIndonesianDate(_selectedDate),
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      "METODE PEMBAYARAN:",
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xFF64748B),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _selectedMethodId == "QRIS"
+                                          ? "QRIS (GPN)"
+                                          : _selectedMethodId == "OVO"
+                                              ? "OVO E-Wallet"
+                                              : _selectedMethodId == "Tunai"
+                                                  ? "Tunai atau Cash"
+                                                  : "Transfer Bank ($_selectedMethodId)",
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                    Text(
+                                      _selectedMethodId == "QRIS"
+                                          ? "ID: ${_paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['va']}"
+                                          : _selectedMethodId == "OVO"
+                                              ? "No: ${_paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['va']}"
+                                              : _selectedMethodId == "Tunai"
+                                                  ? "Bayar Langsung ke Kasir"
+                                                  : "VA: ${_paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['va']}",
+                                      style: const TextStyle(
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF0D9488),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+
+                            // Table Headers
+                            Container(
+                              color: const Color(0xFFF1F5F9),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 8,
+                              ),
+                              child: const Row(
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      "DESKRIPSI PRODUK",
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      "QTY",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      "HARGA",
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      "TOTAL",
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
 
-                        const SizedBox(height: 36),
+                            // Table Item Rows Wrapped in Expanded ScrollView to prevent notes overflow
+                            Expanded(
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: Column(
+                                  children: [
+                                    if (_isLoading)
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            color: Color(0xFF0D9488),
+                                          ),
+                                        ),
+                                      )
+                                    else if (_invoiceItems.length <= 1)
+                                      Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0,
+                                              vertical: 12.0,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        _prodName,
+                                                        style: const TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Color(0xFF0F172A),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 2),
+                                                      Text(
+                                                        "Produk premium pilihan",
+                                                        style: TextStyle(
+                                                          fontSize: 8,
+                                                          color: const Color(0xFF64748B),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    "$_qty",
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                      fontSize: 9,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Color(0xFF0F172A),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    "Rp ${_unitPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                                                    textAlign: TextAlign.right,
+                                                    style: const TextStyle(
+                                                      fontSize: 9,
+                                                      color: Color(0xFF0F172A),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    "Rp ${subtotal.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                                                    textAlign: TextAlign.right,
+                                                    style: const TextStyle(
+                                                      fontSize: 9,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Color(0xFF0F172A),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Container(height: 0.5, color: const Color(0xFFE2E8F0)),
+                                        ],
+                                      )
+                                    else
+                                      Column(
+                                        children: _invoiceItems.map((item) {
+                                          final double itemPrice = item.total / (item.jumlah ?? 1);
+                                          return Column(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8.0,
+                                                  vertical: 12.0,
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(
+                                                            item.namaProduk ?? "-",
+                                                            style: const TextStyle(
+                                                              fontSize: 10,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Color(0xFF0F172A),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(height: 2),
+                                                          Text(
+                                                            "Produk premium pilihan",
+                                                            style: TextStyle(
+                                                              fontSize: 8,
+                                                              color: const Color(0xFF64748B),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        "${item.jumlah}",
+                                                        textAlign: TextAlign.center,
+                                                        style: const TextStyle(
+                                                          fontSize: 9,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Color(0xFF0F172A),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        "Rp ${itemPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                                                        textAlign: TextAlign.right,
+                                                        style: const TextStyle(
+                                                          fontSize: 9,
+                                                          color: Color(0xFF0F172A),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        "Rp ${item.total.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                                                        textAlign: TextAlign.right,
+                                                        style: const TextStyle(
+                                                          fontSize: 9,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Color(0xFF0F172A),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(height: 0.5, color: const Color(0xFFE2E8F0)),
+                                            ],
+                                          );
+                                        }).toList(),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
 
-                        // Bottom Signatures
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            // Subtotal & Calculations
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text(
-                                  "Catatan:",
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF475569),
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  "1. Pembayaran sah setelah dana masuk rekening.",
-                                  style: TextStyle(
-                                    fontSize: 7,
-                                    color: const Color(0xFF64748B),
-                                  ),
-                                ),
-                                Text(
-                                  "2. Invoice ini diterbitkan secara elektronik.",
-                                  style: TextStyle(
-                                    fontSize: 7,
-                                    color: const Color(0xFF64748B),
+                                CustomSizedWidthBox(
+                                  width: 180,
+                                  child: Column(
+                                    children: [
+                                      _buildInvoiceSummaryRow("Subtotal", subtotal),
+                                      const SizedBox(height: 6),
+                                      _buildInvoiceSummaryRow("PPN (11%)", tax),
+                                      const SizedBox(height: 6),
+                                      Container(
+                                        height: 1,
+                                        color: const Color(0xFFCBD5E1),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Text(
+                                            "Total Akhir",
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF0F172A),
+                                            ),
+                                          ),
+                                          Text(
+                                            "Rp ${total.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF0D9488),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
-                            Column(
+
+                            const SizedBox(height: 36),
+
+                            // Bottom Signatures
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  "Hormat Kami,",
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF0F172A),
-                                  ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Catatan:",
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xFF475569),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      "1. Pembayaran sah setelah dana masuk rekening.",
+                                      style: TextStyle(
+                                        fontSize: 7,
+                                        color: const Color(0xFF64748B),
+                                      ),
+                                    ),
+                                    Text(
+                                      "2. Invoice ini diterbitkan secara elektronik.",
+                                      style: TextStyle(
+                                        fontSize: 7,
+                                        color: const Color(0xFF64748B),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 24),
-                                const Text(
-                                  "BIZGROW FINANCE",
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline,
-                                    color: Color(0xFF0F172A),
-                                  ),
+                                Column(
+                                  children: [
+                                    const Text(
+                                      "Hormat Kami,",
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    const Text(
+                                      "BIZGROW FINANCE",
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.underline,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                      if (_isPaid || widget.isReadOnly)
+                        Positioned(
+                          right: 30,
+                          top: 120,
+                          child: Transform.rotate(
+                            angle: -0.2,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: const Color(0xFF10B981), width: 3),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text(
+                                "LUNAS",
+                                style: TextStyle(
+                                  color: Color(0xFF10B981),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -760,7 +872,7 @@ class _InvoiceA4ViewState extends State<InvoiceA4View> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "LOKASI PENGIRIMAN",
+                                "LOKASI TOKO",
                                 style: TextStyle(
                                   color: context.textSecondary,
                                   fontWeight: FontWeight.bold,
@@ -781,6 +893,330 @@ class _InvoiceA4ViewState extends State<InvoiceA4View> {
                             ],
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Horizontal Payment Method Selector Scroll Row
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "PILIH METODE PEMBAYARAN",
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 75,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: _paymentMethods.length,
+                          itemBuilder: (context, index) {
+                            final method = _paymentMethods[index];
+                            final isSelected = _selectedMethodId == method['id'];
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedMethodId = method['id'];
+                                });
+                              },
+                              child: Container(
+                                width: 105,
+                                margin: const EdgeInsets.only(right: 10),
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? method['color'].withValues(alpha: 0.12)
+                                      : context.cardBg,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? method['color']
+                                        : context.borderColor,
+                                    width: isSelected ? 2.0 : 1.5,
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      method['icon'],
+                                      color: isSelected ? method['color'] : context.iconColor,
+                                      size: 22,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      method['label'],
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                        color: isSelected ? method['color'] : context.textPrimary,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Virtual Account / Payment Info Card
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: context.cardBg,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: context.borderColor,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "INFORMASI PEMBAYARAN",
+                              style: TextStyle(
+                                color: context.textSecondary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: _paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['color'].withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                _selectedMethodId.endsWith("VA")
+                                    ? "Virtual Account"
+                                    : (_selectedMethodId == "QRIS" ? "QR Code" : "Digital Payment"),
+                                style: TextStyle(
+                                  color: _paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['color'],
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 9,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        if (_selectedMethodId == "QRIS") ...[
+                          Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(height: 8),
+                                Container(
+                                  width: 160,
+                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFDC2626),
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      "QRIS",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 16,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: 160,
+                                  height: 160,
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 8,
+                                        offset: Offset(0, 4),
+                                      )
+                                    ],
+                                  ),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      CustomPaint(
+                                        size: const Size(136, 136),
+                                        painter: QrisQrPainter(
+                                          data: _paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['va'],
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 28,
+                                        height: 28,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(4),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                              color: Colors.black26,
+                                              blurRadius: 3,
+                                            )
+                                          ],
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            "BG",
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w900,
+                                              color: Color(0xFF0D9488),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  "Pindai Kode QRIS untuk Membayar",
+                                  style: TextStyle(
+                                    color: context.textPrimary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      _paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['va'],
+                                      style: TextStyle(
+                                        color: context.textSecondary,
+                                        fontSize: 11,
+                                        fontFamily: 'monospace',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    GestureDetector(
+                                      onTap: () {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: const Text("ID QRIS disalin!"),
+                                            backgroundColor: const Color(0xFF0D9488),
+                                            behavior: SnackBarBehavior.floating,
+                                            duration: const Duration(seconds: 1),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: const Icon(Icons.copy_rounded, size: 14, color: Color(0xFF0D9488)),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ] else ...[
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: _paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['color'],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  _paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['bank'],
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11,
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _selectedMethodId == "OVO"
+                                          ? "OVO E-Wallet"
+                                          : _selectedMethodId == "Tunai"
+                                              ? "Pembayaran Tunai"
+                                              : "Bank ${_paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['bank']} Virtual Account",
+                                      style: TextStyle(
+                                        color: context.textPrimary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      _paymentMethods.firstWhere((e) => e['id'] == _selectedMethodId)['va'],
+                                      style: TextStyle(
+                                        color: context.textPrimary,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: _selectedMethodId == "Tunai" ? 0.0 : 1.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (_selectedMethodId != "Tunai")
+                                IconButton(
+                                  icon: const Icon(Icons.copy_rounded, size: 20),
+                                  color: const Color(0xFF0D9488),
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          "${_selectedMethodId == 'OVO' ? 'Nomor' : 'Nomor Virtual Account'} disalin!",
+                                        ),
+                                        backgroundColor: const Color(0xFF0D9488),
+                                        behavior: SnackBarBehavior.floating,
+                                        duration: const Duration(seconds: 1),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -885,6 +1321,177 @@ class _InvoiceA4ViewState extends State<InvoiceA4View> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                // Upload Proof of Payment Card
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: _uploadedFileName != null
+                          ? const Color(0xFF10B981).withValues(alpha: 0.05)
+                          : context.cardBg,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: _uploadedFileName != null
+                            ? const Color(0xFF10B981)
+                            : (_isUploading ? const Color(0xFF0D9488) : context.borderColor),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "BUKTI PEMBAYARAN",
+                              style: TextStyle(
+                                color: context.textSecondary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            Icon(
+                              _uploadedFileName != null
+                                  ? Icons.check_circle_rounded
+                                  : Icons.upload_file_rounded,
+                              color: _uploadedFileName != null
+                                  ? const Color(0xFF10B981)
+                                  : const Color(0xFF64748B),
+                              size: 18,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        if (_uploadedFileName == null && !_isUploading) ...[
+                          Text(
+                            "Kirim atau unggah foto bukti transfer untuk melakukan verifikasi pembayaran.",
+                            style: TextStyle(color: context.textSecondary, fontSize: 12),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0D9488),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            icon: const Icon(Icons.add_photo_alternate_rounded, size: 20),
+                            label: const Text(
+                              "Unggah Foto Bukti",
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                            onPressed: () {
+                              _showProofImagePickerDialog(context, (selectedPath) async {
+                                setState(() {
+                                  _isUploading = true;
+                                });
+
+                                // Simulate choosing file and uploading
+                                await Future.delayed(const Duration(milliseconds: 1200));
+
+                                if (!mounted) return;
+
+                                setState(() {
+                                  _isUploading = false;
+                                  _uploadedFileName = selectedPath.split('/').last;
+                                  _isPaid = true;
+                                });
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text(
+                                      "Bukti transfer terunggah! Silakan klik tombol 'Checkout Sekarang' di bawah untuk melanjutkan.",
+                                    ),
+                                    backgroundColor: const Color(0xFF10B981),
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: const Duration(seconds: 4),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                );
+                              });
+                            },
+                          ),
+                        ] else if (_isUploading) ...[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0D9488)),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                "Mengunggah bukti pembayaran...",
+                                style: TextStyle(
+                                  color: context.textPrimary,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ] else ...[
+                          Row(
+                            children: [
+                              Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.image_rounded,
+                                  color: Color(0xFF10B981),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _uploadedFileName!,
+                                      style: TextStyle(
+                                        color: context.textPrimary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    const Text(
+                                      "Telah Terverifikasi",
+                                      style: TextStyle(
+                                        color: Color(0xFF10B981),
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 // Checkout Button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -893,27 +1500,29 @@ class _InvoiceA4ViewState extends State<InvoiceA4View> {
                     height: 52,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0F172A),
+                        backgroundColor: _isPaid ? const Color(0xFF0D9488) : const Color(0xFF94A3B8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                         elevation: 0,
                       ),
-                      onPressed: () => _executeCheckout(total),
-                      child: const Row(
+                      onPressed: _isPaid ? () => _executeCheckout(total) : null,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.shopping_cart_checkout_rounded,
                             color: Colors.white,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
-                            "Checkout Sekarang",
-                            style: TextStyle(
+                            _isPaid
+                                ? "Checkout Sekarang"
+                                : "Belum Dibayar (Konfirmasi ${_selectedMethodId.replaceAll(' VA', '')})",
+                            style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 15,
                             ),
                           ),
                         ],
@@ -1073,6 +1682,85 @@ class _InvoiceA4ViewState extends State<InvoiceA4View> {
       ],
     );
   }
+
+  void _showProofImagePickerDialog(BuildContext context, Function(String) onSelect) {
+    final List<String> images = [
+      'assets/images/gam1.png',
+      'assets/images/gam2.jpg',
+      'assets/images/gam3.jpg',
+      'assets/images/gam4.jpg',
+      'assets/images/gam5.jpg',
+      'assets/images/gam6.jpg',
+      'assets/images/gam7.jpg',
+      'assets/images/gam8.jpg',
+      'assets/images/gam9.jpg',
+      'assets/images/gam10.png',
+    ];
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: context.cardBg,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Pilih Bukti Transfer",
+                style: TextStyle(
+                  color: context.textPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.close, color: context.iconColor),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 260,
+            child: GridView.builder(
+              physics: const BouncingScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemCount: images.length,
+              itemBuilder: (context, index) {
+                final imgPath = images[index];
+                return GestureDetector(
+                  onTap: () {
+                    onSelect(imgPath);
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: context.borderColor),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        imgPath,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class CustomSizedWidthBox extends StatelessWidget {
@@ -1105,15 +1793,49 @@ class MapPainter extends CustomPainter {
     final oceanPaint = Paint()..color = const Color(0xFFA5C9EB);
     canvas.drawRect(oceanRect, oceanPaint);
 
-    // Subtle coordinate grid
-    paint.color = Colors.white.withValues(alpha: 0.2);
-    paint.strokeWidth = 0.8;
-    for (double i = 0; i < w; i += 50) {
+    // Detailed Coordinate Grid: major (every 100px) and minor (every 25px) lines
+    for (double i = 0; i < w; i += 25) {
+      final isMajor = i.round() % 100 == 0;
+      paint.color = isMajor
+          ? Colors.white.withValues(alpha: 0.25)
+          : Colors.white.withValues(alpha: 0.08);
+      paint.strokeWidth = isMajor ? 1.0 : 0.5;
       canvas.drawLine(Offset(i, 0), Offset(i, h), paint);
     }
-    for (double i = 0; i < h; i += 50) {
+    for (double i = 0; i < h; i += 25) {
+      final isMajor = i.round() % 100 == 0;
+      paint.color = isMajor
+          ? Colors.white.withValues(alpha: 0.25)
+          : Colors.white.withValues(alpha: 0.08);
+      paint.strokeWidth = isMajor ? 1.0 : 0.5;
       canvas.drawLine(Offset(0, i), Offset(w, i), paint);
     }
+
+    // Grid Labels for premium maps detailing
+    void drawGridLabel(String text, Offset pos) {
+      final tp = TextPainter(
+        text: TextSpan(
+          text: text,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.4),
+            fontSize: 7.5,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      tp.layout();
+      tp.paint(canvas, pos);
+    }
+    drawGridLabel("100°E", const Offset(100, 5));
+    drawGridLabel("110°E", const Offset(300, 5));
+    drawGridLabel("120°E", const Offset(500, 5));
+    drawGridLabel("130°E", const Offset(700, 5));
+    drawGridLabel("140°E", const Offset(900, 5));
+
+    drawGridLabel("0°EQ", const Offset(5, 200));
+    drawGridLabel("5°S", const Offset(5, 400));
+    drawGridLabel("10°S", const Offset(5, 600));
 
     // 2. Land Paint - Google Maps signature warm beige
     final landColor = const Color(0xFFF1F3F4);
@@ -1143,16 +1865,6 @@ class MapPainter extends CustomPainter {
       ..lineTo(w * 0.12, h * 0.38)
       ..quadraticBezierTo(w * 0.06, h * 0.28, w * 0.04, h * 0.18)
       ..close();
-    canvas.drawPath(pathSumatera, landPaint);
-
-    final pathSumateraParks = Path()
-      ..moveTo(w * 0.08, h * 0.20)
-      ..quadraticBezierTo(w * 0.12, h * 0.22, w * 0.15, h * 0.28)
-      ..lineTo(w * 0.25, h * 0.45)
-      ..quadraticBezierTo(w * 0.29, h * 0.49, w * 0.27, h * 0.54)
-      ..close();
-    canvas.drawPath(pathSumateraParks, parkPaint);
-    canvas.drawPath(pathSumatera, borderPaint);
 
     // 2. Jawa
     final pathJawa = Path()
@@ -1162,15 +1874,6 @@ class MapPainter extends CustomPainter {
       ..quadraticBezierTo(w * 0.58, h * 0.74, w * 0.54, h * 0.73)
       ..quadraticBezierTo(w * 0.46, h * 0.72, w * 0.33, h * 0.69)
       ..close();
-    canvas.drawPath(pathJawa, landPaint);
-
-    final pathJawaParks = Path()
-      ..moveTo(w * 0.35, h * 0.68)
-      ..quadraticBezierTo(w * 0.40, h * 0.68, w * 0.43, h * 0.71)
-      ..quadraticBezierTo(w * 0.48, h * 0.71, w * 0.52, h * 0.72)
-      ..close();
-    canvas.drawPath(pathJawaParks, parkPaint);
-    canvas.drawPath(pathJawa, borderPaint);
 
     // 3. Kalimantan
     final pathKalimantan = Path()
@@ -1183,15 +1886,6 @@ class MapPainter extends CustomPainter {
       ..quadraticBezierTo(w * 0.46, h * 0.51, w * 0.40, h * 0.46)
       ..quadraticBezierTo(w * 0.36, h * 0.42, w * 0.38, h * 0.35)
       ..close();
-    canvas.drawPath(pathKalimantan, landPaint);
-
-    final pathKalimantanParks = Path()
-      ..moveTo(w * 0.42, h * 0.28)
-      ..quadraticBezierTo(w * 0.48, h * 0.25, w * 0.52, h * 0.30)
-      ..quadraticBezierTo(w * 0.50, h * 0.42, w * 0.44, h * 0.40)
-      ..close();
-    canvas.drawPath(pathKalimantanParks, parkPaint);
-    canvas.drawPath(pathKalimantan, borderPaint);
 
     // 4. Sulawesi
     final pathSulawesi = Path()
@@ -1204,14 +1898,6 @@ class MapPainter extends CustomPainter {
       ..quadraticBezierTo(w * 0.63, h * 0.58, w * 0.60, h * 0.58)
       ..quadraticBezierTo(w * 0.61, h * 0.48, w * 0.61, h * 0.42)
       ..close();
-    canvas.drawPath(pathSulawesi, landPaint);
-
-    final pathSulawesiParks = Path()
-      ..moveTo(w * 0.64, h * 0.38)
-      ..quadraticBezierTo(w * 0.66, h * 0.42, w * 0.68, h * 0.46)
-      ..close();
-    canvas.drawPath(pathSulawesiParks, parkPaint);
-    canvas.drawPath(pathSulawesi, borderPaint);
 
     // 5. Papua
     final pathPapua = Path()
@@ -1223,15 +1909,6 @@ class MapPainter extends CustomPainter {
       ..quadraticBezierTo(w * 0.92, h * 0.61, w * 0.88, h * 0.58)
       ..quadraticBezierTo(w * 0.84, h * 0.54, w * 0.80, h * 0.40)
       ..close();
-    canvas.drawPath(pathPapua, landPaint);
-
-    final pathPapuaParks = Path()
-      ..moveTo(w * 0.84, h * 0.42)
-      ..quadraticBezierTo(w * 0.90, h * 0.45, w * 0.94, h * 0.50)
-      ..quadraticBezierTo(w * 0.88, h * 0.54, w * 0.85, h * 0.48)
-      ..close();
-    canvas.drawPath(pathPapuaParks, parkPaint);
-    canvas.drawPath(pathPapua, borderPaint);
 
     // 6. Bali & Nusa Tenggara
     final pathBaliNusa = Path()
@@ -1241,6 +1918,71 @@ class MapPainter extends CustomPainter {
       ..quadraticBezierTo(w * 0.75, h * 0.77, w * 0.68, h * 0.76)
       ..lineTo(w * 0.59, h * 0.74)
       ..close();
+
+    // 3D Drop Shadows Paint
+    final shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.16)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
+
+    // Draw Shadows first for all islands to create realistic elevation depth
+    canvas.drawPath(pathSumatera.shift(const Offset(4, 5)), shadowPaint);
+    canvas.drawPath(pathJawa.shift(const Offset(4, 5)), shadowPaint);
+    canvas.drawPath(pathKalimantan.shift(const Offset(4, 5)), shadowPaint);
+    canvas.drawPath(pathSulawesi.shift(const Offset(4, 5)), shadowPaint);
+    canvas.drawPath(pathPapua.shift(const Offset(4, 5)), shadowPaint);
+    canvas.drawPath(pathBaliNusa.shift(const Offset(4, 5)), shadowPaint);
+
+    // 1. Sumatera
+    canvas.drawPath(pathSumatera, landPaint);
+    final pathSumateraParks = Path()
+      ..moveTo(w * 0.08, h * 0.20)
+      ..quadraticBezierTo(w * 0.12, h * 0.22, w * 0.15, h * 0.28)
+      ..lineTo(w * 0.25, h * 0.45)
+      ..quadraticBezierTo(w * 0.29, h * 0.49, w * 0.27, h * 0.54)
+      ..close();
+    canvas.drawPath(pathSumateraParks, parkPaint);
+    canvas.drawPath(pathSumatera, borderPaint);
+
+    // 2. Jawa
+    canvas.drawPath(pathJawa, landPaint);
+    final pathJawaParks = Path()
+      ..moveTo(w * 0.35, h * 0.68)
+      ..quadraticBezierTo(w * 0.40, h * 0.68, w * 0.43, h * 0.71)
+      ..quadraticBezierTo(w * 0.48, h * 0.71, w * 0.52, h * 0.72)
+      ..close();
+    canvas.drawPath(pathJawaParks, parkPaint);
+    canvas.drawPath(pathJawa, borderPaint);
+
+    // 3. Kalimantan
+    canvas.drawPath(pathKalimantan, landPaint);
+    final pathKalimantanParks = Path()
+      ..moveTo(w * 0.42, h * 0.28)
+      ..quadraticBezierTo(w * 0.48, h * 0.25, w * 0.52, h * 0.30)
+      ..quadraticBezierTo(w * 0.50, h * 0.42, w * 0.44, h * 0.40)
+      ..close();
+    canvas.drawPath(pathKalimantanParks, parkPaint);
+    canvas.drawPath(pathKalimantan, borderPaint);
+
+    // 4. Sulawesi
+    canvas.drawPath(pathSulawesi, landPaint);
+    final pathSulawesiParks = Path()
+      ..moveTo(w * 0.64, h * 0.38)
+      ..quadraticBezierTo(w * 0.66, h * 0.42, w * 0.68, h * 0.46)
+      ..close();
+    canvas.drawPath(pathSulawesiParks, parkPaint);
+    canvas.drawPath(pathSulawesi, borderPaint);
+
+    // 5. Papua
+    canvas.drawPath(pathPapua, landPaint);
+    final pathPapuaParks = Path()
+      ..moveTo(w * 0.84, h * 0.42)
+      ..quadraticBezierTo(w * 0.90, h * 0.45, w * 0.94, h * 0.50)
+      ..quadraticBezierTo(w * 0.88, h * 0.54, w * 0.85, h * 0.48)
+      ..close();
+    canvas.drawPath(pathPapuaParks, parkPaint);
+    canvas.drawPath(pathPapua, borderPaint);
+
+    // 6. Bali & Nusa Tenggara
     canvas.drawPath(pathBaliNusa, landPaint);
     canvas.drawPath(pathBaliNusa, borderPaint);
 
@@ -1431,5 +2173,53 @@ class MapPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant MapPainter oldDelegate) =>
       oldDelegate.markerPosition != markerPosition;
+}
+
+class QrisQrPainter extends CustomPainter {
+  final String data;
+  QrisQrPainter({required this.data});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFF0F172A)
+      ..style = PaintingStyle.fill;
+
+    final double squareSize = size.width / 21;
+
+    void drawFinderPattern(int gridX, int gridY) {
+      final double x = gridX * squareSize;
+      final double y = gridY * squareSize;
+      canvas.drawRect(Rect.fromLTWH(x, y, 7 * squareSize, 7 * squareSize), paint);
+      final whitePaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
+      canvas.drawRect(Rect.fromLTWH(x + squareSize, y + squareSize, 5 * squareSize, 5 * squareSize), whitePaint);
+      canvas.drawRect(Rect.fromLTWH(x + 2 * squareSize, y + 2 * squareSize, 3 * squareSize, 3 * squareSize), paint);
+    }
+
+    drawFinderPattern(0, 0);
+    drawFinderPattern(14, 0);
+    drawFinderPattern(0, 14);
+
+    final int hash = data.hashCode;
+    for (int r = 0; r < 21; r++) {
+      for (int c = 0; c < 21; c++) {
+        if ((r < 8 && c < 8) || (r < 8 && c > 12) || (r > 12 && c < 8)) {
+          continue;
+        }
+        final int val = (r * 7 + c * 13 + hash) % 5;
+        if (val == 0 || val == 2 || (r == 18 && c == 18)) {
+          canvas.drawRect(
+            Rect.fromLTWH(c * squareSize, r * squareSize, squareSize, squareSize),
+            paint,
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 

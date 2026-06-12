@@ -15,6 +15,7 @@ class CartView extends StatefulWidget {
 class _CartViewState extends State<CartView> {
   List<CartItemModel> _cartItems = [];
   bool _isLoading = true;
+  final Set<int> _selectedItemIds = {};
 
   @override
   void initState() {
@@ -29,6 +30,10 @@ class _CartViewState extends State<CartView> {
     final items = await DBHelper().getCart(SessionManager.email);
     setState(() {
       _cartItems = items;
+      if (_selectedItemIds.isNotEmpty) {
+        final currentIds = items.map((e) => e.id).toSet();
+        _selectedItemIds.retainAll(currentIds.whereType<int>());
+      }
       _isLoading = false;
     });
   }
@@ -76,7 +81,10 @@ class _CartViewState extends State<CartView> {
     _loadCart();
   }
 
-  String _getProductImage(String productName) {
+  String _getProductImage(String productName, String? dbGambar) {
+    if (dbGambar != null && dbGambar.isNotEmpty) {
+      return dbGambar;
+    }
     switch (productName) {
       case 'Produk A':
         return 'assets/images/1.jpg';
@@ -88,6 +96,26 @@ class _CartViewState extends State<CartView> {
         return 'assets/images/4.jpg';
       case 'Produk E (Habis)':
         return 'assets/images/5.jpg';
+      case 'Produk F':
+        return 'assets/images/8.jpg';
+      case 'Produk G':
+        return 'assets/images/9.jpg';
+      case 'Produk H':
+        return 'assets/images/10.jpg';
+      case 'Produk I':
+        return 'assets/images/11.jpg';
+      case 'Produk J':
+        return 'assets/images/12.jpg';
+      case 'Produk K':
+        return 'assets/images/13.jpg';
+      case 'Produk L':
+        return 'assets/images/14.jpg';
+      case 'Produk M':
+        return 'assets/images/15.jpg';
+      case 'Produk N':
+        return 'assets/images/6.webp';
+      case 'Produk O':
+        return 'assets/images/7.webp';
       default:
         return '';
     }
@@ -97,9 +125,13 @@ class _CartViewState extends State<CartView> {
   Widget build(BuildContext context) {
     double totalPrice = 0.0;
     int totalItems = 0;
+    int totalCapacity = 0;
     for (var item in _cartItems) {
-      totalPrice += item.productHarga * item.jumlah;
-      totalItems += item.jumlah;
+      totalCapacity += item.jumlah;
+      if (item.id != null && _selectedItemIds.contains(item.id)) {
+        totalPrice += item.productHarga * item.jumlah;
+        totalItems += item.jumlah;
+      }
     }
 
     return ElegantBackground(
@@ -118,33 +150,65 @@ class _CartViewState extends State<CartView> {
           ),
           centerTitle: true,
           actions: [
-            if (_cartItems.isNotEmpty)
+            if (_cartItems.isNotEmpty) ...[
               IconButton(
-                icon: const Icon(Icons.delete_sweep_rounded, color: Colors.redAccent),
-                onPressed: () async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text("Kosongkan Keranjang"),
-                      content: const Text("Hapus semua produk dari keranjang belanja Anda?"),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: const Text("Batal", style: TextStyle(color: Colors.grey)),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, true),
-                          child: const Text("Hapus Semua", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                  );
-                  if (confirm == true) {
-                    await DBHelper().clearCart(SessionManager.email);
-                    _loadCart();
-                  }
+                icon: Icon(
+                  _selectedItemIds.length == _cartItems.length
+                      ? Icons.check_box_rounded
+                      : Icons.check_box_outline_blank_rounded,
+                  color: const Color(0xFF0D9488),
+                ),
+                onPressed: () {
+                  setState(() {
+                    if (_selectedItemIds.length == _cartItems.length) {
+                      _selectedItemIds.clear();
+                    } else {
+                      for (var item in _cartItems) {
+                        if (item.id != null) {
+                          _selectedItemIds.add(item.id!);
+                        }
+                      }
+                    }
+                  });
                 },
               ),
+              IconButton(
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  color: _selectedItemIds.isEmpty ? Colors.grey : Colors.redAccent,
+                ),
+                onPressed: _selectedItemIds.isEmpty
+                    ? null
+                    : () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text("Hapus Item Terpilih"),
+                            content: Text("Apakah Anda yakin ingin menghapus ${_selectedItemIds.length} produk terpilih dari keranjang?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text("Batal", style: TextStyle(color: Colors.grey)),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: const Text("Hapus", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm == true) {
+                          for (var id in _selectedItemIds) {
+                            await DBHelper().removeFromCart(id);
+                          }
+                          setState(() {
+                            _selectedItemIds.clear();
+                          });
+                          _loadCart();
+                        }
+                      },
+              ),
+            ],
           ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1),
@@ -179,7 +243,7 @@ class _CartViewState extends State<CartView> {
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         color: const Color(0xFF0D9488).withOpacity(0.06),
                         child: Text(
-                          "Total Kapasitas: $totalItems / 100 produk",
+                          "Total Kapasitas: $totalCapacity / 100 produk",
                           style: const TextStyle(
                             color: Color(0xFF0D9488),
                             fontWeight: FontWeight.bold,
@@ -194,7 +258,7 @@ class _CartViewState extends State<CartView> {
                           itemCount: _cartItems.length,
                           itemBuilder: (context, index) {
                             final item = _cartItems[index];
-                            final prodImg = _getProductImage(item.productNama);
+                            final prodImg = _getProductImage(item.productNama, item.productGambar);
                             return Container(
                               margin: const EdgeInsets.only(bottom: 16),
                               padding: const EdgeInsets.all(12),
@@ -212,6 +276,32 @@ class _CartViewState extends State<CartView> {
                               ),
                               child: Row(
                                 children: [
+                                  Theme(
+                                    data: Theme.of(context).copyWith(
+                                      unselectedWidgetColor: context.iconColor,
+                                    ),
+                                    child: Checkbox(
+                                      activeColor: const Color(0xFF0D9488),
+                                      checkColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      value: _selectedItemIds.contains(item.id),
+                                      onChanged: (bool? checked) {
+                                        setState(() {
+                                          if (checked == true) {
+                                            if (item.id != null) {
+                                              _selectedItemIds.add(item.id!);
+                                            }
+                                          } else {
+                                            if (item.id != null) {
+                                              _selectedItemIds.remove(item.id!);
+                                            }
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
                                   Container(
                                     width: 72,
                                     height: 72,
@@ -363,31 +453,43 @@ class _CartViewState extends State<CartView> {
                                 height: 50,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF0F172A),
+                                    backgroundColor: _selectedItemIds.isEmpty
+                                        ? Colors.grey.shade400
+                                        : const Color(0xFF0F172A),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     elevation: 0,
                                   ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => PilihLokasiView(
-                                          cartItems: _cartItems,
-                                        ),
-                                      ),
-                                    ).then((_) => _loadCart());
-                                  },
-                                  child: const Row(
+                                  onPressed: _selectedItemIds.isEmpty
+                                      ? null
+                                      : () {
+                                          final selectedItems = _cartItems
+                                              .where((item) =>
+                                                  item.id != null &&
+                                                  _selectedItemIds.contains(item.id))
+                                              .toList();
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => PilihLokasiView(
+                                                cartItems: selectedItems,
+                                              ),
+                                            ),
+                                          ).then((_) => _loadCart());
+                                        },
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.shopping_cart_checkout_rounded, color: Colors.white),
-                                      SizedBox(width: 8),
+                                      Icon(
+                                        Icons.shopping_cart_checkout_rounded,
+                                        color: _selectedItemIds.isEmpty ? Colors.white70 : Colors.white,
+                                      ),
+                                      const SizedBox(width: 8),
                                       Text(
-                                        "Lanjut ke Checkout",
+                                        "Lanjut ke Checkout${totalItems > 0 ? ' ($totalItems)' : ''}",
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: _selectedItemIds.isEmpty ? Colors.white70 : Colors.white,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15,
                                         ),

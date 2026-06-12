@@ -5,6 +5,7 @@ import 'package:flutter_application_1/day_22/database/database_helper.dart';
 import 'package:flutter_application_1/day_22/database/session_manager.dart';
 import 'package:flutter_application_1/day_22/theme/elegant_background.dart';
 import 'package:flutter_application_1/day_22/views/login_view.dart';
+import 'package:flutter_application_1/day_22/views/pesanan_saya_view.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfilView extends StatefulWidget {
@@ -93,7 +94,7 @@ class _ProfilViewState extends State<ProfilView> {
                     ),
                     const SizedBox(height: 16),
                     GestureDetector(
-                      onTap: _editPersonalDetails,
+                      onTap: _editPersonalDataInfo,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
@@ -148,18 +149,24 @@ class _ProfilViewState extends State<ProfilView> {
                 ),
                 child: Column(
                   children: [
+
                     _buildProfileTile(
-                      icon: Icons.badge_outlined,
-                      title: "NIK Karyawan",
-                      subtitle: SessionManager.nik,
-                      onTap: _editNik,
+                      icon: Icons.local_shipping_outlined,
+                      title: "Pesanan Saya",
+                      subtitle: "Lacak dan lihat riwayat pesanan Anda",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const PesananSayaView()),
+                        );
+                      },
                     ),
                     Divider(height: 1, color: context.dividerColor),
                     _buildProfileTile(
-                      icon: Icons.storefront_outlined,
-                      title: "Informasi Bisnis",
-                      subtitle: SessionManager.businessInfo,
-                      onTap: _editBusinessInfo,
+                      icon: Icons.person_outline_rounded,
+                      title: "Informasi Data Pribadi",
+                      subtitle: "${SessionManager.name} | ${SessionManager.nik.isNotEmpty ? SessionManager.nik : 'Tidak ada Nomor Telepon'} | ${SessionManager.email}",
+                      onTap: _editPersonalDataInfo,
                     ),
                     Divider(height: 1, color: context.dividerColor),
                     _buildProfileTile(
@@ -389,10 +396,11 @@ class _ProfilViewState extends State<ProfilView> {
     );
   }
 
-  void _editPersonalDetails() {
+  void _editPersonalDataInfo() {
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController(text: SessionManager.name);
     final emailController = TextEditingController(text: SessionManager.email);
+    final nikController = TextEditingController(text: SessionManager.nik);
     final oldEmail = SessionManager.email;
 
     showModalBottomSheet(
@@ -412,303 +420,113 @@ class _ProfilViewState extends State<ProfilView> {
           ),
           child: Form(
             key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Ubah Data Diri',
-                      style: TextStyle(
-                        color: context.textPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Ubah Informasi Data Pribadi',
+                        style: TextStyle(
+                          color: context.textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.close, color: context.iconColor),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: nameController,
-                  style: TextStyle(color: context.textPrimary),
-                  decoration: _inputDeco("Nama Lengkap"),
-                  validator: (v) =>
-                      v!.isEmpty ? "Nama tidak boleh kosong" : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  style: TextStyle(color: context.textPrimary),
-                  decoration: _inputDeco("Email"),
-                  validator: (v) =>
-                      v!.isEmpty ? "Email tidak boleh kosong" : null,
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 52,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.buttonBg,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                      IconButton(
+                        icon: Icon(Icons.close, color: context.iconColor),
+                        onPressed: () => Navigator.pop(context),
                       ),
-                      elevation: 0,
-                    ),
-                    onPressed: () async {
-                      if (!formKey.currentState!.validate()) return;
-                      final name = nameController.text.trim();
-                      final email = emailController.text.trim();
-                      final nik = SessionManager.nik;
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: nameController,
+                    style: TextStyle(color: context.textPrimary),
+                    decoration: _inputDeco("Nama Lengkap"),
+                    validator: (v) =>
+                        v!.isEmpty ? "Nama tidak boleh kosong" : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: nikController,
+                    style: TextStyle(color: context.textPrimary),
+                    decoration: _inputDeco("Nomor Telepon"),
+                    validator: (v) =>
+                        v!.isEmpty ? "Nomor Telepon tidak boleh kosong" : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(color: context.textPrimary),
+                    decoration: _inputDeco("Email atau Nomor HP"),
+                    validator: (v) =>
+                        v!.isEmpty ? "Email atau Nomor HP tidak boleh kosong" : null,
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    height: 52,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.buttonBg,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: () async {
+                        if (!formKey.currentState!.validate()) return;
+                        final name = nameController.text.trim();
+                        final email = emailController.text.trim();
+                        final nik = nikController.text.trim();
 
-                      // Save to SQLite
-                      final success = await DBHelper().updateUser(
-                        oldEmail,
-                        name,
-                        email,
-                        nik,
-                      );
-                      if (success) {
-                        // Save to SessionManager
-                        await SessionManager.updateProfile(
-                          name: name,
-                          email: email,
-                          nik: nik,
+                        // Save to SQLite
+                        final success = await DBHelper().updateUser(
+                          oldEmail,
+                          name,
+                          email,
+                          nik,
                         );
-                        setState(() {});
-                        if (mounted) {
-                          Navigator.pop(context);
-                          _showSuccessSnackbar("Data diri berhasil disimpan!");
-                        }
-                      } else {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "Gagal memperbarui profil. Email mungkin sudah terdaftar.",
-                              ),
-                            ),
+                        if (success) {
+                          // Save to SessionManager
+                          await SessionManager.updateProfile(
+                            name: name,
+                            email: email,
+                            nik: nik,
                           );
+                          setState(() {});
+                          if (mounted) {
+                            Navigator.pop(context);
+                            _showSuccessSnackbar("Data pribadi berhasil disimpan!");
+                          }
+                        } else {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Gagal memperbarui data pribadi. Email atau Nomor HP mungkin sudah terdaftar.",
+                                ),
+                              ),
+                            );
+                          }
                         }
-                      }
-                    },
-                    child: const Text(
-                      'Simpan Perubahan',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                      },
+                      child: const Text(
+                        'Simpan Perubahan',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 30),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _editNik() {
-    final formKey = GlobalKey<FormState>();
-    final nikController = TextEditingController(text: SessionManager.nik);
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: context.cardBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 20,
-            right: 20,
-            top: 24,
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Ubah NIK Karyawan',
-                      style: TextStyle(
-                        color: context.textPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.close, color: context.iconColor),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: nikController,
-                  keyboardType: TextInputType.number,
-                  style: TextStyle(color: context.textPrimary),
-                  decoration: _inputDeco("Nomor Induk Kependudukan (NIK)"),
-                  validator: (v) {
-                    if (v == null || v.isEmpty) return "NIK wajib diisi";
-                    if (v.length != 16) return "NIK harus 16 digit";
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 52,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.buttonBg,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 0,
-                    ),
-                    onPressed: () async {
-                      if (!formKey.currentState!.validate()) return;
-                      final newNik = nikController.text.trim();
-
-                      // Update SQLite
-                      final success = await DBHelper().updateUser(
-                        SessionManager.email,
-                        SessionManager.name,
-                        SessionManager.email,
-                        newNik,
-                      );
-                      if (success) {
-                        await SessionManager.updateProfile(
-                          name: SessionManager.name,
-                          email: SessionManager.email,
-                          nik: newNik,
-                        );
-                        setState(() {});
-                        if (mounted) {
-                          Navigator.pop(context);
-                          _showSuccessSnackbar("NIK berhasil diperbarui!");
-                        }
-                      }
-                    },
-                    child: const Text(
-                      'Simpan NIK',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _editBusinessInfo() {
-    final formKey = GlobalKey<FormState>();
-    final busController = TextEditingController(
-      text: SessionManager.businessInfo,
-    );
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: context.cardBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 20,
-            right: 20,
-            top: 24,
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Ubah Informasi Bisnis',
-                      style: TextStyle(
-                        color: context.textPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.close, color: context.iconColor),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: busController,
-                  style: TextStyle(color: context.textPrimary),
-                  decoration: _inputDeco("Nama Toko/Bisnis"),
-                  validator: (v) =>
-                      v!.isEmpty ? "Nama bisnis tidak boleh kosong" : null,
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 52,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.buttonBg,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 0,
-                    ),
-                    onPressed: () async {
-                      if (!formKey.currentState!.validate()) return;
-                      final business = busController.text.trim();
-                      await SessionManager.updateBusinessInfo(business);
-                      setState(() {});
-                      if (mounted) {
-                        Navigator.pop(context);
-                        _showSuccessSnackbar(
-                          "Informasi bisnis berhasil diperbarui!",
-                        );
-                      }
-                    },
-                    child: const Text(
-                      'Simpan Bisnis',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-              ],
+                  const SizedBox(height: 30),
+                ],
+              ),
             ),
           ),
         );
@@ -862,54 +680,81 @@ class _ProfilViewState extends State<ProfilView> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  SwitchListTile(
-                    title: Text(
-                      "Notifikasi Penjualan",
-                      style: TextStyle(
-                        color: context.textPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                  if (SessionManager.role.toLowerCase() == "owner") ...[
+                    SwitchListTile(
+                      title: Text(
+                        "Notifikasi Penjualan",
+                        style: TextStyle(
+                          color: context.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    subtitle: Text(
-                      "Dapatkan update ketika pesanan selesai",
-                      style: TextStyle(
-                        color: context.textSecondary,
-                        fontSize: 12,
+                      subtitle: Text(
+                        "Dapatkan update ketika pesanan selesai",
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontSize: 12,
+                        ),
                       ),
+                      value: sales,
+                      activeThumbColor: const Color(0xFF0D9488),
+                      onChanged: (val) {
+                        setModalState(() {
+                          sales = val;
+                        });
+                      },
                     ),
-                    value: sales,
-                    activeThumbColor: const Color(0xFF0D9488),
-                    onChanged: (val) {
-                      setModalState(() {
-                        sales = val;
-                      });
-                    },
-                  ),
-                  SwitchListTile(
-                    title: Text(
-                      "Notifikasi Target",
-                      style: TextStyle(
-                        color: context.textPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                    SwitchListTile(
+                      title: Text(
+                        "Notifikasi Target",
+                        style: TextStyle(
+                          color: context.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    subtitle: Text(
-                      "Dapatkan info saat progress bulanan naik",
-                      style: TextStyle(
-                        color: context.textSecondary,
-                        fontSize: 12,
+                      subtitle: Text(
+                        "Dapatkan info saat progress bulanan naik",
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontSize: 12,
+                        ),
                       ),
+                      value: target,
+                      activeThumbColor: const Color(0xFF0D9488),
+                      onChanged: (val) {
+                        setModalState(() {
+                          target = val;
+                        });
+                      },
                     ),
-                    value: target,
-                    activeThumbColor: const Color(0xFF0D9488),
-                    onChanged: (val) {
-                      setModalState(() {
-                        target = val;
-                      });
-                    },
-                  ),
+                  ] else ...[
+                    SwitchListTile(
+                      title: Text(
+                        "Notifikasi Status Pesanan",
+                        style: TextStyle(
+                          color: context.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      subtitle: Text(
+                        "Dapatkan update status pengiriman pesanan Anda",
+                        style: TextStyle(
+                          color: context.textSecondary,
+                          fontSize: 12,
+                        ),
+                      ),
+                      value: sales,
+                      activeThumbColor: const Color(0xFF0D9488),
+                      onChanged: (val) {
+                        setModalState(() {
+                          sales = val;
+                        });
+                      },
+                    ),
+                  ],
                   SwitchListTile(
                     title: Text(
                       "Notifikasi Sistem",

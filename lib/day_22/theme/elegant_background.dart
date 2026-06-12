@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 extension ThemeContext on BuildContext {
@@ -7,23 +8,33 @@ extension ThemeContext on BuildContext {
 
   // Background & card surfaces
   Color get surfaceColor => isDark ? const Color(0xFF1E293B) : Colors.white;
-  Color get scaffoldBg => isDark ? const Color(0xFF030712) : const Color(0xFFFAFBFC);
+  Color get scaffoldBg =>
+      isDark ? const Color(0xFF030712) : const Color(0xFFFAFBFC);
   Color get cardBg => isDark ? const Color(0xFF1E293B) : Colors.white;
-  Color get inputBg => isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC);
-  Color get buttonBg => isDark ? const Color(0xFF334155) : const Color(0xFF1E293B);
+  Color get inputBg =>
+      isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC);
+  Color get buttonBg =>
+      isDark ? const Color(0xFF334155) : const Color(0xFF1E293B);
 
   // Border & dividers
-  Color get borderColor => isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
-  Color get dividerColor => isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9);
+  Color get borderColor =>
+      isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+  Color get dividerColor =>
+      isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9);
 
   // Text colors
-  Color get textPrimary => isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A);
-  Color get textSecondary => isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
-  Color get textMuted => isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8);
+  Color get textPrimary =>
+      isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A);
+  Color get textSecondary =>
+      isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+  Color get textMuted =>
+      isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8);
 
   // Icon colors
-  Color get iconColor => isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569);
-  Color get iconPrimary => isDark ? const Color(0xFFF8FAFC) : const Color(0xFF1E293B);
+  Color get iconColor =>
+      isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569);
+  Color get iconPrimary =>
+      isDark ? const Color(0xFFF8FAFC) : const Color(0xFF1E293B);
 }
 
 class ElegantBackground extends StatelessWidget {
@@ -36,22 +47,46 @@ class ElegantBackground extends StatelessWidget {
 
     // Premium dark/light color themes for blobs matching cosmic night sky
     final baseBgColor = context.scaffoldBg;
-    
+
     final blob1Colors = isDark
-        ? [const Color(0xFF0284C7).withOpacity(0.35), const Color(0xFF0284C7).withOpacity(0.0)] // Sky blue/cyan glow
-        : [const Color(0xFFFFFBEB).withOpacity(0.5), const Color(0xFFFFFBEB).withOpacity(0.0)]; // Ultra soft cream/gold
+        ? [
+            const Color(0xFF0284C7).withOpacity(0.35),
+            const Color(0xFF0284C7).withOpacity(0.0),
+          ] // Sky blue/cyan glow
+        : [
+            const Color(0xFFFFFBEB).withOpacity(0.5),
+            const Color(0xFFFFFBEB).withOpacity(0.0),
+          ]; // Ultra soft cream/gold
 
     final blob2Colors = isDark
-        ? [const Color(0xFF1E3A8A).withOpacity(0.4), const Color(0xFF1E3A8A).withOpacity(0.0)] // Deep indigo/sapphire glow
-        : [const Color(0xFFE6FFFA).withOpacity(0.55), const Color(0xFFE6FFFA).withOpacity(0.0)]; // Ultra soft aquamarine/teal
+        ? [
+            const Color(0xFF1E3A8A).withOpacity(0.4),
+            const Color(0xFF1E3A8A).withOpacity(0.0),
+          ] // Deep indigo/sapphire glow
+        : [
+            const Color(0xFFE6FFFA).withOpacity(0.55),
+            const Color(0xFFE6FFFA).withOpacity(0.0),
+          ]; // Ultra soft aquamarine/teal
 
     final blob3Colors = isDark
-        ? [const Color(0xFF0EA5E9).withOpacity(0.35), const Color(0xFF0EA5E9).withOpacity(0.0)] // Light cyan/nebula blue
-        : [const Color(0xFFEEF2FF).withOpacity(0.6), const Color(0xFFEEF2FF).withOpacity(0.0)]; // Ultra soft indigo/lavender
+        ? [
+            const Color(0xFF0EA5E9).withOpacity(0.35),
+            const Color(0xFF0EA5E9).withOpacity(0.0),
+          ] // Light cyan/nebula blue
+        : [
+            const Color(0xFFEEF2FF).withOpacity(0.6),
+            const Color(0xFFEEF2FF).withOpacity(0.0),
+          ]; // Ultra soft indigo/lavender
 
     final blob4Colors = isDark
-        ? [const Color(0xFF312E81).withOpacity(0.4), const Color(0xFF312E81).withOpacity(0.0)] // Deep cosmic navy/purple glow
-        : [const Color(0xFFFFF1F2).withOpacity(0.55), const Color(0xFFFFF1F2).withOpacity(0.0)]; // Ultra soft rose
+        ? [
+            const Color(0xFF312E81).withOpacity(0.4),
+            const Color(0xFF312E81).withOpacity(0.0),
+          ] // Deep cosmic navy/purple glow
+        : [
+            const Color(0xFFFFF1F2).withOpacity(0.55),
+            const Color(0xFFFFF1F2).withOpacity(0.0),
+          ]; // Ultra soft rose
 
     final glassOverlayColor = isDark
         ? Colors.black.withOpacity(0.2)
@@ -84,10 +119,8 @@ class ElegantBackground extends StatelessWidget {
     return Stack(
       children: [
         // Base backdrop color
-        Container(
-          decoration: baseBgDecoration,
-        ),
-        
+        Container(decoration: baseBgDecoration),
+
         // Blob 1: Soft Mint/Emerald (Top Left)
         Positioned(
           top: -100,
@@ -97,9 +130,7 @@ class ElegantBackground extends StatelessWidget {
             height: 400,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: blob1Colors,
-              ),
+              gradient: RadialGradient(colors: blob1Colors),
             ),
           ),
         ),
@@ -113,9 +144,7 @@ class ElegantBackground extends StatelessWidget {
             height: 500,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: blob2Colors,
-              ),
+              gradient: RadialGradient(colors: blob2Colors),
             ),
           ),
         ),
@@ -130,9 +159,7 @@ class ElegantBackground extends StatelessWidget {
             height: 450,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: blob3Colors,
-              ),
+              gradient: RadialGradient(colors: blob3Colors),
             ),
           ),
         ),
@@ -147,9 +174,7 @@ class ElegantBackground extends StatelessWidget {
             height: 380,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: blob4Colors,
-              ),
+              gradient: RadialGradient(colors: blob4Colors),
             ),
           ),
         ),
@@ -158,23 +183,17 @@ class ElegantBackground extends StatelessWidget {
         Positioned.fill(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 85, sigmaY: 85),
-            child: Container(
-              color: glassOverlayColor,
-            ),
+            child: Container(color: glassOverlayColor),
           ),
         ),
 
         // Premium Cosmic Starry Sky / Wave Overlay
         Positioned.fill(
-          child: CustomPaint(
-            painter: StarrySkyPainter(isDark: isDark),
-          ),
+          child: CustomPaint(painter: StarrySkyPainter(isDark: isDark)),
         ),
 
         // Screen Content
-        Positioned.fill(
-          child: child,
-        ),
+        Positioned.fill(child: child),
       ],
     );
   }
@@ -234,9 +253,12 @@ class StarrySkyPainter extends CustomPainter {
       final path1 = Path();
       path1.moveTo(0, size.height * 0.3);
       path1.cubicTo(
-        size.width * 0.35, size.height * 0.15,
-        size.width * 0.65, size.height * 0.55,
-        size.width, size.height * 0.4,
+        size.width * 0.35,
+        size.height * 0.15,
+        size.width * 0.65,
+        size.height * 0.55,
+        size.width,
+        size.height * 0.4,
       );
       canvas.drawPath(path1, wavePaint1);
 
@@ -244,12 +266,15 @@ class StarrySkyPainter extends CustomPainter {
       final path2 = Path();
       path2.moveTo(0, size.height * 0.6);
       path2.cubicTo(
-        size.width * 0.4, size.height * 0.8,
-        size.width * 0.7, size.height * 0.35,
-        size.width, size.height * 0.55,
+        size.width * 0.4,
+        size.height * 0.8,
+        size.width * 0.7,
+        size.height * 0.35,
+        size.width,
+        size.height * 0.55,
       );
       canvas.drawPath(path2, wavePaint2);
-      
+
       return;
     }
 
@@ -260,13 +285,13 @@ class StarrySkyPainter extends CustomPainter {
     for (int i = 0; i < 140; i++) {
       final double x = random.nextDouble() * size.width;
       final double y = random.nextDouble() * size.height;
-      
+
       // Star radius ranging from fine cosmic dust (0.3) to bright stars (2.2)
       final double radius = random.nextDouble() * 1.6 + 0.3;
-      
+
       // Star opacity (brightness)
       final double opacity = random.nextDouble() * 0.75 + 0.15;
-      
+
       // Slight color variation for premium depth (some white, some cyan/blue-tinted)
       final double colorRoll = random.nextDouble();
       Color starColor = Colors.white;
@@ -275,7 +300,7 @@ class StarrySkyPainter extends CustomPainter {
       } else if (colorRoll > 0.7) {
         starColor = const Color(0xFFE0F2FE); // Sky blue 100
       }
-      
+
       final paint = Paint()
         ..color = starColor.withOpacity(opacity)
         ..style = PaintingStyle.fill;
@@ -294,5 +319,6 @@ class StarrySkyPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant StarrySkyPainter oldDelegate) => oldDelegate.isDark != isDark;
+  bool shouldRepaint(covariant StarrySkyPainter oldDelegate) =>
+      oldDelegate.isDark != isDark;
 }

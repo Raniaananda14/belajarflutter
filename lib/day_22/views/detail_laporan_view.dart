@@ -532,15 +532,20 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
   }
 
   Widget _buildProdukTab() {
-    return FutureBuilder<List<ActivityModel>>(
-      future: DBHelper().getAllActivities(),
+    return FutureBuilder<List<dynamic>>(
+      future: Future.wait([
+        DBHelper().getAllActivities(),
+        DBHelper().getAllProducts(),
+      ]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(color: Color(0xFF0D9488)),
           );
         }
-        final list = snapshot.data ?? [];
+        final results = snapshot.data ?? [[], []];
+        final List<ActivityModel> list = List<ActivityModel>.from(results[0]);
+        final List<ProductModel> dbProducts = List<ProductModel>.from(results[1]);
 
         // Filter based on selected period
         final filtered = list.where((act) {
@@ -556,23 +561,28 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
         // Group by product name
         final Map<String, Map<String, dynamic>> productMap = {};
         for (var pName in ["Produk A", "Produk B", "Produk C", "Produk D"]) {
+          final dbProd = dbProducts.firstWhere((p) => p.nama == pName, orElse: () => ProductModel(nama: pName, harga: 0.0, stok: 0, deskripsi: "", kategori: "", status: "Aktif"));
           productMap[pName] = {
             "name": pName,
             "qty": 0,
             "sales": 0.0,
+            "gambar": dbProd.gambar,
           };
         }
 
         for (var act in filtered) {
           final pName = act.namaProduk ?? "Produk A";
+          final dbProd = dbProducts.firstWhere((p) => p.nama == pName, orElse: () => ProductModel(nama: pName, harga: 0.0, stok: 0, deskripsi: "", kategori: "", status: "Aktif"));
           if (productMap.containsKey(pName)) {
             productMap[pName]!["qty"] = (productMap[pName]!["qty"] as int) + (act.jumlah ?? 0);
             productMap[pName]!["sales"] = (productMap[pName]!["sales"] as double) + act.total;
+            productMap[pName]!["gambar"] = dbProd.gambar;
           } else {
             productMap[pName] = {
               "name": pName,
               "qty": act.jumlah ?? 0,
               "sales": act.total,
+              "gambar": dbProd.gambar,
             };
           }
         }
@@ -585,7 +595,7 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];
-            final imgPath = _getProductImage(item["name"]);
+            final imgPath = _getProductImage(item["name"], item["gambar"]);
             return GestureDetector(
               onTap: () async {
                 final dbProducts = await DBHelper().getAllProducts();
@@ -1220,18 +1230,41 @@ class _DetailLaporanViewState extends State<DetailLaporanView>
     );
   }
 
-  String _getProductImage(String productName) {
+  String _getProductImage(String productName, String? dbGambar) {
+    if (dbGambar != null && dbGambar.isNotEmpty) {
+      return dbGambar;
+    }
     switch (productName) {
       case 'Produk A':
         return 'assets/images/1.jpg';
       case 'Produk B':
-        return 'assets/images/3.jpg';
+        return 'assets/images/2.webp';
       case 'Produk C':
-        return 'assets/images/8.jpg';
+        return 'assets/images/3.jpg';
       case 'Produk D':
-        return 'assets/images/9.jpg';
+        return 'assets/images/4.jpg';
       case 'Produk E (Habis)':
+        return 'assets/images/5.jpg';
+      case 'Produk F':
+        return 'assets/images/8.jpg';
+      case 'Produk G':
+        return 'assets/images/9.jpg';
+      case 'Produk H':
         return 'assets/images/10.jpg';
+      case 'Produk I':
+        return 'assets/images/11.jpg';
+      case 'Produk J':
+        return 'assets/images/12.jpg';
+      case 'Produk K':
+        return 'assets/images/13.jpg';
+      case 'Produk L':
+        return 'assets/images/14.jpg';
+      case 'Produk M':
+        return 'assets/images/15.jpg';
+      case 'Produk N':
+        return 'assets/images/6.webp';
+      case 'Produk O':
+        return 'assets/images/7.webp';
       default:
         return '';
     }

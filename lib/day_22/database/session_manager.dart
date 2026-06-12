@@ -20,6 +20,7 @@ class SessionManager {
   static const String _keyNotifSales = "day22_notif_sales";
   static const String _keyNotifTarget = "day22_notif_target";
   static const String _keyNotifSystem = "day22_notif_system";
+  static const String _keyCargoHighScore = "day22_cargo_high_score";
 
   static final ValueNotifier<String> themeNotifier = ValueNotifier<String>(
     "light",
@@ -49,7 +50,11 @@ class SessionManager {
     await _prefs.setBool(_keyIsLoggedIn, true);
     // Initialize default business info if empty
     if (_prefs.getString(_keyBusinessInfo) == null) {
-      await _prefs.setString(_keyBusinessInfo, "BizGrow Jakarta Barat");
+      if (role == "Owner") {
+        await _prefs.setString(_keyBusinessInfo, "BizGrow Jakarta Barat");
+      } else {
+        await _prefs.setString(_keyBusinessInfo, "");
+      }
     }
   }
 
@@ -87,9 +92,9 @@ class SessionManager {
 
   static String get name => _prefs.getString(_keyName) ?? "Rania Ananda";
   static String get email => _prefs.getString(_keyEmail) ?? "rania@gmail.com";
-  static String get nik => _prefs.getString(_keyNik) ?? "1234567890123456";
+  static String get nik => _prefs.getString(_keyNik) ?? "";
   static String get businessInfo =>
-      _prefs.getString(_keyBusinessInfo) ?? "BizGrow Jakarta Barat";
+      _prefs.getString(_keyBusinessInfo) ?? (role == "Owner" ? "BizGrow Jakarta Barat" : "");
   static String get profileImage => _prefs.getString(_keyProfileImage) ?? "";
   static String get role => _prefs.getString(_keyRole) ?? "Pembeli";
 
@@ -98,6 +103,12 @@ class SessionManager {
   static bool get notifSystem => _prefs.getBool(_keyNotifSystem) ?? false;
 
   static bool get isLoggedIn => _prefs.getBool(_keyIsLoggedIn) ?? false;
+
+  static int get cargoHighScore => _prefs.getInt(_keyCargoHighScore) ?? 0;
+
+  static Future<void> setCargoHighScore(int score) async {
+    await _prefs.setInt(_keyCargoHighScore, score);
+  }
 
   static Future<void> clear() async {
     await _prefs.remove(_keyName);

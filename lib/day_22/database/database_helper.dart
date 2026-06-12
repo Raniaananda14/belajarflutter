@@ -34,9 +34,11 @@ class DBHelper {
             password TEXT,
             nik TEXT,
             profileImage TEXT,
-            role TEXT
+            role TEXT,
+            securityQuestion TEXT,
+            securityAnswer TEXT
           )
-        ''',);
+        ''');
 
         // Products Table
         await db.execute('''
@@ -48,7 +50,8 @@ class DBHelper {
             deskripsi TEXT,
             kategori TEXT,
             status TEXT,
-            gambar TEXT
+            gambar TEXT,
+            toko TEXT
           )
         ''');
 
@@ -114,10 +117,23 @@ class DBHelper {
           await db.execute("ALTER TABLE users ADD COLUMN role TEXT");
         } catch (_) {}
         try {
+          await db.execute(
+            "ALTER TABLE users ADD COLUMN securityQuestion TEXT",
+          );
+        } catch (_) {}
+        try {
+          await db.execute("ALTER TABLE users ADD COLUMN securityAnswer TEXT");
+        } catch (_) {}
+        try {
           await db.execute("ALTER TABLE activities ADD COLUMN buyerEmail TEXT");
         } catch (_) {}
         try {
-          await db.execute("UPDATE users SET role = 'Owner' WHERE email = 'rania@gmail.com'");
+          await db.execute("ALTER TABLE products ADD COLUMN toko TEXT");
+        } catch (_) {}
+        try {
+          await db.execute(
+            "UPDATE users SET role = 'Owner' WHERE email = 'rania@gmail.com'",
+          );
         } catch (_) {}
         try {
           await db.execute('''
@@ -128,6 +144,29 @@ class DBHelper {
               jumlah INTEGER
             )
           ''');
+        } catch (_) {}
+        try {
+          await db.execute(
+            "UPDATE products SET gambar = 'assets/images/6.webp' WHERE nama = 'Produk I'",
+          );
+          await db.execute(
+            "UPDATE products SET gambar = 'assets/images/7.webp' WHERE nama = 'Produk J'",
+          );
+          await db.execute(
+            "UPDATE products SET gambar = 'assets/images/11.jpg' WHERE nama = 'Produk K'",
+          );
+          await db.execute(
+            "UPDATE products SET gambar = 'assets/images/12.jpg' WHERE nama = 'Produk L'",
+          );
+          await db.execute(
+            "UPDATE products SET gambar = 'assets/images/13.jpg' WHERE nama = 'Produk M'",
+          );
+          await db.execute(
+            "UPDATE products SET gambar = 'assets/images/14.jpg' WHERE nama = 'Produk N'",
+          );
+          await db.execute(
+            "UPDATE products SET gambar = 'assets/images/15.jpg' WHERE nama = 'Produk O'",
+          );
         } catch (_) {}
       },
     );
@@ -153,8 +192,9 @@ class DBHelper {
         'deskripsi':
             'Handcrafted ceramic vase featuring minimalist design and clean natural texture.',
         'kategori': 'Elektronik',
-        'status': 'Aktif',
+        'status': 'Tersedia',
         'gambar': 'assets/images/1.jpg',
+        'toko': 'BizGrow Jakarta Barat',
       },
       {
         'nama': 'Produk B',
@@ -163,8 +203,9 @@ class DBHelper {
         'deskripsi':
             'Handwoven bamboo tote bag. Lightweight, organic, and elegant.',
         'kategori': 'Pakaian',
-        'status': 'Aktif',
+        'status': 'Tersedia',
         'gambar': 'assets/images/3.jpg',
+        'toko': 'Karya Mandiri Shop',
       },
       {
         'nama': 'Produk C',
@@ -173,8 +214,9 @@ class DBHelper {
         'deskripsi':
             'Traditional handwritten batik scarf, colored with organic Javanese indigo.',
         'kategori': 'Pakaian',
-        'status': 'Aktif',
+        'status': 'Tersedia',
         'gambar': 'assets/images/8.jpg',
+        'toko': 'Abadi Jaya Store',
       },
       {
         'nama': 'Produk D',
@@ -183,8 +225,9 @@ class DBHelper {
         'deskripsi':
             'Reclaimed Javanese teak root bowl, ideal for statement centerpieces.',
         'kategori': 'Makanan',
-        'status': 'Aktif',
+        'status': 'Tersedia',
         'gambar': 'assets/images/9.jpg',
+        'toko': 'BizGrow Jakarta Barat',
       },
       {
         'nama': 'Produk E (Habis)',
@@ -192,35 +235,42 @@ class DBHelper {
         'stok': 0,
         'deskripsi': 'Modern glass planter box with brass details.',
         'kategori': 'Lainnya',
-        'status': 'Habis',
+        'status': 'Tidak Tersedia',
         'gambar': 'assets/images/10.jpg',
+        'toko': 'Karya Mandiri Shop',
       },
       {
         'nama': 'Produk F',
         'harga': 180000.0,
         'stok': 25,
-        'deskripsi': 'Rustic wooden serving tray made from sustainably sourced mahogany.',
+        'deskripsi':
+            'Rustic wooden serving tray made from sustainably sourced mahogany.',
         'kategori': 'Makanan',
-        'status': 'Aktif',
+        'status': 'Tersedia',
         'gambar': 'assets/images/2.webp',
+        'toko': 'Abadi Jaya Store',
       },
       {
         'nama': 'Produk G',
         'harga': 350000.0,
         'stok': 15,
-        'deskripsi': 'Premium ergonomic wireless mouse with multi-device connectivity.',
+        'deskripsi':
+            'Premium ergonomic wireless mouse with multi-device connectivity.',
         'kategori': 'Elektronik',
-        'status': 'Aktif',
+        'status': 'Tersedia',
         'gambar': 'assets/images/4.jpg',
+        'toko': 'BizGrow Jakarta Barat',
       },
       {
         'nama': 'Produk H',
         'harga': 65000.0,
         'stok': 50,
-        'deskripsi': 'Locally harvested organic flower honey, raw and unfiltered.',
+        'deskripsi':
+            'Locally harvested organic flower honey, raw and unfiltered.',
         'kategori': 'Makanan',
-        'status': 'Aktif',
+        'status': 'Tersedia',
         'gambar': 'assets/images/5.jpg',
+        'toko': 'Karya Mandiri Shop',
       },
       {
         'nama': 'Produk I',
@@ -228,62 +278,75 @@ class DBHelper {
         'stok': 30,
         'deskripsi': 'Casual daily linen shirt, highly breathable and soft.',
         'kategori': 'Pakaian',
-        'status': 'Aktif',
-        'gambar': 'assets/images/6.jpg',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/6.webp',
+        'toko': 'Abadi Jaya Store',
       },
       {
         'nama': 'Produk J',
         'harga': 140000.0,
         'stok': 20,
-        'deskripsi': 'Scented organic soy candle in a hand-poured concrete jar.',
+        'deskripsi':
+            'Scented organic soy candle in a hand-poured concrete jar.',
         'kategori': 'Lainnya',
-        'status': 'Aktif',
-        'gambar': 'assets/images/7.jpg',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/7.webp',
+        'toko': 'BizGrow Jakarta Barat',
       },
       {
         'nama': 'Produk K',
         'harga': 85000.0,
         'stok': 45,
-        'deskripsi': 'Gourmet roasted Arabica coffee beans from Gayo highlands.',
+        'deskripsi':
+            'Gourmet roasted Arabica coffee beans from Gayo highlands.',
         'kategori': 'Makanan',
-        'status': 'Aktif',
-        'gambar': 'assets/images/1.jpg',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/11.jpg',
+        'toko': 'Karya Mandiri Shop',
       },
       {
         'nama': 'Produk L',
         'harga': 500000.0,
         'stok': 12,
-        'deskripsi': 'Minimalist leather wallet handcrafted with genuine full-grain leather.',
+        'deskripsi':
+            'Minimalist leather wallet handcrafted with genuine full-grain leather.',
         'kategori': 'Lainnya',
-        'status': 'Aktif',
-        'gambar': 'assets/images/3.jpg',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/12.jpg',
+        'toko': 'Abadi Jaya Store',
       },
       {
         'nama': 'Produk M',
         'harga': 110000.0,
         'stok': 28,
-        'deskripsi': 'Artisan hand-painted ceramic mug, safe for microwave and dishwasher.',
+        'deskripsi':
+            'Artisan hand-painted ceramic mug, safe for microwave and dishwasher.',
         'kategori': 'Lainnya',
-        'status': 'Aktif',
-        'gambar': 'assets/images/8.jpg',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/13.jpg',
+        'toko': 'BizGrow Jakarta Barat',
       },
       {
         'nama': 'Produk N',
         'harga': 275000.0,
         'stok': 16,
-        'deskripsi': 'Vintage design mechanical keyboard, quiet switches and warm backlight.',
+        'deskripsi':
+            'Vintage design mechanical keyboard, quiet switches and warm backlight.',
         'kategori': 'Elektronik',
-        'status': 'Aktif',
-        'gambar': 'assets/images/9.jpg',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/14.jpg',
+        'toko': 'Karya Mandiri Shop',
       },
       {
         'nama': 'Produk O',
         'harga': 95000.0,
         'stok': 33,
-        'deskripsi': 'Organic lavender aromatherapy essential oil set for relaxation.',
+        'deskripsi':
+            'Organic lavender aromatherapy essential oil set for relaxation.',
         'kategori': 'Lainnya',
-        'status': 'Aktif',
-        'gambar': 'assets/images/10.jpg',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/15.jpg',
+        'toko': 'Abadi Jaya Store',
       },
     ];
 
@@ -395,7 +458,7 @@ class DBHelper {
         'koordinatY': 0.71,
         'namaProduk': 'Produk C',
         'jumlah': 4,
-      }
+      },
     ];
 
     for (var act in activities) {
@@ -486,6 +549,27 @@ class DBHelper {
       log("Error updating user password: $e");
       return false;
     }
+  }
+
+  // Get new owner registered in database
+  Future<Map<String, String>?> getNewOwner() async {
+    final db = await database;
+    try {
+      final List<Map<String, dynamic>> res = await db.query(
+        'users',
+        where: "role = 'Owner' AND email != 'rania@gmail.com'",
+        limit: 1,
+      );
+      if (res.isNotEmpty) {
+        return {
+          'nama': res.first['nama']?.toString() ?? '',
+          'email': res.first['email']?.toString() ?? '',
+        };
+      }
+    } catch (e) {
+      log("Error getting new owner: $e");
+    }
+    return null;
   }
 
   // Update user profile image path in database
@@ -649,7 +733,9 @@ class DBHelper {
     }
   }
 
-  Future<List<ActivityModel>> getActivitiesByOrderCode(String kodePesanan) async {
+  Future<List<ActivityModel>> getActivitiesByOrderCode(
+    String kodePesanan,
+  ) async {
     final db = await database;
     try {
       final List<Map<String, dynamic>> res = await db.query(
@@ -685,7 +771,10 @@ class DBHelper {
     try {
       int count = await db.update(
         'products',
-        {'stok': newStock, 'status': newStock > 0 ? 'Aktif' : 'Habis'},
+        {
+          'stok': newStock,
+          'status': newStock > 0 ? 'Tersedia' : 'Tidak Tersedia',
+        },
         where: 'id = ?',
         whereArgs: [id],
       );
@@ -700,19 +789,26 @@ class DBHelper {
   Future<List<CartItemModel>> getCart(String email) async {
     final db = await database;
     try {
-      final List<Map<String, dynamic>> res = await db.rawQuery('''
+      final List<Map<String, dynamic>> res = await db.rawQuery(
+        '''
         SELECT c.*, p.nama, p.harga, p.gambar, p.stok
         FROM cart c
         JOIN products p ON c.productId = p.id
         WHERE c.buyerEmail = ?
-      ''', [email]);
-      return res.map((m) => CartItemModel.fromMap(
-        m,
-        nama: m['nama'] as String? ?? '',
-        harga: (m['harga'] as num? ?? 0.0).toDouble(),
-        gambar: m['gambar'] as String?,
-        stok: m['stok'] as int? ?? 0,
-      )).toList();
+      ''',
+        [email],
+      );
+      return res
+          .map(
+            (m) => CartItemModel.fromMap(
+              m,
+              nama: m['nama'] as String? ?? '',
+              harga: (m['harga'] as num? ?? 0.0).toDouble(),
+              gambar: m['gambar'] as String?,
+              stok: m['stok'] as int? ?? 0,
+            ),
+          )
+          .toList();
     } catch (e) {
       log("Error getting cart: $e");
       return [];
@@ -789,7 +885,12 @@ class DBHelper {
       if (newQty <= 0) {
         await db.delete('cart', where: 'id = ?', whereArgs: [id]);
       } else {
-        await db.update('cart', {'jumlah': newQty}, where: 'id = ?', whereArgs: [id]);
+        await db.update(
+          'cart',
+          {'jumlah': newQty},
+          where: 'id = ?',
+          whereArgs: [id],
+        );
       }
       return true;
     } catch (e) {
@@ -813,6 +914,47 @@ class DBHelper {
       await db.delete('cart', where: 'buyerEmail = ?', whereArgs: [email]);
     } catch (e) {
       log("Error clearing cart: $e");
+    }
+  }
+
+  Future<void> clearSelectedCartItems(
+    String email,
+    List<String> productNames,
+  ) async {
+    final db = await database;
+    try {
+      for (var name in productNames) {
+        final prodRes = await db.query(
+          'products',
+          where: 'nama = ?',
+          whereArgs: [name],
+        );
+        if (prodRes.isNotEmpty) {
+          final prodId = prodRes.first['id'] as int;
+          await db.delete(
+            'cart',
+            where: 'buyerEmail = ? AND productId = ?',
+            whereArgs: [email, prodId],
+          );
+        }
+      }
+    } catch (e) {
+      log("Error clearing selected cart items: $e");
+    }
+  }
+
+  Future<List<ProductModel>> getProductsByShop(String shopName) async {
+    final db = await database;
+    try {
+      final List<Map<String, dynamic>> res = await db.query(
+        'products',
+        where: 'toko = ?',
+        whereArgs: [shopName],
+      );
+      return res.map((m) => ProductModel.fromMap(m)).toList();
+    } catch (e) {
+      log("Error getting products by shop: $e");
+      return [];
     }
   }
 }

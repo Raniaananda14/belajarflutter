@@ -6,6 +6,8 @@ class UserModelBizgrow {
   final String nik;
   final String? profileImage;
   final String role;
+  final String? securityQuestion;
+  final String? securityAnswer;
 
   UserModelBizgrow({
     this.id,
@@ -15,6 +17,8 @@ class UserModelBizgrow {
     required this.nik,
     this.profileImage,
     this.role = "Pembeli",
+    this.securityQuestion,
+    this.securityAnswer,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +30,8 @@ class UserModelBizgrow {
       'nik': nik,
       'profileImage': profileImage,
       'role': role,
+      'securityQuestion': securityQuestion,
+      'securityAnswer': securityAnswer,
     };
   }
 
@@ -38,6 +44,8 @@ class UserModelBizgrow {
       nik: map['nik'] as String? ?? '',
       profileImage: map['profileImage'] as String?,
       role: map['role'] as String? ?? 'Pembeli',
+      securityQuestion: map['securityQuestion'] as String?,
+      securityAnswer: map['securityAnswer'] as String?,
     );
   }
 }
@@ -49,8 +57,9 @@ class ProductModel {
   final int stok;
   final String deskripsi;
   final String kategori;
-  final String status; // 'Aktif' or 'Habis'
+  final String status; // 'Tersedia' or 'Tidak Tersedia'
   final String? gambar;
+  final String? toko;
 
   ProductModel({
     this.id,
@@ -61,6 +70,7 @@ class ProductModel {
     required this.kategori,
     required this.status,
     this.gambar,
+    this.toko,
   });
 
   Map<String, dynamic> toMap() {
@@ -73,10 +83,18 @@ class ProductModel {
       'kategori': kategori,
       'status': status,
       'gambar': gambar,
+      if (toko != null) 'toko': toko,
     };
   }
 
   factory ProductModel.fromMap(Map<String, dynamic> map) {
+    final rawStatus = map['status'] as String? ?? 'Tersedia';
+    final parsedStatus = rawStatus == 'Aktif'
+        ? 'Tersedia'
+        : rawStatus == 'Habis'
+            ? 'Tidak Tersedia'
+            : rawStatus;
+            
     return ProductModel(
       id: map['id'] as int?,
       nama: map['nama'] as String? ?? '',
@@ -84,8 +102,9 @@ class ProductModel {
       stok: map['stok'] as int? ?? 0,
       deskripsi: map['deskripsi'] as String? ?? '',
       kategori: map['kategori'] as String? ?? '',
-      status: map['status'] as String? ?? 'Aktif',
+      status: parsedStatus,
       gambar: map['gambar'] as String?,
+      toko: map['toko'] as String?,
     );
   }
 }
