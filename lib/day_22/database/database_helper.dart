@@ -19,7 +19,7 @@ class DBHelper {
 
   Future<Database> _initDB() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'bizgrow_day22_v12.db');
+    final path = join(dbPath, 'bizgrow_day22_v14.db');
 
     return await openDatabase(
       path,
@@ -145,29 +145,6 @@ class DBHelper {
             )
           ''');
         } catch (_) {}
-        try {
-          await db.execute(
-            "UPDATE products SET gambar = 'assets/images/6.webp' WHERE nama = 'Produk I'",
-          );
-          await db.execute(
-            "UPDATE products SET gambar = 'assets/images/7.webp' WHERE nama = 'Produk J'",
-          );
-          await db.execute(
-            "UPDATE products SET gambar = 'assets/images/11.jpg' WHERE nama = 'Produk K'",
-          );
-          await db.execute(
-            "UPDATE products SET gambar = 'assets/images/12.jpg' WHERE nama = 'Produk L'",
-          );
-          await db.execute(
-            "UPDATE products SET gambar = 'assets/images/13.jpg' WHERE nama = 'Produk M'",
-          );
-          await db.execute(
-            "UPDATE products SET gambar = 'assets/images/14.jpg' WHERE nama = 'Produk N'",
-          );
-          await db.execute(
-            "UPDATE products SET gambar = 'assets/images/15.jpg' WHERE nama = 'Produk O'",
-          );
-        } catch (_) {}
       },
     );
   }
@@ -186,167 +163,312 @@ class DBHelper {
     // Seed products
     final products = [
       {
-        'nama': 'Produk A',
+        'nama': 'Vas Bunga Keramik Minimalis',
         'harga': 150000.0,
         'stok': 35,
         'deskripsi':
-            'Handcrafted ceramic vase featuring minimalist design and clean natural texture.',
-        'kategori': 'Elektronik',
+            'Vas bunga keramik dengan desain minimalis modern dan tekstur alami yang elegan untuk dekorasi rumah Anda.',
+        'kategori': 'Lainnya',
         'status': 'Tersedia',
         'gambar': 'assets/images/1.jpg',
         'toko': 'BizGrow Jakarta Barat',
       },
       {
-        'nama': 'Produk B',
+        'nama': 'Tas Anyaman Bambu Premium',
         'harga': 200000.0,
         'stok': 40,
         'deskripsi':
-            'Handwoven bamboo tote bag. Lightweight, organic, and elegant.',
+            'Tas jinjing anyaman bambu premium khas pengrajin lokal. Ringan, organik, ramah lingkungan, dan sangat modis.',
         'kategori': 'Pakaian',
         'status': 'Tersedia',
         'gambar': 'assets/images/3.jpg',
         'toko': 'Karya Mandiri Shop',
       },
       {
-        'nama': 'Produk C',
+        'nama': 'Syal Batik Tulis Indigo',
         'harga': 75000.0,
         'stok': 10,
         'deskripsi':
-            'Traditional handwritten batik scarf, colored with organic Javanese indigo.',
+            'Syal batik tulis tradisional bermotif indah dengan pewarna alami dari tanaman indigo Jawa.',
         'kategori': 'Pakaian',
         'status': 'Tersedia',
         'gambar': 'assets/images/8.jpg',
         'toko': 'Abadi Jaya Store',
       },
       {
-        'nama': 'Produk D',
+        'nama': 'Mangkuk Kayu Jati Solid',
         'harga': 120000.0,
         'stok': 18,
         'deskripsi':
-            'Reclaimed Javanese teak root bowl, ideal for statement centerpieces.',
-        'kategori': 'Makanan',
+            'Mangkuk saji dari akar kayu jati pilihan Jawa Timur, menampilkan serat kayu eksotis dan bentuk alami yang unik.',
+        'kategori': 'Lainnya',
         'status': 'Tersedia',
         'gambar': 'assets/images/9.jpg',
         'toko': 'BizGrow Jakarta Barat',
       },
       {
-        'nama': 'Produk E (Habis)',
+        'nama': 'Terrarium Kaca Hexagonal (Habis)',
         'harga': 90000.0,
         'stok': 0,
-        'deskripsi': 'Modern glass planter box with brass details.',
+        'deskripsi':
+            'Terrarium kaca geometris modern dengan detail bingkai kuningan mewah, cocok untuk tanaman hias sukulen.',
         'kategori': 'Lainnya',
         'status': 'Tidak Tersedia',
         'gambar': 'assets/images/10.jpg',
         'toko': 'Karya Mandiri Shop',
       },
       {
-        'nama': 'Produk F',
+        'nama': 'Nampan Saji Kayu Mahoni',
         'harga': 180000.0,
         'stok': 25,
         'deskripsi':
-            'Rustic wooden serving tray made from sustainably sourced mahogany.',
-        'kategori': 'Makanan',
+            'Nampan saji kayu mahoni dengan gaya rustic natural, dilapisi pelindung food-grade aman untuk makanan.',
+        'kategori': 'Lainnya',
         'status': 'Tersedia',
         'gambar': 'assets/images/2.webp',
         'toko': 'Abadi Jaya Store',
       },
       {
-        'nama': 'Produk G',
+        'nama': 'Mouse Wireless Silent Premium',
         'harga': 350000.0,
         'stok': 15,
         'deskripsi':
-            'Premium ergonomic wireless mouse with multi-device connectivity.',
+            'Mouse nirkabel ergonomis premium dengan sensor presisi tinggi dan klik senyap (silent click), mendukung multi-device.',
         'kategori': 'Elektronik',
         'status': 'Tersedia',
         'gambar': 'assets/images/4.jpg',
         'toko': 'BizGrow Jakarta Barat',
       },
       {
-        'nama': 'Produk H',
+        'nama': 'Madu Hutan Multiflora Organik',
         'harga': 65000.0,
         'stok': 50,
         'deskripsi':
-            'Locally harvested organic flower honey, raw and unfiltered.',
+            'Madu hutan murni multiflora mentah (raw honey), dipanen langsung secara alami tanpa tambahan gula atau pengawet.',
         'kategori': 'Makanan',
         'status': 'Tersedia',
         'gambar': 'assets/images/5.jpg',
         'toko': 'Karya Mandiri Shop',
       },
       {
-        'nama': 'Produk I',
+        'nama': 'Kemeja Linen Casual Premium',
         'harga': 220000.0,
         'stok': 30,
-        'deskripsi': 'Casual daily linen shirt, highly breathable and soft.',
+        'deskripsi':
+            'Kemeja casual berbahan 100% serat linen alami berkualitas tinggi. Sangat lembut, sejuk, dan nyaman dipakai harian.',
         'kategori': 'Pakaian',
         'status': 'Tersedia',
         'gambar': 'assets/images/6.webp',
         'toko': 'Abadi Jaya Store',
       },
       {
-        'nama': 'Produk J',
+        'nama': 'Lilin Aromaterapi Soy Wax',
         'harga': 140000.0,
         'stok': 20,
         'deskripsi':
-            'Scented organic soy candle in a hand-poured concrete jar.',
+            'Lilin aromaterapi wangi menenangkan dari bahan soy wax organik di dalam wadah semen minimalis buatan tangan.',
         'kategori': 'Lainnya',
         'status': 'Tersedia',
         'gambar': 'assets/images/7.webp',
         'toko': 'BizGrow Jakarta Barat',
       },
       {
-        'nama': 'Produk K',
+        'nama': 'Biji Kopi Arabika Gayo',
         'harga': 85000.0,
         'stok': 45,
         'deskripsi':
-            'Gourmet roasted Arabica coffee beans from Gayo highlands.',
+            'Biji kopi Arabika premium dari dataran tinggi Gayo, Aceh. Diproses secara semi-washed dan disangrai tingkat medium.',
         'kategori': 'Makanan',
         'status': 'Tersedia',
         'gambar': 'assets/images/11.jpg',
         'toko': 'Karya Mandiri Shop',
       },
       {
-        'nama': 'Produk L',
+        'nama': 'Dompet Kulit Asli Handmade',
         'harga': 500000.0,
         'stok': 12,
         'deskripsi':
-            'Minimalist leather wallet handcrafted with genuine full-grain leather.',
+            'Dompet kulit sapi asli buatan tangan dengan desain minimalis ramping, memiliki slot kartu dan kompartemen uang.',
         'kategori': 'Lainnya',
         'status': 'Tersedia',
         'gambar': 'assets/images/12.jpg',
         'toko': 'Abadi Jaya Store',
       },
       {
-        'nama': 'Produk M',
+        'nama': 'Cangkir Keramik Lukis Hand-painted',
         'harga': 110000.0,
         'stok': 28,
         'deskripsi':
-            'Artisan hand-painted ceramic mug, safe for microwave and dishwasher.',
+            'Cangkir keramik lukis tangan artistik dengan motif floral unik, aman digunakan di microwave dan mesin pencuci piring.',
         'kategori': 'Lainnya',
         'status': 'Tersedia',
         'gambar': 'assets/images/13.jpg',
         'toko': 'BizGrow Jakarta Barat',
       },
       {
-        'nama': 'Produk N',
+        'nama': 'Keyboard Mekanikal Retro Bluetooth',
         'harga': 275000.0,
         'stok': 16,
         'deskripsi':
-            'Vintage design mechanical keyboard, quiet switches and warm backlight.',
+            'Keyboard mekanikal nirkabel bergaya mesin ketik retro klasik dengan switch taktil senyap dan lampu latar hangat.',
         'kategori': 'Elektronik',
         'status': 'Tersedia',
         'gambar': 'assets/images/14.jpg',
         'toko': 'Karya Mandiri Shop',
       },
       {
-        'nama': 'Produk O',
+        'nama': 'Minyak Atsiri Essential Oil Lavender',
         'harga': 95000.0,
         'stok': 33,
         'deskripsi':
-            'Organic lavender aromatherapy essential oil set for relaxation.',
+            'Set minyak atsiri (essential oil) lavender organik 100% murni untuk relaksasi, membantu tidur nyenyak, dan meredakan stres.',
         'kategori': 'Lainnya',
         'status': 'Tersedia',
         'gambar': 'assets/images/15.jpg',
         'toko': 'Abadi Jaya Store',
+      },
+      {
+        'nama': 'Powerbank Fast Charging 10000mAh',
+        'harga': 195000.0,
+        'stok': 25,
+        'deskripsi':
+            'Powerbank dengan pengisian cepat 22.5W, desain ultra-thin slim, indikator LED, perlindungan sirkuit ganda.',
+        'kategori': 'Elektronik',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/el_1.jpg',
+        'toko': 'BizGrow Jakarta Barat',
+      },
+      {
+        'nama': 'Earphone TWS Bluetooth 5.3',
+        'harga': 299000.0,
+        'stok': 30,
+        'deskripsi':
+            'TWS earphone nirkabel dengan driver dinamis 13mm, deep bass, noise reduction, tahan air IPX4, baterai tahan 24 jam.',
+        'kategori': 'Elektronik',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/el_2.jpg',
+        'toko': 'Karya Mandiri Shop',
+      },
+      {
+        'nama': 'Speaker Bluetooth Portable Waterproof',
+        'harga': 450000.0,
+        'stok': 12,
+        'deskripsi':
+            'Speaker bluetooth portable dengan suara stereo bass kencang, baterai tahan 12 jam, sertifikasi tahan air IPX7 cocok untuk outdoor.',
+        'kategori': 'Elektronik',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/el_3.jpg',
+        'toko': 'Abadi Jaya Store',
+      },
+      {
+        'nama': 'Lampu Meja LED Smart Touch',
+        'harga': 135000.0,
+        'stok': 40,
+        'deskripsi':
+            'Lampu meja LED dengan sensor sentuh, 3 mode pencahayaan (hangat, putih, natural), pengisian daya USB dan pelindung mata.',
+        'kategori': 'Elektronik',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/el_4.jpg',
+        'toko': 'BizGrow Jakarta Barat',
+      },
+      {
+        'nama': 'Jaket Hoodie Katun Fleece',
+        'harga': 250000.0,
+        'stok': 15,
+        'deskripsi':
+            'Jaket hoodie premium unisex terbuat dari bahan katun fleece tebal dan lembut, sangat nyaman dipakai saat cuaca dingin.',
+        'kategori': 'Pakaian',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/pk_1.jpg',
+        'toko': 'Karya Mandiri Shop',
+      },
+      {
+        'nama': 'Celana Chino Slim Fit Pria',
+        'harga': 195000.0,
+        'stok': 20,
+        'deskripsi':
+            'Celana panjang chino slim fit untuk pria, berbahan katun stretch melar yang elastis, lembut, dan tidak panas.',
+        'kategori': 'Pakaian',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/pk_2.jpg',
+        'toko': 'Abadi Jaya Store',
+      },
+      {
+        'nama': 'Topi Canvas Vintage Baseball',
+        'harga': 65000.0,
+        'stok': 50,
+        'deskripsi':
+            'Topi baseball bergaya retro vintage terbuat dari bahan kanvas katun washed yang kokoh dengan pengatur ukuran besi.',
+        'kategori': 'Pakaian',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/pk_3.jpg',
+        'toko': 'BizGrow Jakarta Barat',
+      },
+      {
+        'nama': 'Keripik Tempe Goreng Renyah',
+        'harga': 25000.0,
+        'stok': 100,
+        'deskripsi':
+            'Keripik tempe tipis renyah rasa gurih bawang ketumbar, diolah dengan minyak bersih secara tradisional bebas pengawet.',
+        'kategori': 'Makanan',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/mk_1.jpg',
+        'toko': 'Karya Mandiri Shop',
+      },
+      {
+        'nama': 'Teh Hijau Melati Organik',
+        'harga': 45000.0,
+        'stok': 60,
+        'deskripsi':
+            'Daun teh hijau pilihan berkualitas tinggi yang dipadukan dengan kuntum bunga melati asli untuk aroma harum menenangkan.',
+        'kategori': 'Makanan',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/mk_2.jpg',
+        'toko': 'Abadi Jaya Store',
+      },
+      {
+        'nama': 'Selai Kacang Tanah Creamy',
+        'harga': 55000.0,
+        'stok': 45,
+        'deskripsi':
+            'Selai kacang tanah panggang murni tanpa minyak tambahan, rendah gula, tekstur sangat creamy, gurih dan kaya protein.',
+        'kategori': 'Makanan',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/mk_3.jpg',
+        'toko': 'BizGrow Jakarta Barat',
+      },
+      {
+        'nama': 'Cokelat Hitam Artisan 70%',
+        'harga': 38000.0,
+        'stok': 80,
+        'deskripsi':
+            'Artisan dark chocolate bar dengan kadar kakao 70% asli dari perkebunan cokelat lokal Indonesia, rasa intens dan premium.',
+        'kategori': 'Makanan',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/mk_4.jpg',
+        'toko': 'Karya Mandiri Shop',
+      },
+      {
+        'nama': 'Notebook Jurnal Kulit A5',
+        'harga': 85000.0,
+        'stok': 35,
+        'deskripsi':
+            'Buku catatan jurnal ukuran A5 dengan sampul kulit sintetis bertekstur, kertas bergaris ramah tinta pena air.',
+        'kategori': 'Lainnya',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/ln_1.jpg',
+        'toko': 'Abadi Jaya Store',
+      },
+      {
+        'nama': 'Pajangan Dinding Macrame Leaf',
+        'harga': 120000.0,
+        'stok': 15,
+        'deskripsi':
+            'Hiasan gantungan dinding rajut macrame bermotif daun dari benang katun alami, menambah kesan boho estetik pada ruangan.',
+        'kategori': 'Lainnya',
+        'status': 'Tersedia',
+        'gambar': 'assets/images/ln_2.jpg',
+        'toko': 'BizGrow Jakarta Barat',
       },
     ];
 
@@ -390,7 +512,7 @@ class DBHelper {
         'alamat': 'Jl. Diponegoro No. 1, Medan, Sumatera Utara',
         'koordinatX': 0.12,
         'koordinatY': 0.22,
-        'namaProduk': 'Produk A',
+        'namaProduk': 'Vas Bunga Keramik Minimalis',
         'jumlah': 1,
       },
       {
@@ -401,7 +523,7 @@ class DBHelper {
         'alamat': 'Jl. Jenderal Sudirman No. 2, Jakarta Pusat, DKI Jakarta',
         'koordinatX': 0.36,
         'koordinatY': 0.67,
-        'namaProduk': 'Produk B',
+        'namaProduk': 'Tas Anyaman Bambu Premium',
         'jumlah': 2,
       },
       {
@@ -412,7 +534,7 @@ class DBHelper {
         'alamat': 'Jl. Ahmad Yani No. 3, Balikpapan, Kalimantan Timur',
         'koordinatX': 0.55,
         'koordinatY': 0.38,
-        'namaProduk': 'Produk C',
+        'namaProduk': 'Syal Batik Tulis Indigo',
         'jumlah': 1,
       },
       {
@@ -423,7 +545,7 @@ class DBHelper {
         'alamat': 'Jl. AP Pettarani No. 4, Makassar, Sulawesi Selatan',
         'koordinatX': 0.63,
         'koordinatY': 0.53,
-        'namaProduk': 'Produk A',
+        'namaProduk': 'Vas Bunga Keramik Minimalis',
         'jumlah': 3,
       },
       {
@@ -434,7 +556,7 @@ class DBHelper {
         'alamat': 'Jl. Raya Puputan No. 5, Denpasar, Bali',
         'koordinatX': 0.59,
         'koordinatY': 0.73,
-        'namaProduk': 'Produk B',
+        'namaProduk': 'Tas Anyaman Bambu Premium',
         'jumlah': 3,
       },
       {
@@ -445,7 +567,7 @@ class DBHelper {
         'alamat': 'Jl. Sentani No. 6, Jayapura, Papua',
         'koordinatX': 0.96,
         'koordinatY': 0.46,
-        'namaProduk': 'Produk A',
+        'namaProduk': 'Vas Bunga Keramik Minimalis',
         'jumlah': 8,
       },
       {
@@ -456,7 +578,7 @@ class DBHelper {
         'alamat': 'Jl. Pahlawan No. 7, Surabaya, Jawa Timur',
         'koordinatX': 0.54,
         'koordinatY': 0.71,
-        'namaProduk': 'Produk C',
+        'namaProduk': 'Syal Batik Tulis Indigo',
         'jumlah': 4,
       },
     ];

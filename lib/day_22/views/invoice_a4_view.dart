@@ -189,7 +189,7 @@ class _InvoiceA4ViewState extends State<InvoiceA4View> {
   @override
   void initState() {
     super.initState();
-    _prodName = widget.product?.nama ?? widget.order.namaProduk ?? "Produk A";
+    _prodName = widget.product?.nama ?? widget.order.namaProduk ?? "Vas Bunga Keramik Minimalis";
     _unitPrice = widget.product?.harga ?? 150000.0;
     _qty = widget.product != null
         ? 1
@@ -198,11 +198,11 @@ class _InvoiceA4ViewState extends State<InvoiceA4View> {
     // Fallback detection logic for old seed data
     if (widget.product == null && widget.order.namaProduk == null) {
       if (widget.order.kodePesanan.contains("1002")) {
-        _prodName = "Produk B";
+        _prodName = "Tas Anyaman Bambu Premium";
         _unitPrice = 200000.0;
         _qty = (widget.order.total / _unitPrice).round().clamp(1, 99);
       } else if (widget.order.kodePesanan.contains("1003")) {
-        _prodName = "Produk C";
+        _prodName = "Syal Batik Tulis Indigo";
         _unitPrice = 75000.0;
         _qty = (widget.order.total / _unitPrice).round().clamp(1, 99);
       }

@@ -311,36 +311,62 @@ class _TokoDetailViewState extends State<TokoDetailView> {
       return dbGambar;
     }
     switch (productName) {
-      case 'Produk A':
+      case 'Vas Bunga Keramik Minimalis':
         return 'assets/images/1.jpg';
-      case 'Produk B':
-        return 'assets/images/2.webp';
-      case 'Produk C':
+      case 'Tas Anyaman Bambu Premium':
         return 'assets/images/3.jpg';
-      case 'Produk D':
-        return 'assets/images/4.jpg';
-      case 'Produk E (Habis)':
-        return 'assets/images/5.jpg';
-      case 'Produk F':
+      case 'Syal Batik Tulis Indigo':
         return 'assets/images/8.jpg';
-      case 'Produk G':
+      case 'Mangkuk Kayu Jati Solid':
         return 'assets/images/9.jpg';
-      case 'Produk H':
+      case 'Terrarium Kaca Hexagonal (Habis)':
         return 'assets/images/10.jpg';
-      case 'Produk I':
-        return 'assets/images/11.jpg';
-      case 'Produk J':
-        return 'assets/images/12.jpg';
-      case 'Produk K':
-        return 'assets/images/13.jpg';
-      case 'Produk L':
-        return 'assets/images/14.jpg';
-      case 'Produk M':
-        return 'assets/images/15.jpg';
-      case 'Produk N':
+      case 'Nampan Saji Kayu Mahoni':
+        return 'assets/images/2.webp';
+      case 'Mouse Wireless Silent Premium':
+        return 'assets/images/4.jpg';
+      case 'Madu Hutan Multiflora Organik':
+        return 'assets/images/5.jpg';
+      case 'Kemeja Linen Casual Premium':
         return 'assets/images/6.webp';
-      case 'Produk O':
+      case 'Lilin Aromaterapi Soy Wax':
         return 'assets/images/7.webp';
+      case 'Biji Kopi Arabika Gayo':
+        return 'assets/images/11.jpg';
+      case 'Dompet Kulit Asli Handmade':
+        return 'assets/images/12.jpg';
+      case 'Cangkir Keramik Lukis Hand-painted':
+        return 'assets/images/13.jpg';
+      case 'Keyboard Mekanikal Retro Bluetooth':
+        return 'assets/images/14.jpg';
+      case 'Minyak Atsiri Essential Oil Lavender':
+        return 'assets/images/15.jpg';
+      case 'Powerbank Fast Charging 10000mAh':
+        return 'assets/images/el_1.jpg';
+      case 'Earphone TWS Bluetooth 5.3':
+        return 'assets/images/el_2.jpg';
+      case 'Speaker Bluetooth Portable Waterproof':
+        return 'assets/images/el_3.jpg';
+      case 'Lampu Meja LED Smart Touch':
+        return 'assets/images/el_4.jpg';
+      case 'Jaket Hoodie Katun Fleece':
+        return 'assets/images/pk_1.jpg';
+      case 'Celana Chino Slim Fit Pria':
+        return 'assets/images/pk_2.jpg';
+      case 'Topi Canvas Vintage Baseball':
+        return 'assets/images/pk_3.jpg';
+      case 'Keripik Tempe Goreng Renyah':
+        return 'assets/images/mk_1.jpg';
+      case 'Teh Hijau Melati Organik':
+        return 'assets/images/mk_2.jpg';
+      case 'Selai Kacang Tanah Creamy':
+        return 'assets/images/mk_3.jpg';
+      case 'Cokelat Hitam Artisan 70%':
+        return 'assets/images/mk_4.jpg';
+      case 'Notebook Jurnal Kulit A5':
+        return 'assets/images/ln_1.jpg';
+      case 'Pajangan Dinding Macrame Leaf':
+        return 'assets/images/ln_2.jpg';
       default:
         return '';
     }

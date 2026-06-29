@@ -25,6 +25,7 @@ class _LaporanViewState extends State<LaporanView> {
   double _totalSalesChart = 0.0;
   double _kategoriChartScale = 0.6; // 60%
   List<double> _dailySalesValues = [];
+  String _bestSellingProduct = "Vas Bunga Keramik Minimalis";
 
   @override
   void initState() {
@@ -97,12 +98,31 @@ class _LaporanViewState extends State<LaporanView> {
       }
     }
 
+    final products = await DBHelper().getAllProducts();
+    String bestSellingProduct = "Vas Bunga Keramik Minimalis";
+    if (products.isNotEmpty) {
+      bestSellingProduct = products.first.nama;
+      final Map<String, double> salesMap = {};
+      for (var act in filtered) {
+        final pName = act.namaProduk ?? '';
+        if (pName.isNotEmpty) {
+          salesMap[pName] = (salesMap[pName] ?? 0.0) + act.total;
+        }
+      }
+      if (salesMap.isNotEmpty) {
+        var sortedEntries = salesMap.entries.toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
+        bestSellingProduct = sortedEntries.first.key;
+      }
+    }
+
     setState(() {
       _totalOmset = totalOmset;
       _biaya = totalOmset * 0.20; // 20% estimated costs
       _laba = _totalOmset - _biaya;
       _totalSalesChart = totalOmset;
       _dailySalesValues = dailyValues;
+      _bestSellingProduct = bestSellingProduct;
       
       // Calculate growth relative to hardcoded base or previous period
       _growth = totalOmset > 0 ? 12.5 : 0.0;
@@ -613,16 +633,20 @@ class _LaporanViewState extends State<LaporanView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Kategori Terlaris",
+                      "Produk Terlaris",
                       style: TextStyle(color: context.textPrimary, fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Produk A",
-                          style: TextStyle(color: context.textPrimary, fontSize: 14, fontWeight: FontWeight.bold),
+                        Expanded(
+                          child: Text(
+                            _bestSellingProduct,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: context.textPrimary, fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,

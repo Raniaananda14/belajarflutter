@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/day_22/database/database_helper.dart';
+import 'package:flutter_application_1/day_22/database/session_manager.dart';
 import 'package:flutter_application_1/day_22/models/models.dart';
 import 'package:flutter_application_1/day_22/theme/elegant_background.dart';
-import 'package:flutter_application_1/day_22/views/product_detail_view.dart';
-import 'package:flutter_application_1/day_22/database/session_manager.dart';
 import 'package:flutter_application_1/day_22/views/cart_view.dart';
+import 'package:flutter_application_1/day_22/views/product_detail_view.dart';
 import 'package:flutter_application_1/day_22/views/toko_detail_view.dart';
 
 class ProductListView extends StatefulWidget {
@@ -17,26 +17,43 @@ class ProductListView extends StatefulWidget {
 class _ProductListViewState extends State<ProductListView> {
   String _selectedCategory = "Semua";
   String _searchQuery = "";
-  final List<String> _categories = ["Semua", "Elektronik", "Pakaian", "Makanan", "Lainnya"];
+  final List<String> _categories = [
+    "Semua",
+    "Elektronik",
+    "Pakaian",
+    "Makanan",
+    "Lainnya",
+  ];
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _nameController.dispose();
+    _priceController.dispose();
+    _stockController.dispose();
+    _descController.dispose();
+    super.dispose();
+  }
 
   final List<Map<String, dynamic>> _stores = [
     {
       "nama": "BizGrow Jakarta Barat",
       "owner": "Rania Ananda",
       "rating": 4.9,
-      "gambar": "assets/images/1.jpg"
+      "gambar": "assets/images/1.jpg",
     },
     {
       "nama": "Karya Mandiri Shop",
       "owner": "Budi Santoso",
       "rating": 4.7,
-      "gambar": "assets/images/3.jpg"
+      "gambar": "assets/images/3.jpg",
     },
     {
       "nama": "Abadi Jaya Store",
       "owner": "Siti Aminah",
       "rating": 4.5,
-      "gambar": "assets/images/8.jpg"
+      "gambar": "assets/images/8.jpg",
     },
   ];
 
@@ -221,7 +238,8 @@ class _ProductListViewState extends State<ProductListView> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => TokoDetailView(shopName: store["nama"]),
+                                builder: (_) =>
+                                    TokoDetailView(shopName: store["nama"]),
                               ),
                             );
                           },
@@ -254,14 +272,19 @@ class _ProductListViewState extends State<ProductListView> {
                                       width: 40,
                                       height: 40,
                                       color: context.inputBg,
-                                      child: Icon(Icons.store, color: context.iconColor, size: 20),
+                                      child: Icon(
+                                        Icons.store,
+                                        color: context.iconColor,
+                                        size: 20,
+                                      ),
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
@@ -287,7 +310,11 @@ class _ProductListViewState extends State<ProductListView> {
                                       const SizedBox(height: 2),
                                       Row(
                                         children: [
-                                          const Icon(Icons.star, color: Colors.amber, size: 10),
+                                          const Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                            size: 10,
+                                          ),
                                           const SizedBox(width: 2),
                                           Text(
                                             "${store["rating"]}",
@@ -324,10 +351,17 @@ class _ProductListViewState extends State<ProductListView> {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: _searchController,
                       onChanged: (val) {
                         setState(() {
                           _searchQuery = val.toLowerCase();
                         });
+                      },
+                      onSubmitted: (val) {
+                        setState(() {
+                          _searchQuery = val.toLowerCase();
+                        });
+                        FocusScope.of(context).unfocus();
                       },
                       style: TextStyle(color: context.textPrimary),
                       decoration: InputDecoration(
@@ -335,11 +369,35 @@ class _ProductListViewState extends State<ProductListView> {
                         hintStyle: TextStyle(color: context.textMuted),
                         filled: true,
                         fillColor: context.cardBg,
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: context.iconColor,
-                          size: 20,
+                        prefixIcon: IconButton(
+                          icon: Icon(
+                            Icons.search,
+                            color: context.iconColor,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _searchQuery = _searchController.text
+                                  .toLowerCase();
+                            });
+                            FocusScope.of(context).unfocus();
+                          },
                         ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(
+                                  Icons.clear,
+                                  color: context.iconColor,
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() {
+                                    _searchQuery = "";
+                                  });
+                                },
+                              )
+                            : null,
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 12,
                         ),
@@ -510,7 +568,11 @@ class _ProductListViewState extends State<ProductListView> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(14),
-                              child: _getProductImage(prod.nama, prod.gambar).isNotEmpty
+                              child:
+                                  _getProductImage(
+                                    prod.nama,
+                                    prod.gambar,
+                                  ).isNotEmpty
                                   ? Image.asset(
                                       _getProductImage(prod.nama, prod.gambar),
                                       fit: BoxFit.cover,
@@ -544,9 +606,14 @@ class _ProductListViewState extends State<ProductListView> {
                                 Row(
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 4,
+                                      ),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF0D9488).withOpacity(0.12),
+                                        color: const Color(
+                                          0xFF0D9488,
+                                        ).withOpacity(0.12),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
@@ -753,10 +820,13 @@ class _ProductListViewState extends State<ProductListView> {
                           ),
                         ],
                       ),
-                       const SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       // Display Owner's registered shop name
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
                           color: context.inputBg,
                           borderRadius: BorderRadius.circular(16),
@@ -764,7 +834,11 @@ class _ProductListViewState extends State<ProductListView> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.store_rounded, color: Color(0xFF0D9488), size: 20),
+                            const Icon(
+                              Icons.store_rounded,
+                              color: Color(0xFF0D9488),
+                              size: 20,
+                            ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
@@ -807,7 +881,8 @@ class _ProductListViewState extends State<ProductListView> {
                         keyboardType: TextInputType.number,
                         style: TextStyle(color: context.textPrimary),
                         decoration: _inputDeco("Harga (Rp)"),
-                        validator: (v) => v!.isEmpty ? "Harga wajib diisi" : null,
+                        validator: (v) =>
+                            v!.isEmpty ? "Harga wajib diisi" : null,
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -815,7 +890,8 @@ class _ProductListViewState extends State<ProductListView> {
                         keyboardType: TextInputType.number,
                         style: TextStyle(color: context.textPrimary),
                         decoration: _inputDeco("Jumlah Stok"),
-                        validator: (v) => v!.isEmpty ? "Stok wajib diisi" : null,
+                        validator: (v) =>
+                            v!.isEmpty ? "Stok wajib diisi" : null,
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -865,7 +941,8 @@ class _ProductListViewState extends State<ProductListView> {
                                     ),
                                     const Center(
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Icon(
                                             Icons.edit_outlined,
@@ -895,7 +972,8 @@ class _ProductListViewState extends State<ProductListView> {
                                         },
                                         child: CircleAvatar(
                                           radius: 14,
-                                          backgroundColor: Colors.black.withOpacity(0.6),
+                                          backgroundColor: Colors.black
+                                              .withOpacity(0.6),
                                           child: const Icon(
                                             Icons.close,
                                             color: Colors.white,
@@ -937,20 +1015,20 @@ class _ProductListViewState extends State<ProductListView> {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
-                        value: _newCategory,
+                        initialValue: _newCategory,
                         dropdownColor: context.cardBg,
                         style: TextStyle(color: context.textPrimary),
-                        items: ["Elektronik", "Pakaian", "Makanan", "Lainnya"].map((
-                          cat,
-                        ) {
-                          return DropdownMenuItem(
-                            value: cat,
-                            child: Text(
-                              cat,
-                              style: TextStyle(color: context.textPrimary),
-                            ),
-                          );
-                        }).toList(),
+                        items: ["Elektronik", "Pakaian", "Makanan", "Lainnya"]
+                            .map((cat) {
+                              return DropdownMenuItem(
+                                value: cat,
+                                child: Text(
+                                  cat,
+                                  style: TextStyle(color: context.textPrimary),
+                                ),
+                              );
+                            })
+                            .toList(),
                         onChanged: (val) {
                           if (val != null) {
                             setModalState(() {
@@ -1088,10 +1166,7 @@ class _ProductListViewState extends State<ProductListView> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        imgPath,
-                        fit: BoxFit.cover,
-                      ),
+                      child: Image.asset(imgPath, fit: BoxFit.cover),
                     ),
                   ),
                 );
@@ -1108,39 +1183,64 @@ class _ProductListViewState extends State<ProductListView> {
       return dbGambar;
     }
     switch (productName) {
-      case 'Produk A':
+      case 'Vas Bunga Keramik Minimalis':
         return 'assets/images/1.jpg';
-      case 'Produk B':
-        return 'assets/images/2.webp';
-      case 'Produk C':
+      case 'Tas Anyaman Bambu Premium':
         return 'assets/images/3.jpg';
-      case 'Produk D':
-        return 'assets/images/4.jpg';
-      case 'Produk E (Habis)':
-        return 'assets/images/5.jpg';
-      case 'Produk F':
+      case 'Syal Batik Tulis Indigo':
         return 'assets/images/8.jpg';
-      case 'Produk G':
+      case 'Mangkuk Kayu Jati Solid':
         return 'assets/images/9.jpg';
-      case 'Produk H':
+      case 'Terrarium Kaca Hexagonal (Habis)':
         return 'assets/images/10.jpg';
-      case 'Produk I':
-        return 'assets/images/11.jpg';
-      case 'Produk J':
-        return 'assets/images/12.jpg';
-      case 'Produk K':
-        return 'assets/images/13.jpg';
-      case 'Produk L':
-        return 'assets/images/14.jpg';
-      case 'Produk M':
-        return 'assets/images/15.jpg';
-      case 'Produk N':
+      case 'Nampan Saji Kayu Mahoni':
+        return 'assets/images/2.webp';
+      case 'Mouse Wireless Silent Premium':
+        return 'assets/images/4.jpg';
+      case 'Madu Hutan Multiflora Organik':
+        return 'assets/images/5.jpg';
+      case 'Kemeja Linen Casual Premium':
         return 'assets/images/6.webp';
-      case 'Produk O':
+      case 'Lilin Aromaterapi Soy Wax':
         return 'assets/images/7.webp';
+      case 'Biji Kopi Arabika Gayo':
+        return 'assets/images/11.jpg';
+      case 'Dompet Kulit Asli Handmade':
+        return 'assets/images/12.jpg';
+      case 'Cangkir Keramik Lukis Hand-painted':
+        return 'assets/images/13.jpg';
+      case 'Keyboard Mekanikal Retro Bluetooth':
+        return 'assets/images/14.jpg';
+      case 'Minyak Atsiri Essential Oil Lavender':
+        return 'assets/images/15.jpg';
+      case 'Powerbank Fast Charging 10000mAh':
+        return 'assets/images/el_1.jpg';
+      case 'Earphone TWS Bluetooth 5.3':
+        return 'assets/images/el_2.jpg';
+      case 'Speaker Bluetooth Portable Waterproof':
+        return 'assets/images/el_3.jpg';
+      case 'Lampu Meja LED Smart Touch':
+        return 'assets/images/el_4.jpg';
+      case 'Jaket Hoodie Katun Fleece':
+        return 'assets/images/pk_1.jpg';
+      case 'Celana Chino Slim Fit Pria':
+        return 'assets/images/pk_2.jpg';
+      case 'Topi Canvas Vintage Baseball':
+        return 'assets/images/pk_3.jpg';
+      case 'Keripik Tempe Goreng Renyah':
+        return 'assets/images/mk_1.jpg';
+      case 'Teh Hijau Melati Organik':
+        return 'assets/images/mk_2.jpg';
+      case 'Selai Kacang Tanah Creamy':
+        return 'assets/images/mk_3.jpg';
+      case 'Cokelat Hitam Artisan 70%':
+        return 'assets/images/mk_4.jpg';
+      case 'Notebook Jurnal Kulit A5':
+        return 'assets/images/ln_1.jpg';
+      case 'Pajangan Dinding Macrame Leaf':
+        return 'assets/images/ln_2.jpg';
       default:
         return '';
     }
   }
 }
-

@@ -5,6 +5,7 @@ import 'package:flutter_application_1/day_22/models/models.dart';
 import 'package:flutter_application_1/day_22/theme/elegant_background.dart';
 import 'package:flutter_application_1/day_22/views/cargo_catcher_view.dart';
 import 'package:flutter_application_1/day_22/views/detail_laporan_view.dart';
+import 'package:flutter_application_1/day_22/views/game_hub_view.dart';
 import 'package:flutter_application_1/day_22/views/lacak_pesanan_view.dart';
 import 'package:flutter_application_1/day_22/views/main_navigation.dart';
 import 'package:flutter_application_1/day_22/views/pesanan_saya_view.dart';
@@ -59,7 +60,7 @@ class _DashboardViewState extends State<DashboardView> {
             alamat: "Jl. Merdeka No. 10, Jakarta",
             koordinatX: -6.2088,
             koordinatY: 106.8456,
-            namaProduk: "Produk A",
+            namaProduk: "Vas Bunga Keramik Minimalis",
             jumlah: 1,
             buyerEmail: "buyer.demo@example.com",
           ),
@@ -72,7 +73,7 @@ class _DashboardViewState extends State<DashboardView> {
             alamat: "Jl. Sudirman No. 45, Jakarta",
             koordinatX: -6.2189,
             koordinatY: 106.8557,
-            namaProduk: "Produk B",
+            namaProduk: "Tas Anyaman Bambu Premium",
             jumlah: 2,
             buyerEmail: "buyer.demo@example.com",
           ),
@@ -85,7 +86,7 @@ class _DashboardViewState extends State<DashboardView> {
             alamat: "Jl. Gatot Subroto No. 12, Jakarta",
             koordinatX: -6.2290,
             koordinatY: 106.8658,
-            namaProduk: "Produk C",
+            namaProduk: "Syal Batik Tulis Indigo",
             jumlah: 1,
             buyerEmail: "buyer.demo@example.com",
           ),
@@ -197,10 +198,24 @@ class _DashboardViewState extends State<DashboardView> {
                   _searchQuery = val;
                 });
               },
+              onSubmitted: (val) {
+                setState(() {
+                  _searchQuery = val;
+                });
+                FocusScope.of(context).unfocus();
+              },
               decoration: InputDecoration(
                 hintText: "Cari produk di BizGrow...",
                 hintStyle: TextStyle(color: context.textMuted, fontSize: 13),
-                prefixIcon: Icon(Icons.search_rounded, color: context.textSecondary, size: 20),
+                prefixIcon: IconButton(
+                  icon: Icon(Icons.search_rounded, color: context.textSecondary, size: 20),
+                  onPressed: () {
+                    setState(() {
+                      _searchQuery = _searchController.text;
+                    });
+                    FocusScope.of(context).unfocus();
+                  },
+                ),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear_rounded, size: 18),
@@ -1040,7 +1055,6 @@ class _DashboardViewState extends State<DashboardView> {
   }
 
   Widget _buildGameBanner(BuildContext context) {
-    final highscore = SessionManager.cargoHighScore;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -1062,76 +1076,36 @@ class _DashboardViewState extends State<DashboardView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.local_shipping_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Expanded(
-                      child: Text(
-                        "Game: Tangkap Kargo! 🚚",
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.sports_esports_rounded,
+                  color: Colors.white,
+                  size: 20,
                 ),
               ),
-              const SizedBox(width: 8),
-              if (highscore > 0)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFBBF24).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: const Color(0xFFFBBF24).withOpacity(0.5),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.emoji_events_rounded,
-                        color: Color(0xFFFBBF24),
-                        size: 12,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        "$highscore pts",
-                        style: const TextStyle(
-                          color: Color(0xFFFBBF24),
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+              const SizedBox(width: 10),
+              const Expanded(
+                child: Text(
+                  "Pusat Game Edukasi BizGrow 🎮",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           const Text(
-            "Bantu driver BizGrow menangkap kargo dan koin yang jatuh. Mainkan sendiri atau aktifkan Autopilot AI untuk melihat simulasi!",
+            "Asah kemampuan bisnis Anda! Mainkan game tebak kata, kuis wawasan kewirausahaan, simulasi keuangan, dan tangkap kargo.",
             style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
           ),
           const SizedBox(height: 16),
@@ -1148,14 +1122,14 @@ class _DashboardViewState extends State<DashboardView> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const CargoCatcherView()),
+                MaterialPageRoute(builder: (_) => const GameHubView()),
               ).then((_) {
                 setState(() {});
               });
             },
-            icon: const Icon(Icons.play_circle_fill_rounded, size: 18),
+            icon: const Icon(Icons.sports_esports_rounded, size: 18),
             label: const Text(
-              "Mainkan Sekarang",
+              "Masuk Pusat Game",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
             ),
           ),

@@ -241,7 +241,8 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
   double? _selectedRx;
   double? _selectedRy;
   bool _isLocationPermissionGranted = false;
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
 
   void _zoom(double factor) {
     final matrix = _transformationController.value.clone();
@@ -265,10 +266,16 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return AlertDialog(
           backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: Row(
             children: [
-              const Icon(Icons.location_on_rounded, color: Color(0xFF0D9488), size: 28),
+              const Icon(
+                Icons.location_on_rounded,
+                color: Color(0xFF0D9488),
+                size: 28,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -284,10 +291,7 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
           ),
           content: const Text(
             "Izinkan 'BizGrow' untuk mengakses lokasi perangkat ini agar dapat menentukan titik alamat pengiriman Anda secara otomatis.",
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.4,
-            ),
+            style: TextStyle(fontSize: 14, height: 1.4),
           ),
           actions: [
             Column(
@@ -297,20 +301,27 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0D9488),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   onPressed: () => Navigator.pop(context, "while_using"),
                   child: const Text(
                     "Saat Aplikasi Digunakan",
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Color(0xFFCBD5E1)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   onPressed: () => Navigator.pop(context, "only_this_time"),
@@ -327,7 +338,10 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                   onPressed: () => Navigator.pop(context, "deny"),
                   child: const Text(
                     "Jangan Izinkan",
-                    style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -346,7 +360,9 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text("Izin lokasi ditolak. Silakan pilih lokasi secara manual di peta."),
+            content: const Text(
+              "Izin lokasi ditolak. Silakan pilih lokasi secara manual di peta.",
+            ),
             backgroundColor: const Color(0xFFEF4444),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -359,18 +375,23 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
   }
 
   void _setToSimulatedCurrentLocation() {
-    final simulatedHub = _shippingHubs.firstWhere((h) => h.city == "Jakarta Pusat");
+    final simulatedHub = _shippingHubs.firstWhere(
+      (h) => h.city == "Jakarta Pusat",
+    );
     setState(() {
       _selectedRx = simulatedHub.rx;
       _selectedRy = simulatedHub.ry;
-      _selectedAddress = "${simulatedHub.address}, ${simulatedHub.city}, ${simulatedHub.province} (${simulatedHub.island})";
+      _selectedAddress =
+          "${simulatedHub.address}, ${simulatedHub.city}, ${simulatedHub.province} (${simulatedHub.island})";
       _isLocationSelected = true;
     });
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("Lokasi Anda berhasil dideteksi otomatis (Jakarta Pusat) 📍"),
+          content: const Text(
+            "Lokasi Anda berhasil dideteksi otomatis (Jakarta Pusat) 📍",
+          ),
           backgroundColor: const Color(0xFF10B981),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -388,7 +409,8 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
     ShippingLocation closest = _shippingHubs[0];
     double minDist = double.infinity;
     for (final loc in _shippingHubs) {
-      final dist = (loc.rx - rx) * (loc.rx - rx) + (loc.ry - ry) * (loc.ry - ry);
+      final dist =
+          (loc.rx - rx) * (loc.rx - rx) + (loc.ry - ry) * (loc.ry - ry);
       if (dist < minDist) {
         minDist = dist;
         closest = loc;
@@ -398,7 +420,8 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
     setState(() {
       _selectedRx = closest.rx;
       _selectedRy = closest.ry;
-      _selectedAddress = "${closest.address}, ${closest.city}, ${closest.province} (${closest.island})";
+      _selectedAddress =
+          "${closest.address}, ${closest.city}, ${closest.province} (${closest.island})";
       _isLocationSelected = true;
     });
   }
@@ -412,12 +435,20 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded, color: context.iconPrimary, size: 20),
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: context.iconPrimary,
+              size: 20,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
             "Pilih Alamat Pengiriman",
-            style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(
+              color: context.textPrimary,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
           centerTitle: true,
           bottom: PreferredSize(
@@ -447,13 +478,13 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: _isLocationSelected 
-                      ? const Color(0xFF0D9488).withOpacity(0.06) 
+                  color: _isLocationSelected
+                      ? const Color(0xFF0D9488).withOpacity(0.06)
                       : Colors.orange.withOpacity(0.06),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: _isLocationSelected 
-                        ? const Color(0xFF0D9488).withOpacity(0.3) 
+                    color: _isLocationSelected
+                        ? const Color(0xFF0D9488).withOpacity(0.3)
                         : Colors.orange.withOpacity(0.3),
                   ),
                 ),
@@ -461,8 +492,12 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
-                      _isLocationSelected ? Icons.location_on_rounded : Icons.info_outline_rounded,
-                      color: _isLocationSelected ? const Color(0xFF0D9488) : Colors.orange,
+                      _isLocationSelected
+                          ? Icons.location_on_rounded
+                          : Icons.info_outline_rounded,
+                      color: _isLocationSelected
+                          ? const Color(0xFF0D9488)
+                          : Colors.orange,
                       size: 20,
                     ),
                     const SizedBox(width: 10),
@@ -497,22 +532,31 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                       builder: (context, constraints) {
                         const double canvasW = 1200;
                         const double canvasH = 800;
-                        final markerPos = (_selectedRx != null && _selectedRy != null)
-                            ? Offset(_selectedRx! * canvasW, _selectedRy! * canvasH)
+                        final markerPos =
+                            (_selectedRx != null && _selectedRy != null)
+                            ? Offset(
+                                _selectedRx! * canvasW,
+                                _selectedRy! * canvasH,
+                              )
                             : null;
                         return Stack(
                           children: [
                             // InteractiveViewer containing the scrollable and zoomable map child
                             Positioned.fill(
                               child: InteractiveViewer(
-                                transformationController: _transformationController,
+                                transformationController:
+                                    _transformationController,
                                 minScale: 0.4,
                                 maxScale: 4.0,
                                 boundaryMargin: const EdgeInsets.all(500),
                                 constrained: false,
                                 child: GestureDetector(
                                   onTapDown: (details) {
-                                    _selectLocation(details.localPosition, canvasW, canvasH);
+                                    _selectLocation(
+                                      details.localPosition,
+                                      canvasW,
+                                      canvasH,
+                                    );
                                   },
                                   child: SizedBox(
                                     width: canvasW,
@@ -521,10 +565,13 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                                       children: [
                                         Positioned.fill(
                                           child: CustomPaint(
-                                            painter: MapPainter(markerPosition: markerPos),
+                                            painter: MapPainter(
+                                              markerPosition: markerPos,
+                                            ),
                                           ),
                                         ),
-                                        if (_selectedRx != null && _selectedRy != null)
+                                        if (_selectedRx != null &&
+                                            _selectedRy != null)
                                           Positioned(
                                             left: (_selectedRx! * canvasW) - 18,
                                             top: (_selectedRy! * canvasH) - 36,
@@ -559,17 +606,28 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                                   borderRadius: BorderRadius.circular(22),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.12),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.12,
+                                      ),
                                       blurRadius: 8,
                                       offset: const Offset(0, 3),
                                     ),
                                   ],
-                                  border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    width: 0.5,
+                                  ),
                                 ),
-                                padding: const EdgeInsets.symmetric(horizontal: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                ),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.search_rounded, color: Color(0xFF5F6368), size: 20),
+                                    const Icon(
+                                      Icons.search_rounded,
+                                      color: Color(0xFF5F6368),
+                                      size: 20,
+                                    ),
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
@@ -587,14 +645,24 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                                         ),
                                       ),
                                     ),
-                                    const Icon(Icons.mic_none_rounded, color: Color(0xFF5F6368), size: 20),
-                                    const VerticalDivider(width: 16, thickness: 1, indent: 10, endIndent: 10),
+                                    const Icon(
+                                      Icons.mic_none_rounded,
+                                      color: Color(0xFF5F6368),
+                                      size: 20,
+                                    ),
+                                    const VerticalDivider(
+                                      width: 16,
+                                      thickness: 1,
+                                      indent: 10,
+                                      endIndent: 10,
+                                    ),
                                     CircleAvatar(
                                       radius: 12,
                                       backgroundColor: const Color(0xFF1A73E8),
                                       child: Text(
                                         SessionManager.name.isNotEmpty
-                                            ? SessionManager.name[0].toUpperCase()
+                                            ? SessionManager.name[0]
+                                                  .toUpperCase()
                                             : "U",
                                         style: const TextStyle(
                                           color: Colors.white,
@@ -616,10 +684,13 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                                   // Compass
                                   _buildMapControlIcon(Icons.explore_outlined, () {
                                     // Reset map zoom/pan back to default identity view
-                                    _transformationController.value = Matrix4.identity();
+                                    _transformationController.value =
+                                        Matrix4.identity();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Kompas diatur ulang (Default View) 🧭"),
+                                        content: Text(
+                                          "Kompas diatur ulang (Default View) 🧭",
+                                        ),
                                         duration: Duration(seconds: 1),
                                       ),
                                     );
@@ -629,7 +700,9 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                                   _buildMapControlIcon(Icons.layers_outlined, () {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Tampilan Peta default / Satelit diubah"),
+                                        content: Text(
+                                          "Tampilan Peta default / Satelit diubah",
+                                        ),
                                         duration: Duration(seconds: 1),
                                       ),
                                     );
@@ -653,15 +726,20 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                                     );
                                   }),
                                   const SizedBox(height: 6),
-                                  _buildMapControlIcon(Icons.remove_rounded, () {
-                                    _zoom(0.8);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text("Zoom Out (-0.8x)"),
-                                        duration: Duration(seconds: 1),
-                                      ),
-                                    );
-                                  }),
+                                  _buildMapControlIcon(
+                                    Icons.remove_rounded,
+                                    () {
+                                      _zoom(0.8);
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Zoom Out (-0.8x)"),
+                                          duration: Duration(seconds: 1),
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ],
                               ),
                             ),
@@ -671,14 +749,21 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                                   color: Colors.black.withValues(alpha: 0.25),
                                   alignment: Alignment.center,
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 10,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: Colors.black87,
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                     child: const Text(
                                       "Tap di Peta Untuk Pilih Lokasi",
-                                      style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -695,12 +780,17 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.15),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.15,
+                                      ),
                                       blurRadius: 6,
                                       offset: const Offset(0, 3),
                                     ),
                                   ],
-                                  border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    width: 0.5,
+                                  ),
                                 ),
                                 child: Material(
                                   color: Colors.transparent,
@@ -713,19 +803,23 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                                       final targetY = 0.67 * canvasH;
                                       final viewportW = constraints.maxWidth;
                                       final viewportH = constraints.maxHeight;
-                                      
+
                                       // Set zoom translation matrix to center on Jakarta
-                                      final translationMatrix = Matrix4.identity()
-                                        ..translate(
-                                          (viewportW / 2) - targetX * 1.5,
-                                          (viewportH / 2) - targetY * 1.5,
-                                        )
-                                        ..scale(1.5);
-                                      _transformationController.value = translationMatrix;
+                                      final translationMatrix =
+                                          Matrix4.identity()
+                                            ..translate(
+                                              (viewportW / 2) - targetX * 1.5,
+                                              (viewportH / 2) - targetY * 1.5,
+                                            )
+                                            ..scale(1.5);
+                                      _transformationController.value =
+                                          translationMatrix;
                                     },
                                     child: const Icon(
                                       Icons.my_location_rounded,
-                                      color: Color(0xFF1A73E8), // Google Maps signature blue
+                                      color: Color(
+                                        0xFF1A73E8,
+                                      ), // Google Maps signature blue
                                       size: 20,
                                     ),
                                   ),
@@ -749,127 +843,156 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                 height: 52,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isLocationSelected ? const Color(0xFF0F172A) : Colors.grey.shade400,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    backgroundColor: _isLocationSelected
+                        ? const Color(0xFF0F172A)
+                        : Colors.grey.shade400,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     elevation: 0,
                   ),
-                   onPressed: _isLocationSelected ? () async {
-                    final now = DateTime.now();
-                    final months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-                    final dateStr = "${now.day} ${months[now.month - 1]} ${now.year}";
-                    final kode = '#BM-${1000 + (now.millisecondsSinceEpoch % 9000)}';
-                    
-                    ActivityModel primaryOrder;
-                    
-                    if (widget.product != null) {
-                      // Single-product checkout flow
-                      final product = widget.product!;
-                      primaryOrder = ActivityModel(
-                        kodePesanan: kode,
-                        tanggal: dateStr,
-                        total: product.harga,
-                        status: 'Pending',
-                        alamat: _selectedAddress,
-                        koordinatX: _selectedRx,
-                        koordinatY: _selectedRy,
-                        namaProduk: product.nama,
-                        jumlah: 1,
-                        buyerEmail: SessionManager.email,
-                      );
-                      
-                      // Save order to database
-                      await DBHelper().addActivity(primaryOrder);
-                      
-                      // Reduce product stock
-                      if (product.id != null) {
-                        await DBHelper().updateProductStock(
-                          product.id!,
-                          (product.stok - 1).clamp(0, 9999),
-                        );
-                      }
-                    } else if (widget.cartItems != null && widget.cartItems!.isNotEmpty) {
-                      // Multi-item / Cart checkout flow
-                      final cartItems = widget.cartItems!;
-                      
-                      // Create first item as primaryOrder to pass to Invoice/Lacak views
-                      final first = cartItems.first;
-                      primaryOrder = ActivityModel(
-                        kodePesanan: kode,
-                        tanggal: dateStr,
-                        total: first.productHarga * first.jumlah,
-                        status: 'Pending',
-                        alamat: _selectedAddress,
-                        koordinatX: _selectedRx,
-                        koordinatY: _selectedRy,
-                        namaProduk: first.productNama,
-                        jumlah: first.jumlah,
-                        buyerEmail: SessionManager.email,
-                      );
-                      
-                      // Save all items as activities and reduce stock
-                      for (int i = 0; i < cartItems.length; i++) {
-                        final item = cartItems[i];
-                        final orderItem = ActivityModel(
-                          kodePesanan: kode,
-                          tanggal: dateStr,
-                          total: item.productHarga * item.jumlah,
-                          status: 'Pending',
-                          alamat: _selectedAddress,
-                          koordinatX: _selectedRx,
-                          koordinatY: _selectedRy,
-                          namaProduk: item.productNama,
-                          jumlah: item.jumlah,
-                          buyerEmail: SessionManager.email,
-                        );
-                        await DBHelper().addActivity(orderItem);
-                        
-                        // Reduce stock for each product
-                        final prod = await DBHelper().getProductById(item.productId);
-                        if (prod != null) {
-                          await DBHelper().updateProductStock(
-                            item.productId,
-                            (prod.stok - item.jumlah).clamp(0, 9999),
+                  onPressed: _isLocationSelected
+                      ? () async {
+                          final now = DateTime.now();
+                          final months = [
+                            'Januari',
+                            'Februari',
+                            'Maret',
+                            'April',
+                            'Mei',
+                            'Juni',
+                            'Juli',
+                            'Agustus',
+                            'September',
+                            'Oktober',
+                            'November',
+                            'Desember',
+                          ];
+                          final dateStr =
+                              "${now.day} ${months[now.month - 1]} ${now.year}";
+                          final kode =
+                              '#BM-${1000 + (now.millisecondsSinceEpoch % 9000)}';
+
+                          ActivityModel primaryOrder;
+
+                          if (widget.product != null) {
+                            // Single-product checkout flow
+                            final product = widget.product!;
+                            primaryOrder = ActivityModel(
+                              kodePesanan: kode,
+                              tanggal: dateStr,
+                              total: product.harga,
+                              status: 'Pending',
+                              alamat: _selectedAddress,
+                              koordinatX: _selectedRx,
+                              koordinatY: _selectedRy,
+                              namaProduk: product.nama,
+                              jumlah: 1,
+                              buyerEmail: SessionManager.email,
+                            );
+
+                            // Save order to database
+                            await DBHelper().addActivity(primaryOrder);
+
+                            // Reduce product stock
+                            if (product.id != null) {
+                              await DBHelper().updateProductStock(
+                                product.id!,
+                                (product.stok - 1).clamp(0, 9999),
+                              );
+                            }
+                          } else if (widget.cartItems != null &&
+                              widget.cartItems!.isNotEmpty) {
+                            // Multi-item / Cart checkout flow
+                            final cartItems = widget.cartItems!;
+
+                            // Create first item as primaryOrder to pass to Invoice/Lacak views
+                            final first = cartItems.first;
+                            primaryOrder = ActivityModel(
+                              kodePesanan: kode,
+                              tanggal: dateStr,
+                              total: first.productHarga * first.jumlah,
+                              status: 'Pending',
+                              alamat: _selectedAddress,
+                              koordinatX: _selectedRx,
+                              koordinatY: _selectedRy,
+                              namaProduk: first.productNama,
+                              jumlah: first.jumlah,
+                              buyerEmail: SessionManager.email,
+                            );
+
+                            // Save all items as activities and reduce stock
+                            for (int i = 0; i < cartItems.length; i++) {
+                              final item = cartItems[i];
+                              final orderItem = ActivityModel(
+                                kodePesanan: kode,
+                                tanggal: dateStr,
+                                total: item.productHarga * item.jumlah,
+                                status: 'Pending',
+                                alamat: _selectedAddress,
+                                koordinatX: _selectedRx,
+                                koordinatY: _selectedRy,
+                                namaProduk: item.productNama,
+                                jumlah: item.jumlah,
+                                buyerEmail: SessionManager.email,
+                              );
+                              await DBHelper().addActivity(orderItem);
+
+                              // Reduce stock for each product
+                              final prod = await DBHelper().getProductById(
+                                item.productId,
+                              );
+                              if (prod != null) {
+                                await DBHelper().updateProductStock(
+                                  item.productId,
+                                  (prod.stok - item.jumlah).clamp(0, 9999),
+                                );
+                              }
+                            }
+                          } else {
+                            return; // Nothing to checkout
+                          }
+
+                          if (!mounted) return;
+
+                          // Show invoice, then navigate to tracking
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => InvoiceA4View(
+                                order: primaryOrder,
+                                product: widget.product,
+                                address: _selectedAddress,
+                                koordinatX: _selectedRx,
+                                koordinatY: _selectedRy,
+                                isReadOnly: false,
+                              ),
+                            ),
+                          );
+
+                          if (!mounted) return;
+
+                          // After invoice, go directly to tracking screen
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  LacakPesananView(order: primaryOrder),
+                            ),
                           );
                         }
-                      }
-                    } else {
-                      return; // Nothing to checkout
-                    }
-                    
-                    if (!mounted) return;
-                    
-                    // Show invoice, then navigate to tracking
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => InvoiceA4View(
-                          order: primaryOrder,
-                          product: widget.product,
-                          address: _selectedAddress,
-                          koordinatX: _selectedRx,
-                          koordinatY: _selectedRy,
-                          isReadOnly: false,
-                        ),
-                      ),
-                    );
-                    
-                    if (!mounted) return;
-                    
-                    // After invoice, go directly to tracking screen
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => LacakPesananView(order: primaryOrder),
-                      ),
-                    );
-                  } : null,
+                      : null,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        _isLocationSelected ? "Lanjut ke Checkout" : "Pilih Lokasi Terlebih Dahulu",
+                        _isLocationSelected
+                            ? "Lanjut ke Checkout"
+                            : "Pilih Lokasi Terlebih Dahulu",
                         style: TextStyle(
-                          color: _isLocationSelected ? Colors.white : Colors.white60,
+                          color: _isLocationSelected
+                              ? Colors.white
+                              : Colors.white60,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -877,7 +1000,9 @@ class _PilihLokasiViewState extends State<PilihLokasiView> {
                       const SizedBox(width: 8),
                       Icon(
                         Icons.arrow_forward_rounded,
-                        color: _isLocationSelected ? Colors.white : Colors.white60,
+                        color: _isLocationSelected
+                            ? Colors.white
+                            : Colors.white60,
                         size: 20,
                       ),
                     ],
