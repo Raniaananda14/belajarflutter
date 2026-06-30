@@ -13,8 +13,8 @@ class _BiodataScreenMealsState extends State<BiodataScreenMeals> {
   // Developer details
   final String _name = "Rania Ananda";
   final String _username = "@raniaananda14";
-  final String _role = "Mobile Application Engineer";
-  final String _location = "Jakarta, Indonesia";
+  final String _role = "Mobile Application";
+  final String _location = "Indonesia";
 
   // Define stats data
   final List<Map<String, String>> _stats = [
@@ -79,7 +79,7 @@ class _BiodataScreenMealsState extends State<BiodataScreenMeals> {
     },
     {
       "title": "Phone",
-      "value": "+62 812-3456-7890",
+      "value": "+62 812-1961-9181",
       "icon": Icons.phone_outlined,
       "color": Colors.greenAccent,
     },
@@ -93,7 +93,7 @@ class _BiodataScreenMealsState extends State<BiodataScreenMeals> {
           children: [
             const Icon(
               Icons.check_circle_outline_rounded,
-              color: Colors.white,
+              color: Colors.blueGrey,
               size: 20,
             ),
             const SizedBox(width: 8),
@@ -300,8 +300,8 @@ class _BiodataScreenMealsState extends State<BiodataScreenMeals> {
                             color: context.inputBg,
                           ),
                           child: ClipOval(
-                            child: Image.network(
-                              'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&fit=crop&q=80',
+                            child: Image.asset(
+                              'assets/images/profile_dev.jpg',
                               width: 96,
                               height: 96,
                               fit: BoxFit.cover,
@@ -324,7 +324,7 @@ class _BiodataScreenMealsState extends State<BiodataScreenMeals> {
                                       style: const TextStyle(
                                         fontSize: 32,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: Colors.lightBlueAccent,
                                       ),
                                     ),
                                   ),
@@ -354,8 +354,11 @@ class _BiodataScreenMealsState extends State<BiodataScreenMeals> {
                       ),
                       const SizedBox(height: 12),
                       // Location & Terminal tag
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 8,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -393,7 +396,6 @@ class _BiodataScreenMealsState extends State<BiodataScreenMeals> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,

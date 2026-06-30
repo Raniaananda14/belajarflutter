@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter_application_1/day35/models/models/user_model.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'user_model.dart';
 
-part 'profile_response.g.dart';
+part '../service/profile_response.g.dart';
 
 ProfileResponse profileResponseFromJson(String str) =>
     ProfileResponse.fromJson(json.decode(str));

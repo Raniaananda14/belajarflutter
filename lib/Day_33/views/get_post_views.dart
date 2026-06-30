@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/day_22/theme/elegant_background.dart';
 import 'package:flutter_application_1/Day_33/models/post_models.dart';
 import 'package:flutter_application_1/Day_33/service/api_services.dart';
 import 'package:flutter_application_1/Day_33/service/dio.dart';
 import 'package:flutter_application_1/Day_33/views/biodata_views.dart';
 import 'package:flutter_application_1/Day_33/views/meal_detail_views.dart';
+import 'package:flutter_application_1/day_22/theme/elegant_background.dart';
 import 'package:flutter_application_1/extention/navigator.dart';
 
 class PostListScreenDay33 extends StatefulWidget {
@@ -121,7 +121,7 @@ class _PostListScreenDay33State extends State<PostListScreenDay33> {
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0D9488),
-                          foregroundColor: Colors.white,
+                          foregroundColor: Colors.lightBlueAccent,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 12,
@@ -202,7 +202,8 @@ class _PostListScreenDay33State extends State<PostListScreenDay33> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => MealDetailScreen(meal: post),
+                              builder: (context) =>
+                                  MealDetailScreen(meal: post),
                             ),
                           );
                         },
